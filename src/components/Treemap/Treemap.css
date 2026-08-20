@@ -123,3 +123,89 @@
 .he-treemap__tile--ink-text {
   color: var(--he-bg);
 }
+
+/* Consumer/lens supplied an explicit fill — default to white text (fills are
+ * expected to be saturated); override per-tile via `color` if needed. */
+.he-treemap__tile--custom-fill {
+  color: var(--he-white);
+}
+
+/* ── Grouped / faceted mode ───────────────────────────────────────────────
+ * A flex row of self-framing regions, each a header band above its own
+ * squarified tile field. Widths are distributed by flex-grow (∝ value). */
+.he-treemap--grouped {
+  display: flex;
+  gap: var(--he-space-3);
+  /* Each region carries its own chrome; drop the single-surface frame. */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.he-treemap__region {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md, 8px);
+  overflow: hidden;
+}
+
+.he-treemap__region-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--he-space-2) var(--he-space-3);
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-treemap__region-title {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--he-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-treemap__region-summary {
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--he-text-dim);
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Positioning context for a region's tiles; fills the space under the header. */
+.he-treemap__region-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Spotlight/off-filter: fade in place (never darken), keep the tile hoverable. */
+.he-treemap__tile--dimmed {
+  filter: grayscale(0.5) opacity(0.35);
+}
+
+.he-treemap__tile--dimmed:hover {
+  filter: grayscale(0.5) opacity(0.6);
+}
+
+/* Custom tile bodies opt out of the padded 2-line column. */
+.he-treemap__tile-inner--custom {
+  display: block;
+  padding: 0;
+}
+
+/* Anchor for the shared per-tile tooltip — a plain block wrapper so it maps
+ * onto the field without altering layout. */
+.he-treemap-tip-anchor {
+  display: block;
+}

@@ -41,3 +41,16 @@
   background: var(--he-accent);
   flex-shrink: 0;
 }
+
+/* Diagonal hatch — the "No metric" legend swatch. Token stops + transparent
+ * keep it clear of the raw-color check. */
+.he-chip__dot--hatch {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--he-text-faint) 0,
+    var(--he-text-faint) 1.5px,
+    transparent 1.5px,
+    transparent 3px
+  );
+  border: 1px solid var(--he-border);
+}

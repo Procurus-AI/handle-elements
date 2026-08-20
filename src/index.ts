@@ -1,5 +1,5 @@
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/Button/Button';
-export { Chip, type ChipProps, type ChipVariant } from './components/Chip/Chip';
+export { Chip, type ChipProps, type ChipVariant, type ChipDotPattern } from './components/Chip/Chip';
 export { StatusPill, type StatusPillProps, type StatusPillStatus } from './components/StatusPill/StatusPill';
 export { Card, type CardProps, type CardStatus } from './components/Card/Card';
 export { Badge, type BadgeProps, type BadgeTone } from './components/Badge/Badge';
@@ -197,6 +197,11 @@ export {
   type TreemapProps,
   type TreemapDatum,
   type TreemapTone,
+  type TreemapGroup,
+  type TreemapTileGeometry,
+  type RenderTile,
+  type ColorBy,
+  type SpotlightPredicate,
 } from './components/Treemap/Treemap';
 export {
   TrendGrid,

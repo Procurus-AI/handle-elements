@@ -40,12 +40,27 @@
 
 .he-drawer__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--he-space-3);
   min-height: 56px;
-  padding: var(--he-space-3) var(--he-space-5);
+  padding: var(--he-space-4) var(--he-space-5);
   border-bottom: 1px solid var(--he-border);
+}
+
+.he-drawer__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-2);
+  min-width: 0;
+}
+
+.he-drawer__eyebrow {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--he-text-dim);
 }
 
 .he-drawer__title {
@@ -54,9 +69,24 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--he-font-sans);
-  font-size: var(--he-body);
+  font-size: var(--he-heading);
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.2;
+}
+
+.he-drawer__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--he-space-1) var(--he-space-3);
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+}
+
+/* Pinned tab-bar: sits under the header, doesn't scroll with the body. */
+.he-drawer__nav {
+  padding: 0 var(--he-space-5);
+  flex: 0 0 auto;
 }
 
 .he-drawer__close {

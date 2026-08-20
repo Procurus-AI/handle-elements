@@ -9,7 +9,17 @@ export interface DrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   onClose: () => void;
   /** Edge the panel slides in from. */
   side?: DrawerSide;
+  /** Mono uppercase kicker above the title (context, e.g. the parent group). */
+  eyebrow?: ReactNode;
   title?: ReactNode;
+  /** Quiet supporting line under the title — a price, id, or status row. */
+  meta?: ReactNode;
+  /**
+   * A `<Tabs>` element pinned in its own region below the header — the body
+   * scrolls beneath it. Pass the Tabs component directly (use `variant="underline"`)
+   * so the drawer stays the layout, not the tab implementation.
+   */
+  tabs?: ReactNode;
   /** Sticky footer (actions) pinned to the bottom of the panel. */
   footer?: ReactNode;
   /** Any valid CSS width for the panel (default 420px). */
@@ -28,7 +38,10 @@ export function Drawer({
   open,
   onClose,
   side = 'right',
+  eyebrow,
   title,
+  meta,
+  tabs,
   footer,
   width = '420px',
   closeOnScrim = true,
@@ -83,13 +96,18 @@ export function Drawer({
         {...rest}
       >
         <div className="he-drawer__header">
-          {title != null && <div className="he-drawer__title">{title}</div>}
+          <div className="he-drawer__heading">
+            {eyebrow != null && <span className="he-drawer__eyebrow">{eyebrow}</span>}
+            {title != null && <div className="he-drawer__title">{title}</div>}
+            {meta != null && <div className="he-drawer__meta">{meta}</div>}
+          </div>
           <button type="button" className="he-drawer__close" onClick={onClose} aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
               <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
         </div>
+        {tabs != null && <div className="he-drawer__nav">{tabs}</div>}
         <div className="he-drawer__body">{children}</div>
         {footer != null && <div className="he-drawer__footer">{footer}</div>}
       </div>
