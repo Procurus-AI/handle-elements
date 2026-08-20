@@ -34,23 +34,23 @@
 }
 
 /* ---- head ---- */
+/* Quiet sentence-case sans headers (Perplexity/Handle app convention) — not the
+ * mono all-caps caption motif, which reads too heavy in a dense table. */
 .he-table__th {
   padding: var(--he-space-3) var(--he-space-4);
   text-align: left;
   vertical-align: middle;
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
   font-weight: 500;
-  letter-spacing: var(--he-tracking-caps);
-  text-transform: uppercase;
-  color: var(--he-text-faint);
+  color: var(--he-text-dim);
   white-space: nowrap;
   border-bottom: 1px solid var(--he-border);
   background: var(--he-surface);
 }
 
 .he-table__th--active {
-  color: var(--he-text-dim);
+  color: var(--he-text);
 }
 
 .he-table__sort {

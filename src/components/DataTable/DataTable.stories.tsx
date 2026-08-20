@@ -74,7 +74,9 @@ export const WithToolbar: Story = {
       onRowClick={(r) => window.alert(`Open ${r.name}`)}
       toolbar={
         <>
-          <strong style={{ fontFamily: 'var(--he-font-display)', fontSize: 'var(--he-heading)' }}>Pipeline</strong>
+          <span style={{ fontSize: 'var(--he-body-sm)', fontWeight: 600, color: 'var(--he-text-dim)' }}>
+            Pipeline
+          </span>
           <Button size="sm" variant="secondary">
             Export
           </Button>

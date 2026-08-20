@@ -22,4 +22,16 @@ export {
   type SortDirection,
 } from './components/DataTable/DataTable';
 export { Drawer, type DrawerProps, type DrawerSide } from './components/Drawer/Drawer';
+export {
+  Sidebar,
+  SidebarHeader,
+  SidebarItem,
+  SidebarSection,
+  SidebarFooterItem,
+  type SidebarProps,
+  type SidebarHeaderProps,
+  type SidebarItemProps,
+  type SidebarSectionProps,
+  type SidebarFooterItemProps,
+} from './components/Sidebar/Sidebar';
 export { cx } from './lib/cx';
