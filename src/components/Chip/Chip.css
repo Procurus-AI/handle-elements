@@ -27,6 +27,13 @@
   color: var(--he-text-faint);
 }
 
+/* Borderless — a bare dot + label, e.g. a chart legend item. */
+.he-chip--plain {
+  padding: 0;
+  border: none;
+  background: none;
+}
+
 .he-chip__dot {
   width: 6px;
   height: 6px;

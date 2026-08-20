@@ -1,0 +1,142 @@
+.he-columnchart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--he-chart-ink);
+  font-family: var(--he-font-sans);
+}
+
+.he-columnchart__plot-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+/* Left gutter: y tick labels aligned to the gridlines behind the plot. */
+.he-columnchart__ycol {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: var(--he-columnchart-h, 200px);
+  padding-bottom: 1px;
+  text-align: right;
+}
+
+.he-columnchart__ylabel {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  line-height: 1;
+  color: var(--he-chart-axis);
+  transform: translateY(-0.5em);
+}
+
+.he-columnchart__ylabel:first-child {
+  transform: translateY(0);
+}
+
+.he-columnchart__ylabel:last-child {
+  transform: translateY(-1em);
+}
+
+.he-columnchart__plot {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--he-columnchart-h, 200px);
+}
+
+/* Faint horizontal gridlines only — no verticals, no box. */
+.he-columnchart__grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.he-columnchart__gridline {
+  height: 1px;
+  background: var(--he-chart-grid);
+  opacity: 0.7;
+}
+
+.he-columnchart__groups {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.he-columnchart__group {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  height: 100%;
+}
+
+/* Bars within a group: grouped = side by side, stacked = vertical. */
+.he-columnchart__stack {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-end;
+  justify-content: center;
+  gap: inherit;
+  min-height: 0;
+}
+
+.he-columnchart--stacked .he-columnchart__stack {
+  flex-direction: column-reverse;
+  /* column-reverse main-start is the bottom edge — pack the stack there so it
+   * sits on the zero baseline instead of floating at the vertical center. */
+  justify-content: flex-start;
+  gap: 0;
+}
+
+.he-columnchart__bar {
+  flex: 1 1 0;
+  min-width: 2px;
+  max-width: 22px;
+  border-radius: 2px 2px 0 0;
+  transition: height var(--he-transition-base);
+}
+
+.he-columnchart--stacked .he-columnchart__bar {
+  width: 100%;
+  max-width: 26px;
+  flex: 0 0 auto;
+  border-radius: 0;
+  margin-inline: auto;
+}
+
+.he-columnchart--stacked .he-columnchart__bar:last-child {
+  border-radius: 2px 2px 0 0;
+}
+
+.he-columnchart__xlabel {
+  margin-top: 8px;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  line-height: 1.2;
+  color: var(--he-chart-axis);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Legend items are Chip (dot + plain) — see ColumnChart.tsx. */
+.he-columnchart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding-left: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-columnchart__bar {
+    transition: none;
+  }
+}

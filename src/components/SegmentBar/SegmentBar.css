@@ -1,0 +1,98 @@
+.he-segmentbar {
+  display: block;
+  color: var(--he-chart-ink);
+  font-family: var(--he-font-sans);
+}
+
+/* One clean bar; the track carries the empty color so gaps and any remainder
+ * tail read as track, never as a colored segment. */
+.he-segmentbar__track {
+  display: flex;
+  width: 100%;
+  height: var(--he-segmentbar-h, 10px);
+  overflow: hidden;
+  background: var(--he-chart-track);
+}
+
+.he-segmentbar--sm {
+  --he-segmentbar-h: 6px;
+}
+
+.he-segmentbar--md {
+  --he-segmentbar-h: 10px;
+}
+
+.he-segmentbar--lg {
+  --he-segmentbar-h: 16px;
+}
+
+.he-segmentbar--rounded .he-segmentbar__track {
+  border-radius: var(--he-radius-full);
+}
+
+.he-segmentbar__seg {
+  height: 100%;
+  min-width: 1px;
+  transition: filter 120ms ease;
+}
+
+/* Hairline separators: a track-colored inset between adjacent segments so the
+ * bar reads as distinct parts without introducing a new color. */
+.he-segmentbar--gap .he-segmentbar__seg + .he-segmentbar__seg {
+  box-shadow: inset 2px 0 0 var(--he-chart-track);
+}
+
+/* Unfilled remainder (total > sum): just the track showing through. */
+.he-segmentbar__seg--rest {
+  background: transparent;
+}
+
+.he-segmentbar--gap .he-segmentbar__seg--rest {
+  box-shadow: none;
+}
+
+/* Hover lifts the whole bar's segments (brighten), never darkens. */
+.he-segmentbar__track:hover .he-segmentbar__seg {
+  filter: brightness(1.06);
+}
+
+/* ---- legend ---- */
+.he-segmentbar__legend {
+  list-style: none;
+  margin: var(--he-space-3) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--he-space-2);
+}
+
+.he-segmentbar__legend-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: var(--he-space-2);
+}
+
+/* The dot + label pair is a plain Chip; let it shrink and clip long labels. */
+.he-segmentbar__legend-chip {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--he-text-dim);
+}
+
+/* Mono numerals so values and percentages align in a tidy column. */
+.he-segmentbar__value {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-chart-ink);
+  text-align: right;
+}
+
+.he-segmentbar__pct {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-text-faint);
+  text-align: right;
+  min-width: 3ch;
+}

@@ -1,0 +1,152 @@
+.he-heatmap {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--he-font-sans);
+  color: var(--he-text-dim);
+}
+
+/* Horizontal overflow keeps wide grids scrollable without breaking layout. */
+.he-heatmap__scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Column header row aligns to the grid: an optional corner spacer sits above
+ * the row-label gutter, then one label per column. */
+.he-heatmap__col-labels {
+  display: grid;
+  grid-template-columns: auto repeat(var(--he-heatmap-cols), var(--he-heatmap-cell));
+  gap: var(--he-heatmap-gap);
+  align-items: end;
+  margin-bottom: var(--he-heatmap-gap);
+}
+
+/* When there is no row-label gutter, the corner spacer collapses. */
+.he-heatmap__col-labels:not(:has(.he-heatmap__corner)) {
+  grid-template-columns: repeat(var(--he-heatmap-cols), var(--he-heatmap-cell));
+}
+
+.he-heatmap__col-label {
+  font-family: var(--he-font-mono);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--he-text-faint);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-heatmap__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-heatmap-gap);
+  width: max-content;
+}
+
+.he-heatmap__row {
+  display: flex;
+  align-items: center;
+  gap: var(--he-heatmap-gap);
+}
+
+.he-heatmap__row-label {
+  flex: 0 0 auto;
+  min-width: 2.5em;
+  padding-right: 4px;
+  font-family: var(--he-font-mono);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--he-text-faint);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.he-heatmap__corner {
+  min-width: 0;
+  padding: 0;
+}
+
+.he-heatmap__cell {
+  flex: 0 0 auto;
+  width: var(--he-heatmap-cell);
+  height: var(--he-heatmap-cell);
+  background: var(--he-heat-0);
+  border: 1px solid transparent;
+  transition: outline-color 120ms ease;
+}
+
+.he-heatmap__cell--sm {
+  border-radius: var(--he-radius-xs);
+}
+
+.he-heatmap__cell--md {
+  border-radius: var(--he-radius-sm);
+}
+
+.he-heatmap__cell--full {
+  border-radius: var(--he-radius-full);
+}
+
+/* Blank cells: no fill, faint outline distinguishes them from a zero value. */
+.he-heatmap__cell--empty {
+  background: transparent;
+  border-color: var(--he-chart-grid);
+}
+
+.he-heatmap__cell--hidden {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Interactive cells (buttons) get focus + hover affordance. Hover lifts. */
+button.he-heatmap__cell {
+  cursor: pointer;
+  padding: 0;
+  appearance: none;
+}
+
+button.he-heatmap__cell:hover {
+  outline: 2px solid var(--he-chart-axis);
+  outline-offset: 1px;
+}
+
+button.he-heatmap__cell:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 1px;
+}
+
+/* Legend — mono "Less ▢▢▢▢▢ More" swatch scale. */
+.he-heatmap__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  color: var(--he-text-faint);
+}
+
+.he-heatmap__legend-scale {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.he-heatmap__legend-cell {
+  width: 12px;
+  height: 12px;
+  background: var(--he-heat-0);
+  border: 1px solid var(--he-chart-grid);
+}
+
+.he-heatmap__legend-cell--sm {
+  border-radius: var(--he-radius-xs);
+}
+
+.he-heatmap__legend-cell--md {
+  border-radius: var(--he-radius-sm);
+}
+
+.he-heatmap__legend-cell--full {
+  border-radius: var(--he-radius-full);
+}

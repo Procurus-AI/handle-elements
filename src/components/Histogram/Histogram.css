@@ -1,0 +1,87 @@
+.he-histogram {
+  display: block;
+  color: var(--he-chart-ink);
+  font-family: var(--he-font-mono);
+}
+
+.he-histogram__plot {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
+}
+
+.he-histogram__bin {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.he-histogram__value {
+  font-size: var(--he-caption);
+  line-height: 1;
+  color: var(--he-text-dim);
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.he-histogram__bar {
+  width: 100%;
+  min-height: 1px;
+  background: currentColor;
+  border-radius: 1px 1px 0 0;
+  transition: height var(--he-transition-base);
+}
+
+.he-histogram__bar--peak {
+  color: var(--he-chart-accent);
+}
+
+.he-histogram__xaxis {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.he-histogram__xlabel {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  font-size: var(--he-caption);
+  line-height: 1.2;
+  color: var(--he-chart-axis);
+  white-space: nowrap;
+  overflow: visible;
+}
+
+/* tones — currentColor drives the bar fill */
+.he-histogram--accent {
+  color: var(--he-chart-accent);
+}
+
+.he-histogram--ok {
+  color: var(--he-chart-pos);
+}
+
+.he-histogram--warn {
+  color: var(--he-warn);
+}
+
+.he-histogram--error {
+  color: var(--he-chart-neg);
+}
+
+.he-histogram--neutral {
+  color: var(--he-neutral);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-histogram__bar {
+    transition: none;
+  }
+}

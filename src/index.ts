@@ -7,7 +7,11 @@ export {
   type StatCardProps,
   type StatCardDeltaDirection,
 } from './components/StatCard/StatCard';
-export { PageHeader, type PageHeaderProps } from './components/PageHeader/PageHeader';
+export {
+  PageHeader,
+  type PageHeaderProps,
+  type PageHeaderSize,
+} from './components/PageHeader/PageHeader';
 export { Tabs, type TabsProps, type TabsVariant, type TabItem } from './components/Tabs/Tabs';
 export { Input, type InputProps, type InputVariant } from './components/Input/Input';
 export { Textarea, type TextareaProps } from './components/Input/Textarea';
@@ -109,4 +113,52 @@ export {
   type CalendarDayContext,
   type CalendarStatus,
 } from './components/Calendar/Calendar';
+export {
+  Sparkline,
+  type SparklineProps,
+  type SparklineTone,
+} from './components/Sparkline/Sparkline';
+export {
+  BarChart,
+  type BarChartProps,
+  type BarChartDatum,
+  type BarChartTone,
+} from './components/BarChart/BarChart';
+export {
+  SegmentBar,
+  type SegmentBarProps,
+  type Segment,
+  type SegmentTone,
+} from './components/SegmentBar/SegmentBar';
+export { Heatmap, type HeatmapProps } from './components/Heatmap/Heatmap';
+export {
+  RadialGauge,
+  type RadialGaugeProps,
+  type GaugeTone,
+} from './components/RadialGauge/RadialGauge';
+export {
+  ColumnChart,
+  type ColumnChartProps,
+  type ColumnDatum,
+  type ColumnSeries,
+  type ColumnTone,
+} from './components/ColumnChart/ColumnChart';
+export {
+  Histogram,
+  type HistogramProps,
+  type HistogramBin,
+  type HistogramTone,
+} from './components/Histogram/Histogram';
+export {
+  Treemap,
+  type TreemapProps,
+  type TreemapDatum,
+  type TreemapTone,
+} from './components/Treemap/Treemap';
+export {
+  TrendGrid,
+  type TrendGridProps,
+  type TrendGridItem,
+} from './components/TrendGrid/TrendGrid';
+export * as chart from './lib/chart';
 export { cx } from './lib/cx';

@@ -1,0 +1,95 @@
+.he-gauge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--he-chart-ink);
+  font-family: var(--he-font-sans);
+  line-height: 1;
+}
+
+.he-gauge__svg {
+  display: block;
+}
+
+.he-gauge__track {
+  stroke: var(--he-chart-track);
+}
+
+.he-gauge__value {
+  stroke: currentColor;
+  stroke-dasharray: var(--he-gauge-dash);
+  stroke-dashoffset: var(--he-gauge-offset);
+  transition: stroke-dashoffset var(--he-transition-base);
+}
+
+.he-gauge__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--he-space-1);
+  text-align: center;
+  pointer-events: none;
+  padding: 0 12%;
+}
+
+/* Gauge is bottom-open: nudge the center content up into the arc's visual mass. */
+.he-gauge--gauge .he-gauge__center {
+  justify-content: center;
+  padding-bottom: 8%;
+}
+
+.he-gauge__number {
+  font-family: var(--he-font-display);
+  font-size: var(--he-gauge-number-size, 22px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--he-chart-ink);
+}
+
+.he-gauge__label {
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+  max-width: 100%;
+}
+
+/* tones — currentColor drives the value arc */
+.he-gauge--accent {
+  color: var(--he-chart-accent);
+}
+
+.he-gauge--ok {
+  color: var(--he-chart-pos);
+}
+
+.he-gauge--warn {
+  color: var(--he-warn);
+}
+
+.he-gauge--error {
+  color: var(--he-chart-neg);
+}
+
+.he-gauge--neutral {
+  color: var(--he-neutral);
+}
+
+/* Borealis accent is low-contrast as a thin ring on light surfaces; deepen it
+ * to ink there while keeping true accent on dark backgrounds. */
+.he-gauge--accent .he-gauge__value {
+  stroke: var(--he-text);
+}
+
+[data-theme='dark'] .he-gauge--accent .he-gauge__value,
+.he-theme-dark .he-gauge--accent .he-gauge__value {
+  stroke: var(--he-chart-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-gauge__value {
+    transition: none;
+  }
+}

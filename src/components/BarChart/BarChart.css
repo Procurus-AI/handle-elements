@@ -1,0 +1,102 @@
+.he-barchart {
+  display: grid;
+  gap: var(--he-space-3);
+  width: 100%;
+}
+
+.he-barchart__row {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr max-content;
+  align-items: center;
+  gap: var(--he-space-3);
+  /* Fill tone flows down via currentColor. */
+  color: var(--he-chart-ink);
+}
+
+.he-barchart__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+}
+
+.he-barchart__track {
+  min-width: 0;
+  background: var(--he-chart-track);
+  border-radius: var(--he-radius-full);
+  overflow: hidden;
+}
+
+.he-barchart__fill {
+  height: 100%;
+  min-width: 2px;
+  background: currentColor;
+  border-radius: inherit;
+  transition: width var(--he-transition-base);
+}
+
+.he-barchart__value {
+  justify-self: end;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-text-faint);
+  white-space: nowrap;
+}
+
+.he-barchart__hint {
+  grid-column: 2 / -1;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-caption);
+  color: var(--he-text-faint);
+}
+
+/* bar thickness — pill track for thin bars, softer radius for chunky ones */
+.he-barchart--sm .he-barchart__track {
+  height: 6px;
+}
+
+.he-barchart--md .he-barchart__track {
+  height: 10px;
+}
+
+.he-barchart--lg .he-barchart__track {
+  height: 16px;
+  border-radius: var(--he-radius-xs);
+}
+
+/* tones — currentColor paints the fill */
+.he-barchart__row--accent {
+  color: var(--he-chart-accent);
+}
+
+.he-barchart__row--ok {
+  color: var(--he-chart-pos);
+}
+
+.he-barchart__row--warn {
+  color: var(--he-warn);
+}
+
+.he-barchart__row--error {
+  color: var(--he-chart-neg);
+}
+
+.he-barchart__row--neutral {
+  color: var(--he-neutral);
+}
+
+/* Hover lifts the fill (never darkens) with a faint shadow so a hovered row
+ * reads as raised rather than dimmed. */
+.he-barchart__row:hover .he-barchart__fill {
+  box-shadow: var(--he-shadow-card);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-barchart__fill {
+    transition: none;
+  }
+}

@@ -1,0 +1,124 @@
+/* Treemap — Finviz-style packed tiles, area ∝ value, colored by a lens.
+ * Tiles are absolutely positioned in % (from a 100×100 squarify layout) so the
+ * map is fully fluid. Gaps come from the container showing through a 1px inset
+ * around each tile (border in the surface color), not from margins. */
+
+.he-treemap {
+  position: relative;
+  width: 100%;
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md, 8px);
+  overflow: hidden;
+  font-family: var(--he-font-sans);
+}
+
+.he-treemap__tile {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: none;
+  /* The gap: a ring of the container's surface color around every tile. */
+  box-shadow: inset 0 0 0 var(--he-treemap-gap) var(--he-surface);
+  overflow: hidden;
+  text-align: left;
+  color: var(--he-on-accent);
+  transition: box-shadow 120ms ease, filter 120ms ease;
+}
+
+.he-treemap__tile-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.he-treemap__label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.he-treemap__value {
+  font-family: var(--he-font-mono);
+  font-size: 11px;
+  line-height: 1.1;
+  opacity: 0.82;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.he-treemap__hint {
+  margin-top: auto;
+  font-size: 10.5px;
+  line-height: 1.2;
+  opacity: 0.66;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+}
+
+/* Hover LIFTS — brighten the fill and thin the gap ring into a light inset
+ * ring. Never darkens. */
+.he-treemap__tile--clickable {
+  cursor: pointer;
+}
+
+.he-treemap__tile--clickable:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 0 0 var(--he-treemap-gap) var(--he-surface),
+    inset 0 0 0 calc(var(--he-treemap-gap) + 1.5px) var(--he-white);
+}
+
+.he-treemap__tile--clickable:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 var(--he-treemap-gap) var(--he-surface),
+    inset 0 0 0 calc(var(--he-treemap-gap) + 2px) var(--he-accent);
+}
+
+/* ── Text-contrast lenses ─────────────────────────────────────────────────
+ * Fills are set inline; these classes only pick a legible text color. */
+
+/* Heat ramp = light greens in both themes → midnight text. */
+.he-treemap__tile--heat-text {
+  color: var(--he-on-accent);
+}
+
+/* Borealis accent fill → midnight text. */
+.he-treemap__tile--on-accent-text {
+  color: var(--he-on-accent);
+}
+
+/* pos/neg fills are saturated → white text in both themes. */
+.he-treemap__tile--light-text {
+  color: var(--he-white);
+}
+
+/* Series palette (light theme): 1 is near-black, the rest are mid-tones —
+ * white text reads on all of them. */
+.he-treemap__tile--series-text {
+  color: var(--he-white);
+}
+
+/* Series palette inverts in dark theme to light mid-tones → midnight text. */
+[data-theme='dark'] .he-treemap__tile--series-text,
+.he-theme-dark .he-treemap__tile--series-text {
+  color: var(--he-midnight);
+}
+
+/* Ink fill follows --he-text (near-black on light, near-white on dark), so the
+ * text must take the opposite: --he-bg reads on it in both themes. */
+.he-treemap__tile--ink-text {
+  color: var(--he-bg);
+}

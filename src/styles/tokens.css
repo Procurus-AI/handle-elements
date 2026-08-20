@@ -51,6 +51,33 @@
   --he-neutral: #6b6f78;
   --he-neutral-bg: var(--he-gray-light);
 
+  /* ---- charts ----
+   * Monochrome-first, Perplexity-restrained. `ink` is the default single-series
+   * color; the categorical series palette is muted and brand-cohesive (navy →
+   * steel → olive → taupe → gray) rather than a rainbow. Grid/axis stay faint so
+   * data carries the ink. Heat ramp climbs from a neutral empty cell toward
+   * Borealis Green (fills only — never used as text). */
+  --he-chart-ink: var(--he-text);
+  --he-chart-grid: var(--he-border);
+  --he-chart-axis: var(--he-text-faint);
+  --he-chart-track: var(--he-surface-2);
+  --he-chart-accent: var(--he-accent);
+  --he-chart-pos: var(--he-ok);
+  --he-chart-neg: var(--he-error);
+
+  --he-series-1: #191d27;
+  --he-series-2: #6f8a99;
+  --he-series-3: #b3936a;
+  --he-series-4: #86a15c;
+  --he-series-5: #8a8d94;
+  --he-series-6: #4a5568;
+
+  --he-heat-0: var(--he-surface-2);
+  --he-heat-1: #eef6d6;
+  --he-heat-2: #ddefab;
+  --he-heat-3: #c3e474;
+  --he-heat-4: #a6d047;
+
   /* ---- typography ---- */
   --he-font-display: 'Sentient', Georgia, 'Times New Roman', serif;
   --he-font-sans: 'Neue Haas Unica', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -119,6 +146,27 @@
   --he-error-bg: #3b241f;
   --he-neutral: #a8abb3;
   --he-neutral-bg: #212633;
+
+  /* charts — series lift toward light so they read on Midnight; heat ramp
+   * climbs from surface toward Borealis Green. */
+  --he-chart-ink: var(--he-text);
+  --he-chart-grid: var(--he-border);
+  --he-chart-axis: var(--he-text-faint);
+  --he-chart-track: var(--he-surface-2);
+  --he-chart-accent: var(--he-accent);
+
+  --he-series-1: #c8cdd6;
+  --he-series-2: #8fb0c0;
+  --he-series-3: #d0b088;
+  --he-series-4: #a9c471;
+  --he-series-5: #9a9da5;
+  --he-series-6: #7f8ca3;
+
+  --he-heat-0: #212633;
+  --he-heat-1: #2f3a24;
+  --he-heat-2: #45592f;
+  --he-heat-3: #6d8b3a;
+  --he-heat-4: #a7d24e;
 
   --he-shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
   --he-shadow-lift: 0 12px 30px rgb(0 0 0 / 0.5), 0 3px 8px rgb(0 0 0 / 0.35);

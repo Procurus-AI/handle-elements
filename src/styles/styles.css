@@ -28,3 +28,14 @@
 @import '../components/Menu/Menu.css';
 @import '../components/Tooltip/Tooltip.css';
 @import '../components/Modal/Modal.css';
+
+/* charts */
+@import '../components/Sparkline/Sparkline.css';
+@import '../components/BarChart/BarChart.css';
+@import '../components/SegmentBar/SegmentBar.css';
+@import '../components/Heatmap/Heatmap.css';
+@import '../components/RadialGauge/RadialGauge.css';
+@import '../components/ColumnChart/ColumnChart.css';
+@import '../components/Histogram/Histogram.css';
+@import '../components/Treemap/Treemap.css';
+@import '../components/TrendGrid/TrendGrid.css';

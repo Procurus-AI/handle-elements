@@ -1,0 +1,111 @@
+.he-trendgrid {
+  display: grid;
+  gap: 12px;
+}
+
+.he-trendgrid--auto {
+  grid-template-columns: repeat(auto-fill, minmax(var(--he-trendgrid-min, 140px), 1fr));
+}
+
+.he-trendgrid__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md);
+  background: var(--he-surface);
+}
+
+/* interactive cells reset button chrome and lift on hover */
+.he-trendgrid__cell--button {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow var(--he-transition-base),
+    border-color var(--he-transition-base),
+    transform var(--he-transition-base);
+}
+
+.he-trendgrid__cell--button:hover {
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-lift);
+  transform: translateY(-1px);
+}
+
+.he-trendgrid__cell--button:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+.he-trendgrid__head {
+  min-width: 0;
+}
+
+.he-trendgrid__label {
+  display: block;
+  overflow: hidden;
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* make the fixed-width Sparkline fluid inside the cell. The Sparkline root
+ * carries an inline width/height, so !important is required to override it;
+ * preserveAspectRatio="none" on the SVG lets it stretch to the cell width. */
+.he-trendgrid__spark {
+  min-width: 0;
+}
+
+.he-trendgrid__spark .he-sparkline {
+  display: block;
+  width: 100% !important;
+}
+
+.he-trendgrid__spark .he-sparkline__svg {
+  width: 100%;
+  height: 100%;
+}
+
+.he-trendgrid__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.he-trendgrid__value {
+  overflow: hidden;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-body-sm);
+  color: var(--he-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.he-trendgrid__delta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  color: var(--he-text-faint);
+}
+
+.he-trendgrid__delta--up {
+  color: var(--he-chart-pos);
+}
+
+.he-trendgrid__delta--down {
+  color: var(--he-chart-neg);
+}
+
+.he-trendgrid__arrow {
+  display: block;
+}

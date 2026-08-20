@@ -1,0 +1,74 @@
+.he-sparkline {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 0;
+  color: var(--he-chart-ink);
+}
+
+.he-sparkline__svg {
+  display: block;
+  overflow: visible;
+}
+
+.he-sparkline__line {
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.he-sparkline__area {
+  stroke: none;
+}
+
+.he-sparkline__grad-top {
+  stop-color: currentColor;
+  stop-opacity: 0.22;
+}
+
+.he-sparkline__grad-bottom {
+  stop-color: currentColor;
+  stop-opacity: 0;
+}
+
+.he-sparkline__baseline {
+  stroke: var(--he-chart-grid);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.he-sparkline__marker {
+  fill: currentColor;
+}
+
+/* tones — color drives both line (currentColor) and gradient */
+.he-sparkline--accent {
+  color: var(--he-chart-accent);
+}
+
+.he-sparkline--ok {
+  color: var(--he-chart-pos);
+}
+
+.he-sparkline--warn {
+  color: var(--he-warn);
+}
+
+.he-sparkline--error {
+  color: var(--he-chart-neg);
+}
+
+.he-sparkline--neutral {
+  color: var(--he-neutral);
+}
+
+/* Borealis line on a light surface is low-contrast; darken the stroke while
+ * keeping the accent legible (fills/markers stay accent). */
+.he-sparkline--accent .he-sparkline__line {
+  stroke: var(--he-text);
+}
+
+[data-theme='dark'] .he-sparkline--accent .he-sparkline__line,
+.he-theme-dark .he-sparkline--accent .he-sparkline__line {
+  stroke: var(--he-chart-accent);
+}
