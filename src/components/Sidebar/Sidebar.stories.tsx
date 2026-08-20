@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { Button } from '../Button/Button';
+import { StatusPill } from '../StatusPill/StatusPill';
 import { Sidebar, SidebarFooterItem, SidebarHeader, SidebarItem, SidebarSection } from './Sidebar';
 
 const meta = {
@@ -173,4 +174,130 @@ export const AppShell: Story = {
       </div>
     );
   },
+};
+
+/* ------------------------- example: collapsible rail ------------------------ */
+
+export const CollapsibleRail: Story = {
+  render: () => {
+    const [collapsed, setCollapsed] = useState(false);
+    const [active, setActive] = useState('new');
+    return (
+      <div style={{ display: 'flex', height: '100vh', margin: -16 }}>
+        <Sidebar
+          collapsed={collapsed}
+          footer={<SidebarFooterItem media={<Avatar name="Alfonso" />} label="Alfonso de los Ríos" sublabel="Pro" />}
+        >
+          <SidebarHeader>
+            <span style={{ color: 'var(--he-text)', display: 'inline-flex' }}>{icons.brandmark}</span>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              onClick={() => setCollapsed(!collapsed)}
+            >
+              {icons.collapse}
+            </Button>
+          </SidebarHeader>
+          <SidebarItem icon={icons.plus} label="New" active={active === 'new'} onClick={() => setActive('new')} />
+          <SidebarItem icon={icons.computer} label="Computer" active={active === 'computer'} onClick={() => setActive('computer')} />
+          <SidebarItem icon={icons.artifacts} label="Artifacts" active={active === 'artifacts'} onClick={() => setActive('artifacts')} />
+          <SidebarSection label="Projects">
+            <SidebarItem icon={icons.folder} label="Travel Planner" />
+            <SidebarItem icon={icons.folder} label="AI Learning" />
+          </SidebarSection>
+        </Sidebar>
+        <main style={{ flex: 1, background: 'var(--he-surface)', padding: 40 }}>
+          <p style={{ color: 'var(--he-text-dim)' }}>Click the panel icon to collapse to an icon-only rail.</p>
+        </main>
+      </div>
+    );
+  },
+};
+
+/* --------------------- example: ops console (data-heavy) -------------------- */
+
+export const OpsConsole: Story = {
+  render: () => {
+    const [active, setActive] = useState('renewals');
+    const count = (n: number) => (
+      <span style={{ fontFamily: 'var(--he-font-mono)', fontSize: 10.5 }}>{n}</span>
+    );
+    return (
+      <div style={{ display: 'flex', height: '100vh', margin: -16 }}>
+        <Sidebar
+          width="280px"
+          footer={
+            <>
+              <SidebarItem icon={icons.customize} label="Settings" />
+              <SidebarFooterItem media={<Avatar name="Poncho" />} label="poncho@delosrioscapital.com" sublabel="Admin" />
+            </>
+          }
+        >
+          <SidebarHeader>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--he-text)' }}>
+              {icons.brandmark}
+              <span style={{ fontFamily: 'var(--he-font-display)', fontSize: 17 }}>handle</span>
+            </span>
+          </SidebarHeader>
+
+          <SidebarItem icon={icons.plus} label="Quoting" end={count(12)} active={active === 'quoting'} onClick={() => setActive('quoting')} />
+          <SidebarItem
+            icon={icons.artifacts}
+            label="Renewals"
+            end={<StatusPill status="error" label="8 at risk" />}
+            active={active === 'renewals'}
+            onClick={() => setActive('renewals')}
+          />
+          <SidebarItem icon={icons.computer} label="Reconciliation" end={count(3)} active={active === 'recon'} onClick={() => setActive('recon')} />
+
+          <SidebarSection
+            label="Carriers"
+            action={
+              <Button variant="ghost" size="icon-xs" aria-label="Add carrier">
+                +
+              </Button>
+            }
+          >
+            <SidebarItem icon={icons.folder} label="Chubb" />
+            <SidebarItem icon={icons.folder} label="Travelers" active />
+            <SidebarItem label="Commercial lines" depth={1} />
+            <SidebarItem label="Personal lines" depth={1} end={count(41)} />
+            <SidebarItem icon={icons.folder} label="Hartford" />
+          </SidebarSection>
+
+          <SidebarSection label="Saved views" defaultOpen={false}>
+            <SidebarItem label="Overdue > 60 days" />
+            <SidebarItem label="Q3 bind queue" />
+          </SidebarSection>
+        </Sidebar>
+        <main style={{ flex: 1, background: 'var(--he-surface)', padding: 40 }}>
+          <p style={{ color: 'var(--he-text-dim)' }}>
+            Counts, pills, nested rows, section actions, closed-by-default sections, multi-row footer.
+          </p>
+        </main>
+      </div>
+    );
+  },
+};
+
+/* --------------------------- example: minimal list -------------------------- */
+
+export const Minimal: Story = {
+  render: () => (
+    <div style={{ display: 'flex', height: '100vh', margin: -16 }}>
+      <Sidebar width="220px">
+        <SidebarHeader>
+          <span style={{ fontFamily: 'var(--he-font-display)', fontSize: 17 }}>handle</span>
+        </SidebarHeader>
+        <SidebarItem label="Overview" href="#overview" active />
+        <SidebarItem label="Policies" href="#policies" />
+        <SidebarItem label="Clients" href="#clients" />
+        <SidebarItem label="Billing" href="#billing" />
+      </Sidebar>
+      <main style={{ flex: 1, background: 'var(--he-surface)', padding: 40 }}>
+        <p style={{ color: 'var(--he-text-dim)' }}>No sections, no footer, anchor navigation — just rows.</p>
+      </main>
+    </div>
+  ),
 };

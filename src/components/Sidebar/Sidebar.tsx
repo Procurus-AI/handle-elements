@@ -11,15 +11,22 @@ import { cx } from '../../lib/cx';
 /* ---------------------------------- shell ---------------------------------- */
 
 export interface SidebarProps extends HTMLAttributes<HTMLElement> {
-  /** Any valid CSS width (default 250px). */
+  /** Any valid CSS width (default 250px). Ignored while `collapsed`. */
   width?: string;
+  /** Icon-only rail: hides labels, ends, and sections; footer keeps only its media. */
+  collapsed?: boolean;
   /** Sticky bottom slot (account row…), separated by a hairline. */
   footer?: ReactNode;
 }
 
-export function Sidebar({ width = '250px', footer, className, children, style, ...rest }: SidebarProps) {
+export function Sidebar({ width = '250px', collapsed = false, footer, className, children, style, ...rest }: SidebarProps) {
   return (
-    <aside className={cx('he-sidebar', className)} style={{ width, ...style }} {...rest}>
+    <aside
+      className={cx('he-sidebar', collapsed && 'he-sidebar--collapsed', className)}
+      style={{ width: collapsed ? undefined : width, ...style }}
+      data-collapsed={collapsed || undefined}
+      {...rest}
+    >
       <div className="he-sidebar__scroll">{children}</div>
       {footer != null && <div className="he-sidebar__footer">{footer}</div>}
     </aside>
@@ -42,6 +49,8 @@ type ItemBaseProps = {
   /** Trailing slot (count, shortcut, chevron…). */
   end?: ReactNode;
   active?: boolean;
+  /** Nesting level — each step indents the row (default 0). */
+  depth?: number;
 };
 
 export type SidebarItemProps = ItemBaseProps &
@@ -50,7 +59,7 @@ export type SidebarItemProps = ItemBaseProps &
     | ({ href?: undefined } & ButtonHTMLAttributes<HTMLButtonElement>)
   );
 
-export function SidebarItem({ icon, label, end, active = false, className, ...rest }: SidebarItemProps) {
+export function SidebarItem({ icon, label, end, active = false, depth = 0, className, style, ...rest }: SidebarItemProps) {
   const isLink = typeof (rest as { href?: string }).href === 'string';
   return createElement(
     isLink ? 'a' : 'button',
@@ -58,6 +67,7 @@ export function SidebarItem({ icon, label, end, active = false, className, ...re
       ...(isLink ? {} : { type: 'button' }),
       className: cx('he-sidebar-item', active && 'he-sidebar-item--active', className),
       'aria-current': active ? 'page' : undefined,
+      style: depth > 0 ? { paddingLeft: `calc(var(--he-space-2) + ${depth} * 18px)`, ...style } : style,
       ...rest,
     },
     icon != null && (
@@ -86,6 +96,8 @@ export interface SidebarSectionProps extends Omit<HTMLAttributes<HTMLDivElement>
   /** Controlled open state. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Action slot on the header row (e.g. a ghost "+" button); clicks don't toggle. */
+  action?: ReactNode;
 }
 
 export function SidebarSection({
@@ -94,6 +106,7 @@ export function SidebarSection({
   defaultOpen = true,
   open: controlledOpen,
   onOpenChange,
+  action,
   className,
   children,
   ...rest
@@ -109,25 +122,28 @@ export function SidebarSection({
 
   return (
     <div className={cx('he-sidebar-section', className)} {...rest}>
-      {collapsible ? (
-        <button type="button" className="he-sidebar-section__head" onClick={toggle} aria-expanded={open}>
-          <span className="he-sidebar-section__label">{label}</span>
-          <svg
-            className={cx('he-sidebar-section__chevron', !open && 'he-sidebar-section__chevron--closed')}
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            aria-hidden
-          >
-            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-      ) : (
-        <div className="he-sidebar-section__head he-sidebar-section__head--static">
-          <span className="he-sidebar-section__label">{label}</span>
-        </div>
-      )}
+      <div className="he-sidebar-section__row">
+        {collapsible ? (
+          <button type="button" className="he-sidebar-section__head" onClick={toggle} aria-expanded={open}>
+            <span className="he-sidebar-section__label">{label}</span>
+            <svg
+              className={cx('he-sidebar-section__chevron', !open && 'he-sidebar-section__chevron--closed')}
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden
+            >
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        ) : (
+          <div className="he-sidebar-section__head he-sidebar-section__head--static">
+            <span className="he-sidebar-section__label">{label}</span>
+          </div>
+        )}
+        {action != null && <span className="he-sidebar-section__action">{action}</span>}
+      </div>
       {open && <div className="he-sidebar-section__items">{children}</div>}
     </div>
   );
