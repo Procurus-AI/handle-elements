@@ -10,6 +10,12 @@
     box-shadow var(--he-transition-fast);
 }
 
+/* Fill available width and grow — e.g. a search field flexing in a toolbar. */
+.he-input--grow {
+  display: flex;
+  flex: 1 1 16rem;
+}
+
 .he-input:hover {
   border-color: var(--he-border-strong);
 }

@@ -3,6 +3,9 @@
 @import './tokens.css';
 @import './base.css';
 
+@import '../components/Layout/Layout.css';
+@import '../components/Text/Text.css';
+
 @import '../components/Button/Button.css';
 @import '../components/Chip/Chip.css';
 @import '../components/StatusPill/StatusPill.css';

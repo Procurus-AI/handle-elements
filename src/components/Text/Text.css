@@ -1,0 +1,35 @@
+/* Text — token-scaled typography for captions, notes, mini-headings. */
+.he-text {
+  margin: 0;
+  font-family: var(--he-font-sans);
+  color: var(--he-text);
+  line-height: 1.55;
+}
+
+.he-text--caption {
+  font-size: var(--he-caption);
+}
+.he-text--sm {
+  font-size: var(--he-body-sm);
+}
+.he-text--body {
+  font-size: var(--he-body);
+}
+.he-text--heading {
+  font-size: var(--he-heading);
+  line-height: 1.2;
+}
+
+.he-text--dim {
+  color: var(--he-text-dim);
+}
+.he-text--faint {
+  color: var(--he-text-faint);
+}
+
+.he-text--medium {
+  font-weight: 500;
+}
+.he-text--mono {
+  font-family: var(--he-font-mono);
+}

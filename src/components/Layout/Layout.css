@@ -1,0 +1,43 @@
+/* Layout primitives — Stack, Grid, Divider, Container. Structure only; all
+ * concrete spacing/color comes from --he-* tokens (set inline as custom props
+ * by the components, resolved here). */
+
+.he-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-stack-gap, var(--he-space-4));
+  min-width: 0;
+}
+.he-stack--row {
+  flex-direction: row;
+}
+.he-stack--wrap {
+  flex-wrap: wrap;
+}
+
+.he-grid {
+  display: grid;
+  gap: var(--he-grid-gap, var(--he-space-4));
+  min-width: 0;
+}
+
+.he-divider {
+  flex-shrink: 0;
+  background: var(--he-border);
+  border: 0;
+}
+.he-divider--horizontal {
+  width: 100%;
+  height: 1px;
+}
+.he-divider--vertical {
+  width: 1px;
+  align-self: stretch;
+}
+
+.he-container {
+  width: 100%;
+  margin-inline: auto;
+  max-width: var(--he-container-max, 70rem);
+  padding: var(--he-container-pad, var(--he-space-6));
+}
