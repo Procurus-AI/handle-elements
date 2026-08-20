@@ -1,0 +1,90 @@
+.he-tabs {
+  display: flex;
+  align-items: center;
+}
+
+.he-tab {
+  appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  color: var(--he-text-dim);
+  white-space: nowrap;
+  transition:
+    color var(--he-transition-fast),
+    background var(--he-transition-fast),
+    border-color var(--he-transition-fast);
+}
+
+.he-tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.he-tab:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+  border-radius: var(--he-radius-xs);
+}
+
+/* underline — quiet page-level nav with an active rule */
+.he-tabs--underline {
+  gap: var(--he-space-5);
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-tabs--underline .he-tab {
+  padding: var(--he-space-3) 2px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.he-tabs--underline .he-tab:hover:not(:disabled) {
+  color: var(--he-text);
+}
+
+.he-tabs--underline .he-tab--active {
+  color: var(--he-text);
+  border-bottom-color: var(--he-text);
+}
+
+/* pills — compact filter row; active pill is a bordered surface */
+.he-tabs--pills {
+  gap: var(--he-space-2);
+}
+
+.he-tabs--pills .he-tab {
+  padding: 5px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--he-radius-full);
+}
+
+.he-tabs--pills .he-tab:hover:not(:disabled) {
+  color: var(--he-text);
+  background: var(--he-surface-2);
+}
+
+.he-tabs--pills .he-tab--active {
+  color: var(--he-text);
+  background: var(--he-surface);
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-card);
+}
+
+/* sm density */
+.he-tabs--sm.he-tabs--underline {
+  gap: var(--he-space-4);
+}
+.he-tabs--sm .he-tab {
+  font-size: var(--he-caption);
+}
+.he-tabs--sm.he-tabs--underline .he-tab {
+  padding: var(--he-space-2) 2px;
+}
+.he-tabs--sm.he-tabs--pills .he-tab {
+  padding: 3px 11px;
+}

@@ -6,7 +6,6 @@
   background: var(--he-surface);
   border: 1px solid var(--he-border);
   border-radius: var(--he-radius-md);
-  box-shadow: var(--he-shadow-card);
 }
 
 .he-stat__label {

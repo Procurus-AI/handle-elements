@@ -8,4 +8,5 @@ export {
   type StatCardDeltaDirection,
 } from './components/StatCard/StatCard';
 export { PageHeader, type PageHeaderProps } from './components/PageHeader/PageHeader';
+export { Tabs, type TabsProps, type TabsVariant, type TabItem } from './components/Tabs/Tabs';
 export { cx } from './lib/cx';

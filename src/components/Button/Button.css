@@ -50,21 +50,22 @@
 
 .he-btn--outline {
   background: transparent;
-  border-color: var(--he-border-strong);
+  border-color: var(--he-border);
   color: var(--he-text);
 }
 .he-btn--outline:hover:not(:disabled) {
   background: var(--he-surface);
+  border-color: var(--he-border-strong);
   box-shadow: var(--he-shadow-card);
 }
 
 .he-btn--secondary {
-  background: var(--he-surface-2);
+  background: var(--he-surface);
+  border-color: var(--he-border);
   color: var(--he-text);
 }
 .he-btn--secondary:hover:not(:disabled) {
-  background: var(--he-surface);
-  border-color: var(--he-border);
+  border-color: var(--he-border-strong);
   box-shadow: var(--he-shadow-card);
 }
 
@@ -90,41 +91,41 @@
 
 /* sizes */
 .he-btn--size-default {
-  height: 36px;
+  height: 34px;
   padding: 0 var(--he-space-4);
 }
 .he-btn--size-xs {
-  height: 26px;
+  height: 25px;
   padding: 0 var(--he-space-3);
   font-size: var(--he-caption);
 }
 .he-btn--size-sm {
-  height: 31px;
+  height: 29px;
   padding: 0 var(--he-space-3);
 }
 .he-btn--size-lg {
-  height: 42px;
+  height: 40px;
   padding: 0 var(--he-space-5);
   font-size: var(--he-body);
 }
 .he-btn--size-icon {
-  height: 36px;
-  width: 36px;
+  height: 34px;
+  width: 34px;
   padding: 0;
 }
 .he-btn--size-icon-xs {
-  height: 26px;
-  width: 26px;
+  height: 25px;
+  width: 25px;
   padding: 0;
 }
 .he-btn--size-icon-sm {
-  height: 31px;
-  width: 31px;
+  height: 29px;
+  width: 29px;
   padding: 0;
 }
 .he-btn--size-icon-lg {
-  height: 42px;
-  width: 42px;
+  height: 40px;
+  width: 40px;
   padding: 0;
 }
 
