@@ -1,5 +1,7 @@
 .he-segmentbar {
   display: block;
+  width: 100%;
+  max-width: 100%;
   color: var(--he-chart-ink);
   font-family: var(--he-font-sans);
 }

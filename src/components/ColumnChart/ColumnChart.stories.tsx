@@ -95,7 +95,7 @@ export const Gallery: Story = {
 function Panel({ label, children }: { label: string; children: React.ReactNode }) {
   const [title, lede] = label.split(/\s*[—·]\s*/, 2);
   return (
-    <section style={{ display: 'grid', gap: 14 }}>
+    <section style={{ display: 'grid', gap: 20 }}>
       <PageHeader size="section" eyebrow="Time series" title={title} lede={lede} />
       {children}
     </section>

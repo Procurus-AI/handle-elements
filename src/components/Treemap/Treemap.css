@@ -6,6 +6,7 @@
 .he-treemap {
   position: relative;
   width: 100%;
+  max-width: 100%;
   background: var(--he-surface);
   border: 1px solid var(--he-border);
   border-radius: var(--he-radius-md, 8px);

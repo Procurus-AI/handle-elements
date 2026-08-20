@@ -1,5 +1,9 @@
 .he-histogram {
   display: block;
+  width: 100%;
+  max-width: 100%;
+  /* Contain the centered edge x-labels so they never spill past the card. */
+  overflow: hidden;
   color: var(--he-chart-ink);
   font-family: var(--he-font-mono);
 }

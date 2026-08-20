@@ -53,7 +53,7 @@ export const Playground: Story = {};
 export const Gallery: Story = {
   render: () => (
     <Card style={{ width: 420, display: 'grid', gap: 28 }}>
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader size="section" eyebrow="Composition" title="Series palette" />
         <SegmentBar
           segments={premium}
@@ -62,7 +62,7 @@ export const Gallery: Story = {
         />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader size="section" eyebrow="Composition" title="Status tones" />
         <SegmentBar
           segments={collections}
@@ -71,7 +71,7 @@ export const Gallery: Story = {
         />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Composition"
@@ -89,12 +89,12 @@ export const Gallery: Story = {
         />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader size="section" eyebrow="Composition" title="Thin, no legend" />
         <SegmentBar segments={premium} size="sm" showLegend={false} aria-label="Premium mix" />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Composition"

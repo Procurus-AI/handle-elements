@@ -34,6 +34,9 @@
 
 .he-pagehead__main {
   min-width: 0;
+  /* Grow to fill the row so the lede spans the full width (Perplexity-style)
+   * instead of collapsing to its intrinsic width beside the aside. */
+  flex: 1 1 auto;
 }
 
 .he-pagehead__eyebrow {
@@ -61,7 +64,6 @@
   font-size: var(--he-body);
   line-height: 1.55;
   color: var(--he-text-dim);
-  max-width: 60ch;
 }
 
 .he-pagehead__aside {

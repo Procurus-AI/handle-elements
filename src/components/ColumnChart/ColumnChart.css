@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  max-width: 100%;
   color: var(--he-chart-ink);
   font-family: var(--he-font-sans);
 }

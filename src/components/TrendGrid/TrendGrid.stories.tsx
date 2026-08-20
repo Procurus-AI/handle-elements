@@ -62,7 +62,7 @@ export const Gallery: Story = {
   render: () => (
     <div style={{ display: 'grid', gap: 24, maxWidth: 720 }}>
       <Card>
-        <section style={{ display: 'grid', gap: 14 }}>
+        <section style={{ display: 'grid', gap: 20 }}>
           <PageHeader
             size="section"
             eyebrow="Small multiples"
@@ -74,7 +74,7 @@ export const Gallery: Story = {
       </Card>
 
       <Card>
-        <section style={{ display: 'grid', gap: 14 }}>
+        <section style={{ display: 'grid', gap: 20 }}>
           <PageHeader
             size="section"
             eyebrow="Small multiples"
@@ -86,7 +86,7 @@ export const Gallery: Story = {
       </Card>
 
       <Card>
-        <section style={{ display: 'grid', gap: 14 }}>
+        <section style={{ display: 'grid', gap: 20 }}>
           <PageHeader
             size="section"
             eyebrow="Small multiples"
@@ -101,7 +101,7 @@ export const Gallery: Story = {
       </Card>
 
       <Card>
-        <section style={{ display: 'grid', gap: 14 }}>
+        <section style={{ display: 'grid', gap: 20 }}>
           <PageHeader
             size="section"
             eyebrow="Small multiples"

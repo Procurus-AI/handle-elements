@@ -2,11 +2,13 @@
   display: inline-block;
   vertical-align: middle;
   line-height: 0;
+  max-width: 100%;
   color: var(--he-chart-ink);
 }
 
 .he-sparkline__svg {
   display: block;
+  max-width: 100%;
   overflow: visible;
 }
 

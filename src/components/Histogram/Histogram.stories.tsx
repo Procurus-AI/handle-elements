@@ -116,7 +116,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section style={{ display: 'grid', gap: 14 }}>
+    <section style={{ display: 'grid', gap: 20 }}>
       <PageHeader size="section" eyebrow="Distribution" title={title} lede={caption} />
       {children}
     </section>

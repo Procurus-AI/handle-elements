@@ -57,7 +57,7 @@ export const Playground: Story = {};
 export const Gallery: Story = {
   render: () => (
     <Card style={{ width: 520, display: 'grid', gap: 28 }}>
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Intensity"
@@ -76,7 +76,7 @@ export const Gallery: Story = {
         />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Intensity"
@@ -96,7 +96,7 @@ export const Gallery: Story = {
         />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Intensity"

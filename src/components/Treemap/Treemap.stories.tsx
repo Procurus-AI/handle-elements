@@ -56,12 +56,12 @@ const clickable: TreemapDatum[] = mrr.slice(0, 8).map((d) => ({ ...d, id: String
 export const Gallery: Story = {
   render: () => (
     <Card style={{ width: 640, display: 'grid', gap: 24 }}>
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader size="section" eyebrow="Hierarchy" title="MRR by customer" lede="series" />
         <Treemap data={mrr} height={300} formatValue={usd} />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Hierarchy"
@@ -71,12 +71,12 @@ export const Gallery: Story = {
         <Treemap data={health} height={300} colorMode="heat" formatValue={usd} />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader size="section" eyebrow="Hierarchy" title="Carrier premium" lede="with hints" />
         <Treemap data={premium} height={220} formatValue={usd} />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Hierarchy"
@@ -92,7 +92,7 @@ export const Gallery: Story = {
         />
       </section>
 
-      <section style={{ display: 'grid', gap: 14 }}>
+      <section style={{ display: 'grid', gap: 20 }}>
         <PageHeader
           size="section"
           eyebrow="Hierarchy"

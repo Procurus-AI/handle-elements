@@ -2,6 +2,9 @@
   display: inline-flex;
   flex-direction: column;
   gap: 10px;
+  /* Cap at the parent so a wide grid scrolls inside __scroll instead of
+   * pushing past the card; inline-flex alone sizes to content and overflows. */
+  max-width: 100%;
   font-family: var(--he-font-sans);
   color: var(--he-text-dim);
 }
