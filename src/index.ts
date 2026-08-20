@@ -13,4 +13,13 @@ export { Input, type InputProps, type InputVariant } from './components/Input/In
 export { Textarea, type TextareaProps } from './components/Input/Textarea';
 export { Select, type SelectProps } from './components/Input/Select';
 export { Composer, type ComposerProps } from './components/Composer/Composer';
+export {
+  DataTable,
+  type DataTableProps,
+  type DataTableColumn,
+  type DataTableAlign,
+  type DataTableSort,
+  type SortDirection,
+} from './components/DataTable/DataTable';
+export { Drawer, type DrawerProps, type DrawerSide } from './components/Drawer/Drawer';
 export { cx } from './lib/cx';

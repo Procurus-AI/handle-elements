@@ -1,0 +1,131 @@
+/* DataTable — a quiet bordered surface wrapping a sortable table.
+ * Colors/sizes come from --he-* tokens; status/color lives in cell renderers. */
+.he-table {
+  width: 100%;
+  font-family: var(--he-font-sans);
+  color: var(--he-text);
+}
+
+.he-table--card {
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md);
+  overflow: hidden;
+}
+
+.he-table__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--he-space-3);
+  padding: var(--he-space-3) var(--he-space-4);
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-table__scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.he-table__el {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--he-body-sm);
+}
+
+/* ---- head ---- */
+.he-table__th {
+  padding: var(--he-space-3) var(--he-space-4);
+  text-align: left;
+  vertical-align: middle;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-weight: 500;
+  letter-spacing: var(--he-tracking-caps);
+  text-transform: uppercase;
+  color: var(--he-text-faint);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--he-border);
+  background: var(--he-surface);
+}
+
+.he-table__th--active {
+  color: var(--he-text-dim);
+}
+
+.he-table__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  transition: color var(--he-transition-fast);
+}
+
+.he-table__sort:hover {
+  color: var(--he-text);
+}
+
+.he-table__sort:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+  border-radius: var(--he-radius-xs);
+}
+
+.he-table__sort-glyph {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* ---- body ---- */
+.he-table__td {
+  padding: var(--he-space-3) var(--he-space-4);
+  vertical-align: middle;
+  border-bottom: 1px solid var(--he-border);
+  color: var(--he-text);
+}
+
+.he-table__row:last-child .he-table__td {
+  border-bottom: 0;
+}
+
+.he-table__row--clickable {
+  cursor: pointer;
+  transition: background var(--he-transition-fast);
+}
+
+.he-table__row--clickable:hover {
+  background: var(--he-surface-2);
+}
+
+/* ---- alignment ---- */
+.he-table__cell--start {
+  text-align: left;
+}
+.he-table__cell--center {
+  text-align: center;
+}
+.he-table__cell--end {
+  text-align: right;
+}
+
+/* ---- density ---- */
+.he-table--dense .he-table__th,
+.he-table--dense .he-table__td {
+  padding: var(--he-space-2) var(--he-space-3);
+}
+
+/* ---- empty ---- */
+.he-table__empty {
+  padding: var(--he-space-6) var(--he-space-4);
+  text-align: center;
+  color: var(--he-text-faint);
+  font-size: var(--he-body-sm);
+}
