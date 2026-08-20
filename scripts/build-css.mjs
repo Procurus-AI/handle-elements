@@ -30,20 +30,30 @@ const tokens = transform({
 });
 writeFileSync(path.join(dist, 'tokens.css'), tokens.code);
 
+const missingFonts = ['NeueHaasUnica-Regular.woff2', 'NeueHaasUnica-Medium.woff2'].filter(
+  (f) => !existsSync(path.join(src, 'fonts', 'neue-haas-unica', f)),
+);
+
 // fonts.css is authored with url('../fonts/...') relative to src/styles/;
-// in dist it sits next to the fonts/ dir, so rewrite to ./fonts/.
-const fontsCss = readFileSync(path.join(src, 'styles', 'fonts.css'), 'utf8').replaceAll('../fonts/', './fonts/');
+// in dist it sits next to the fonts/ dir, so rewrite to ./fonts/. Licensed
+// Neue Haas files are optional, so drop any @font-face block that points at a
+// missing file instead of shipping broken CSS urls.
+let fontsCss = readFileSync(path.join(src, 'styles', 'fonts.css'), 'utf8');
+for (const file of missingFonts) {
+  fontsCss = fontsCss.replace(
+    new RegExp(`@font-face\\s*{[^}]*${file.replaceAll('.', '\\.')}[^}]*}\\s*`, 'g'),
+    '',
+  );
+}
+fontsCss = fontsCss.replaceAll('../fonts/', './fonts/');
 const fonts = transform({ filename: 'fonts.css', code: Buffer.from(fontsCss), minify: false, targets });
 writeFileSync(path.join(dist, 'fonts.css'), fonts.code);
 
 cpSync(path.join(src, 'fonts'), path.join(dist, 'fonts'), { recursive: true });
 
-const unica = ['NeueHaasUnica-Regular.woff2', 'NeueHaasUnica-Medium.woff2'].filter(
-  (f) => !existsSync(path.join(src, 'fonts', 'neue-haas-unica', f)),
-);
-if (unica.length) {
+if (missingFonts.length) {
   console.warn(
-    `[build-css] Missing licensed font files (fallback stack will render until provided): ${unica.join(', ')}`,
+    `[build-css] Missing licensed font files (fallback stack will render until provided): ${missingFonts.join(', ')}`,
   );
 }
 console.log('[build-css] wrote dist/styles.css, dist/tokens.css, dist/fonts.css, dist/fonts/');
