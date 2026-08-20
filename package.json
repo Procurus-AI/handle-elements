@@ -1,6 +1,6 @@
 {
   "name": "@procurus-ai/handle-elements",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Handle design system — brand tokens, fonts, and React components",
   "license": "UNLICENSED",
   "type": "module",
