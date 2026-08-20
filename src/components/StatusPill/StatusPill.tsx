@@ -11,7 +11,7 @@ export interface StatusPillProps extends HTMLAttributes<HTMLSpanElement> {
 
 export function StatusPill({ status, label, withDot = true, className, ...rest }: StatusPillProps) {
   return (
-    <span className={cx('he-pill', `he-pill--${status}`, className)} {...rest}>
+    <span className={cx('he-pill', `he-pill--${status}`, !withDot && 'he-pill--nodot', className)} {...rest}>
       {withDot && <span className="he-pill__dot" aria-hidden />}
       {label}
     </span>

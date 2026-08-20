@@ -1,13 +1,18 @@
+/* Status is carried by the dot, not a tinted background — the pill itself is a
+ * quiet bordered surface. `accent` is the one filled (Borealis) variant. */
 .he-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 10px;
+  padding: 3px 10px;
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
   border-radius: var(--he-radius-full);
   font-family: var(--he-font-sans);
   font-size: var(--he-caption);
   font-weight: 500;
-  line-height: 1.7;
+  line-height: 1.6;
+  color: var(--he-text-dim);
   white-space: nowrap;
 }
 
@@ -15,27 +20,39 @@
   width: 6px;
   height: 6px;
   border-radius: var(--he-radius-full);
-  background: currentColor;
   flex-shrink: 0;
 }
 
-.he-pill--ok {
-  background: var(--he-ok-bg);
+.he-pill--ok .he-pill__dot {
+  background: var(--he-ok);
+}
+.he-pill--warn .he-pill__dot {
+  background: var(--he-warn);
+}
+.he-pill--error .he-pill__dot {
+  background: var(--he-error);
+}
+.he-pill--neutral .he-pill__dot {
+  background: var(--he-text-faint);
+}
+
+/* dotless pills color the label instead, so status stays legible */
+.he-pill--nodot.he-pill--ok {
   color: var(--he-ok);
 }
-.he-pill--warn {
-  background: var(--he-warn-bg);
+.he-pill--nodot.he-pill--warn {
   color: var(--he-warn);
 }
-.he-pill--error {
-  background: var(--he-error-bg);
+.he-pill--nodot.he-pill--error {
   color: var(--he-error);
 }
-.he-pill--neutral {
-  background: var(--he-neutral-bg);
-  color: var(--he-neutral);
-}
+
+/* accent — filled Borealis, the single brand-colored pill */
 .he-pill--accent {
   background: var(--he-accent);
+  border-color: transparent;
   color: var(--he-on-accent);
+}
+.he-pill--accent .he-pill__dot {
+  background: var(--he-on-accent);
 }
