@@ -10,3 +10,7 @@
 @import '../components/StatCard/StatCard.css';
 @import '../components/PageHeader/PageHeader.css';
 @import '../components/Tabs/Tabs.css';
+@import '../components/Input/Input.css';
+@import '../components/Input/Textarea.css';
+@import '../components/Input/Select.css';
+@import '../components/Composer/Composer.css';

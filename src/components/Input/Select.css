@@ -1,0 +1,85 @@
+.he-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: var(--he-text);
+  transition:
+    border-color var(--he-transition-fast),
+    background var(--he-transition-fast),
+    box-shadow var(--he-transition-fast);
+}
+
+.he-select__field {
+  appearance: none;
+  background: none;
+  border: none;
+  outline: none;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--he-font-sans);
+  font-weight: 500;
+  color: inherit;
+  padding-right: 18px;
+}
+
+.he-select__chevron {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: var(--he-text-dim);
+}
+
+.he-select--ghost .he-select__chevron {
+  right: 2px;
+}
+
+.he-select--pill {
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-full);
+}
+
+.he-select--pill:hover {
+  border-color: var(--he-border-strong);
+}
+
+.he-select--pill:focus-within {
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-card);
+}
+
+.he-select--ghost {
+  color: var(--he-text-dim);
+}
+
+.he-select--ghost:hover {
+  color: var(--he-text);
+}
+
+.he-select:has(.he-select__field:disabled) {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* sizes */
+.he-select--md.he-select--pill {
+  height: 34px;
+}
+.he-select--md .he-select__field {
+  font-size: var(--he-body-sm);
+}
+.he-select--md.he-select--pill .he-select__field {
+  padding-left: var(--he-space-4);
+  padding-right: 26px;
+}
+
+.he-select--sm.he-select--pill {
+  height: 29px;
+}
+.he-select--sm .he-select__field {
+  font-size: var(--he-caption);
+}
+.he-select--sm.he-select--pill .he-select__field {
+  padding-left: var(--he-space-3);
+  padding-right: 24px;
+}
