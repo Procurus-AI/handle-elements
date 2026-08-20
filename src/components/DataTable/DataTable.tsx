@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useMemo,
   useState,
   type HTMLAttributes,
@@ -52,6 +53,18 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   emptyState?: ReactNode;
   /** Optional heading row above the table (title, actions…). */
   toolbar?: ReactNode;
+  /**
+   * Client-side text filter. Rows are kept when the query is found in any
+   * `filterKeys` column (or every column's raw value when `filterKeys` is
+   * omitted). Case-insensitive. Leave undefined to filter in the app instead.
+   */
+  globalFilter?: string;
+  /** Restrict which columns the `globalFilter` searches. */
+  filterKeys?: string[];
+  /** Custom predicate — overrides the default substring match. */
+  filterFn?: (row: T, query: string) => boolean;
+  /** Notified with the filtered (pre-sort) rows — drive a ResultCount from it. */
+  onFilteredChange?: (rows: T[]) => void;
 }
 
 function defaultCompare(a: unknown, b: unknown): number {
@@ -75,6 +88,10 @@ export function DataTable<T>({
   dense = false,
   emptyState = 'No data',
   toolbar,
+  globalFilter,
+  filterKeys,
+  filterFn,
+  onFilteredChange,
   className,
   ...rest
 }: DataTableProps<T>) {
@@ -88,14 +105,31 @@ export function DataTable<T>({
     return map;
   }, [columns]);
 
+  const filteredData = useMemo(() => {
+    const query = (globalFilter ?? '').trim().toLowerCase();
+    if (!query) return data;
+    const keys = filterKeys ?? columns.map((c) => c.key);
+    return data.filter((row) => {
+      if (filterFn) return filterFn(row, query);
+      return keys.some((k) => {
+        const value = (row as Record<string, unknown>)[k];
+        return value != null && String(value).toLowerCase().includes(query);
+      });
+    });
+  }, [data, globalFilter, filterKeys, filterFn, columns]);
+
+  useEffect(() => {
+    onFilteredChange?.(filteredData);
+  }, [filteredData, onFilteredChange]);
+
   const sortedData = useMemo(() => {
-    if (!sort) return data;
+    if (!sort) return filteredData;
     const col = columnByKey.get(sort.key);
-    if (!col) return data;
+    if (!col) return filteredData;
     const accessor = col.sortValue ?? ((row: T) => (row as Record<string, unknown>)[col.key] as never);
     const dir = sort.direction === 'asc' ? 1 : -1;
-    return [...data].sort((a, b) => defaultCompare(accessor(a), accessor(b)) * dir);
-  }, [data, sort, columnByKey]);
+    return [...filteredData].sort((a, b) => defaultCompare(accessor(a), accessor(b)) * dir);
+  }, [filteredData, sort, columnByKey]);
 
   const toggleSort = (col: DataTableColumn<T>) => {
     if (!col.sortable) return;

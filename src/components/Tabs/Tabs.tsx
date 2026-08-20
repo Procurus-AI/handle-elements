@@ -1,10 +1,15 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../lib/cx';
+import { Badge, type BadgeTone } from '../Badge/Badge';
 
 export interface TabItem {
   value: string;
   label: ReactNode;
   disabled?: boolean;
+  /** Trailing count badge (e.g. filter tabs: "Necesitan atención 24"). */
+  count?: ReactNode;
+  /** Tone for the count badge (default neutral). */
+  countTone?: BadgeTone;
 }
 
 export type TabsVariant = 'underline' | 'pills';
@@ -35,7 +40,12 @@ export function Tabs({ items, value, onChange, variant = 'underline', size = 'md
           className={cx('he-tab', item.value === value && 'he-tab--active')}
           onClick={() => onChange?.(item.value)}
         >
-          {item.label}
+          <span className="he-tab__label">{item.label}</span>
+          {item.count != null && (
+            <Badge size="sm" tone={item.countTone ?? 'neutral'} className="he-tab__count">
+              {item.count}
+            </Badge>
+          )}
         </button>
       ))}
     </div>

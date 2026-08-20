@@ -1,7 +1,8 @@
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/Button/Button';
 export { Chip, type ChipProps, type ChipVariant } from './components/Chip/Chip';
 export { StatusPill, type StatusPillProps, type StatusPillStatus } from './components/StatusPill/StatusPill';
-export { Card, type CardProps } from './components/Card/Card';
+export { Card, type CardProps, type CardStatus } from './components/Card/Card';
+export { Badge, type BadgeProps, type BadgeTone } from './components/Badge/Badge';
 export {
   StatCard,
   type StatCardProps,
@@ -32,6 +33,15 @@ export { Tabs, type TabsProps, type TabsVariant, type TabItem } from './componen
 export { Input, type InputProps, type InputVariant } from './components/Input/Input';
 export { Textarea, type TextareaProps } from './components/Input/Textarea';
 export { Select, type SelectProps } from './components/Input/Select';
+export { SearchInput, type SearchInputProps } from './components/Input/SearchInput';
+export {
+  Toolbar,
+  ToolbarGroup,
+  ResultCount,
+  type ToolbarProps,
+  type ToolbarGroupProps,
+  type ResultCountProps,
+} from './components/Toolbar/Toolbar';
 export { Composer, type ComposerProps } from './components/Composer/Composer';
 export {
   DataTable,

@@ -6,8 +6,10 @@ import { Chip } from '../Chip/Chip';
 import { Drawer } from '../Drawer/Drawer';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { Money } from '../Money/Money';
+import { SearchInput } from '../Input/SearchInput';
 import { Sparkline } from '../Sparkline/Sparkline';
 import { StatusPill } from '../StatusPill/StatusPill';
+import { Toolbar, ToolbarGroup, ResultCount } from '../Toolbar/Toolbar';
 import { DataTable, TableCell, type DataTableColumn } from './DataTable';
 
 const meta = {
@@ -88,6 +90,41 @@ export const WithToolbar: Story = {
       }
     />
   ),
+};
+
+export const Filterable: Story = {
+  name: 'Filterable (SearchInput + globalFilter + ResultCount)',
+  render: () => {
+    const [q, setQ] = useState('');
+    const [shown, setShown] = useState(ACCOUNTS.length);
+    return (
+      <DataTable
+        columns={columns}
+        data={ACCOUNTS}
+        rowKey={(r) => r.name}
+        defaultSort={{ key: 'arr', direction: 'desc' }}
+        globalFilter={q}
+        filterKeys={['name', 'owner', 'stage']}
+        onFilteredChange={(rows) => setShown(rows.length)}
+        emptyState="Sin resultados para tu búsqueda."
+        toolbar={
+          <Toolbar>
+            <SearchInput
+              value={q}
+              onValueChange={setQ}
+              placeholder="Buscar cuenta u owner…"
+              style={{ maxWidth: 260 }}
+            />
+            <ToolbarGroup align="end">
+              <ResultCount>
+                {shown} de {ACCOUNTS.length}
+              </ResultCount>
+            </ToolbarGroup>
+          </Toolbar>
+        }
+      />
+    );
+  },
 };
 
 export const Empty: Story = {
