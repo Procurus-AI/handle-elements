@@ -1,0 +1,62 @@
+/* Handle brand fonts, self-hosted.
+ * Sentient — headlines/display (Fontshare, free license, vendored).
+ * Neue Haas Unica — body/subtitles (licensed; drop woff2 files in fonts/neue-haas-unica/,
+ *   see the README there — until then the Helvetica fallback stack renders).
+ * IBM Plex Mono — captions/labels (OFL, vendored).
+ */
+
+@font-face {
+  font-family: 'Sentient';
+  src: url('../fonts/sentient/Sentient-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sentient';
+  src: url('../fonts/sentient/Sentient-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sentient';
+  src: url('../fonts/sentient/Sentient-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neue Haas Unica';
+  src: url('../fonts/neue-haas-unica/NeueHaasUnica-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neue Haas Unica';
+  src: url('../fonts/neue-haas-unica/NeueHaasUnica-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../fonts/ibm-plex-mono/IBMPlexMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('../fonts/ibm-plex-mono/IBMPlexMono-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,125 @@
+/* Handle design tokens — source of truth: Handle Brand Book (June 2026).
+ *
+ * Two tiers:
+ *   1. Raw brand palette (--he-white … --he-black) — never referenced by components.
+ *   2. Semantic tokens — what components (and consumer apps) use.
+ *
+ * Dark theme follows the attribute model: the app sets data-theme="dark" on <html>
+ * (or .he-theme-dark on a subtree). Never key on prefers-color-scheme.
+ * Brand accessibility rules baked in: Borealis Green is a fill or dark-bg accent,
+ * never text on light backgrounds; Sandstone is faint-text-only on light.
+ */
+:root {
+  /* ---- raw brand palette ---- */
+  --he-white: #fafafa;
+  --he-gray-light: #f2f2f2;
+  --he-sandstone: #c6c5c4;
+  --he-borealis: #e0fea2;
+  --he-midnight: #191d27;
+  --he-black: #141414;
+
+  /* ---- surfaces & text (light, default) ---- */
+  --he-bg: var(--he-white);
+  --he-surface: #ffffff;
+  --he-surface-2: var(--he-gray-light);
+  --he-text: var(--he-midnight);
+  --he-text-dim: #5c6068;
+  --he-text-faint: #9b9a98;
+  --he-border: #e4e3e0;
+  --he-border-strong: var(--he-sandstone);
+
+  /* ---- accent (Borealis) ---- */
+  --he-accent: var(--he-borealis);
+  --he-on-accent: var(--he-midnight);
+
+  /* ---- action: non-inverting dark pill (same in both themes) ---- */
+  --he-action: var(--he-midnight);
+  --he-action-hover: #2a2f3d;
+  --he-on-action: var(--he-white);
+  --he-action-border: transparent;
+
+  /* ---- focus ring ---- */
+  --he-focus: var(--he-midnight);
+
+  /* ---- status ---- */
+  --he-ok: #3d7a4e;
+  --he-ok-bg: #e8f2e4;
+  --he-warn: #8a6d1f;
+  --he-warn-bg: #f4edd4;
+  --he-error: #a04a3e;
+  --he-error-bg: #f5e4de;
+  --he-neutral: #6b6f78;
+  --he-neutral-bg: var(--he-gray-light);
+
+  /* ---- typography ---- */
+  --he-font-display: 'Sentient', Georgia, 'Times New Roman', serif;
+  --he-font-sans: 'Neue Haas Unica', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --he-font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --he-display-1: 56px;
+  --he-display-2: 40px;
+  --he-title: 28px;
+  --he-heading: 20px;
+  --he-body: 15px;
+  --he-body-sm: 13px;
+  --he-caption: 11.5px;
+  --he-tracking-caps: 0.14em;
+
+  /* ---- spacing ---- */
+  --he-space-1: 4px;
+  --he-space-2: 8px;
+  --he-space-3: 12px;
+  --he-space-4: 16px;
+  --he-space-5: 24px;
+  --he-space-6: 32px;
+  --he-space-7: 48px;
+
+  /* ---- radius (brand book has no spec; restrained scale) ---- */
+  --he-radius-xs: 4px;
+  --he-radius-sm: 8px;
+  --he-radius-md: 12px;
+  --he-radius-lg: 16px;
+  --he-radius-full: 999px;
+
+  /* ---- elevation (hover lifts, never darkens) ---- */
+  --he-shadow-card: 0 1px 2px rgb(20 20 20 / 0.05), 0 1px 3px rgb(20 20 20 / 0.04);
+  --he-shadow-lift: 0 10px 28px rgb(20 20 20 / 0.1), 0 3px 8px rgb(20 20 20 / 0.05);
+
+  /* ---- motion ---- */
+  --he-transition-fast: 150ms ease;
+  --he-transition-base: 200ms ease;
+}
+
+[data-theme='dark'],
+.he-theme-dark {
+  --he-bg: var(--he-black);
+  --he-surface: var(--he-midnight);
+  --he-surface-2: #212633;
+  --he-text: var(--he-white);
+  --he-text-dim: #a8abb3;
+  --he-text-faint: #6a6f7a;
+  --he-border: #2a2f3d;
+  --he-border-strong: #3a4050;
+
+  --he-accent: var(--he-borealis);
+  --he-on-accent: var(--he-midnight);
+
+  /* action stays dark (non-inverting); hover moves lighter, border separates from bg */
+  --he-action: var(--he-midnight);
+  --he-action-hover: #262b38;
+  --he-on-action: var(--he-white);
+  --he-action-border: #2a2f3d;
+
+  --he-focus: var(--he-borealis);
+
+  --he-ok: #8fd0a0;
+  --he-ok-bg: #223327;
+  --he-warn: #d9c078;
+  --he-warn-bg: #363019;
+  --he-error: #e0968a;
+  --he-error-bg: #3b241f;
+  --he-neutral: #a8abb3;
+  --he-neutral-bg: #212633;
+
+  --he-shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+  --he-shadow-lift: 0 12px 30px rgb(0 0 0 / 0.5), 0 3px 8px rgb(0 0 0 / 0.35);
+}

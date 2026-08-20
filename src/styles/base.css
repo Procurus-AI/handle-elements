@@ -1,0 +1,23 @@
+/* Minimal base layer — scoped to Handle Elements classes only.
+ * The library never styles body/html; apply .he-root to <body> or a wrapper
+ * to opt a surface into Handle bg/text/typography. */
+
+[class^='he-'],
+[class*=' he-'] {
+  box-sizing: border-box;
+}
+
+[class^='he-'] *,
+[class*=' he-'] * {
+  box-sizing: border-box;
+}
+
+.he-root {
+  background: var(--he-bg);
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}

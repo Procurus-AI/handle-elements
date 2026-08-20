@@ -1,0 +1,36 @@
+.he-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px var(--he-space-2);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-sm);
+  background: var(--he-surface-2);
+  color: var(--he-text-dim);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-caption);
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.he-chip--sm {
+  padding: 0 6px;
+  font-size: 10.5px;
+}
+
+.he-chip--mono {
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
+}
+
+.he-chip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-radius-full);
+  background: var(--he-accent);
+  flex-shrink: 0;
+}

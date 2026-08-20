@@ -1,0 +1,41 @@
+.he-card {
+  display: block;
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-lg);
+  box-shadow: var(--he-shadow-card);
+  color: inherit;
+  text-decoration: none;
+}
+
+.he-card--pad-none {
+  padding: 0;
+}
+.he-card--pad-sm {
+  padding: var(--he-space-3);
+}
+.he-card--pad-md {
+  padding: var(--he-space-4);
+}
+.he-card--pad-lg {
+  padding: var(--he-space-5);
+}
+
+.he-card--clickable {
+  cursor: pointer;
+  transition:
+    transform var(--he-transition-base),
+    border-color var(--he-transition-base),
+    box-shadow var(--he-transition-base);
+}
+
+.he-card--clickable:hover {
+  transform: translateY(-2px);
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-lift);
+}
+
+.he-card--clickable:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
