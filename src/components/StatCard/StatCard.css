@@ -37,6 +37,27 @@
   font-weight: 300;
 }
 
+/* Mini stat — for tight clusters (quality / bottleneck counters). */
+.he-stat--sm {
+  gap: var(--he-space-1);
+}
+
+.he-stat--sm .he-stat__value {
+  font-size: var(--he-heading);
+}
+
+.he-stat--sm .he-stat__label {
+  font-size: 10px;
+}
+
+/* Borderless — nest inside a panel Card without cards-in-cards. */
+.he-stat--plain {
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
 .he-stat__unit {
   font-family: var(--he-font-sans);
   font-size: var(--he-body-sm);

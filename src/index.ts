@@ -6,7 +6,23 @@ export {
   StatCard,
   type StatCardProps,
   type StatCardDeltaDirection,
+  type StatCardSize,
+  type StatCardVariant,
 } from './components/StatCard/StatCard';
+export {
+  StatToggle,
+  StatToggleGroup,
+  type StatToggleProps,
+  type StatToggleGroupProps,
+  type StatToggleTone,
+} from './components/StatToggle/StatToggle';
+export {
+  List,
+  ListItem,
+  type ListProps,
+  type ListItemProps,
+  type ListVariant,
+} from './components/List/List';
 export {
   PageHeader,
   type PageHeaderProps,
@@ -19,11 +35,13 @@ export { Select, type SelectProps } from './components/Input/Select';
 export { Composer, type ComposerProps } from './components/Composer/Composer';
 export {
   DataTable,
+  TableCell,
   type DataTableProps,
   type DataTableColumn,
   type DataTableAlign,
   type DataTableSort,
   type SortDirection,
+  type TableCellProps,
 } from './components/DataTable/DataTable';
 export { Drawer, type DrawerProps, type DrawerSide } from './components/Drawer/Drawer';
 export {

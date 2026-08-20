@@ -3,6 +3,10 @@ import { cx } from '../../lib/cx';
 
 export type StatCardDeltaDirection = 'up' | 'down' | 'flat';
 
+export type StatCardSize = 'sm' | 'md' | 'lg';
+
+export type StatCardVariant = 'card' | 'plain';
+
 export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   /** Caption above the value — rendered in mono uppercase. */
   label: ReactNode;
@@ -10,7 +14,13 @@ export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   unit?: ReactNode;
   delta?: { value: ReactNode; direction: StatCardDeltaDirection };
   footer?: ReactNode;
-  size?: 'md' | 'lg';
+  size?: StatCardSize;
+  /**
+   * `card` (default) is the bordered surface. `plain` strips the border,
+   * background, and padding so the stat can nest inside a panel/Card without
+   * the cards-in-cards look — e.g. a cluster of mini stats or a hero metric.
+   */
+  variant?: StatCardVariant;
 }
 
 const DELTA_GLYPH: Record<StatCardDeltaDirection, string> = {
@@ -19,9 +29,27 @@ const DELTA_GLYPH: Record<StatCardDeltaDirection, string> = {
   flat: '→',
 };
 
-export function StatCard({ label, value, unit, delta, footer, size = 'md', className, ...rest }: StatCardProps) {
+export function StatCard({
+  label,
+  value,
+  unit,
+  delta,
+  footer,
+  size = 'md',
+  variant = 'card',
+  className,
+  ...rest
+}: StatCardProps) {
   return (
-    <div className={cx('he-stat', size === 'lg' && 'he-stat--lg', className)} {...rest}>
+    <div
+      className={cx(
+        'he-stat',
+        size !== 'md' && `he-stat--${size}`,
+        variant === 'plain' && 'he-stat--plain',
+        className,
+      )}
+      {...rest}
+    >
       <span className="he-stat__label">{label}</span>
       <div className="he-stat__row">
         <span className="he-stat__value">{value}</span>

@@ -1,10 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import { Avatar } from '../Avatar/Avatar';
 import { Button } from '../Button/Button';
 import { Chip } from '../Chip/Chip';
+import { Drawer } from '../Drawer/Drawer';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { Money } from '../Money/Money';
+import { Sparkline } from '../Sparkline/Sparkline';
 import { StatusPill } from '../StatusPill/StatusPill';
-import { DataTable, type DataTableColumn } from './DataTable';
+import { DataTable, TableCell, type DataTableColumn } from './DataTable';
 
 const meta = {
   title: 'Elements/DataTable',
@@ -99,4 +103,93 @@ export const Empty: Story = {
 export const Plain: Story = {
   name: 'Without card wrapper',
   render: () => <DataTable card={false} columns={columns} data={ACCOUNTS} rowKey={(r) => r.name} />,
+};
+
+// ---- Leaderboard: nested cells + row-click-to-drawer ----
+interface Broker {
+  rank: number;
+  name: string;
+  region: string;
+  recovered: number;
+  trend: number[];
+  rate: number;
+}
+
+const BROKERS: Broker[] = [
+  { rank: 1, name: 'Aegis Mutual', region: 'Bajío', recovered: 482000, rate: 0.91, trend: [12, 14, 15, 19, 22, 26] },
+  { rank: 2, name: 'Northwind Freight', region: 'Norte', recovered: 421000, rate: 0.84, trend: [20, 18, 17, 16, 15, 14] },
+  { rank: 3, name: 'Harbor P&C', region: 'Occidente', recovered: 388000, rate: 0.79, trend: [8, 10, 12, 14, 18, 21] },
+  { rank: 4, name: 'Sterling Re', region: 'Sureste', recovered: 296000, rate: 0.74, trend: [14, 13, 15, 14, 16, 17] },
+];
+
+const leaderColumns: DataTableColumn<Broker>[] = [
+  {
+    key: 'name',
+    header: 'Broker',
+    sortable: true,
+    render: (r) => (
+      <TableCell
+        media={<span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontFamily: 'var(--he-font-mono)', color: 'var(--he-text-faint)', minWidth: '2ch', textAlign: 'right' }}>
+            {r.rank}
+          </span>
+          <Avatar name={r.name} size="sm" />
+        </span>}
+        primary={r.name}
+        secondary={`Región · ${r.region}`}
+      />
+    ),
+  },
+  {
+    key: 'trend',
+    header: '6-mo trend',
+    width: '120px',
+    render: (r) => <Sparkline data={r.trend} width={96} variant="area" tone={r.trend.at(-1)! >= r.trend[0] ? 'ok' : 'error'} />,
+  },
+  {
+    key: 'rate',
+    header: 'Recovery rate',
+    sortable: true,
+    align: 'end',
+    render: (r) => <span style={{ fontFamily: 'var(--he-font-mono)' }}>{Math.round(r.rate * 100)}%</span>,
+  },
+  {
+    key: 'recovered',
+    header: 'Recovered',
+    sortable: true,
+    align: 'end',
+    width: '150px',
+    render: (r) => <Money value={r.recovered} currency="MXN" />,
+  },
+];
+
+export const Leaderboard: Story = {
+  name: 'Leaderboard (nested cells + row → drawer)',
+  render: () => {
+    const [open, setOpen] = useState<Broker | null>(null);
+    return (
+      <>
+        <DataTable
+          columns={leaderColumns}
+          data={BROKERS}
+          rowKey={(r) => r.name}
+          defaultSort={{ key: 'recovered', direction: 'desc' }}
+          onRowClick={(r) => setOpen(r)}
+        />
+        <Drawer open={open != null} onClose={() => setOpen(null)} title={open?.name}>
+          {open && (
+            <div style={{ display: 'grid', gap: 16 }}>
+              <span style={{ fontFamily: 'var(--he-font-mono)', fontSize: 'var(--he-caption)', color: 'var(--he-text-dim)' }}>
+                Región · {open.region}
+              </span>
+              <Sparkline data={open.trend} width={280} height={64} variant="area" tone="ok" marker />
+              <p style={{ fontSize: 'var(--he-body-sm)', color: 'var(--he-text-dim)' }}>
+                Recovery rate {Math.round(open.rate * 100)}% · click a row (or focus + Enter) to open this drawer.
+              </p>
+            </div>
+          )}
+        </Drawer>
+      </>
+    );
+  },
 };

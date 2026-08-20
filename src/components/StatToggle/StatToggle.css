@@ -1,0 +1,127 @@
+/* StatToggle — a clickable stat tile that carries a selected + zero state.
+ * Base is a quiet surface; hover lifts; active shows a tone accent cap and an
+ * ink border; zero fades the numerals. All color via --he-* tokens. */
+.he-stattoggle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-1);
+  min-width: 92px;
+  padding: var(--he-space-3) var(--he-space-4);
+  text-align: left;
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md);
+  cursor: pointer;
+  font-family: var(--he-font-sans);
+  transition:
+    border-color var(--he-transition-fast),
+    background var(--he-transition-fast),
+    box-shadow var(--he-transition-fast),
+    transform var(--he-transition-fast);
+  --he-stattoggle-accent: var(--he-accent);
+}
+
+/* Tone accent cap — appears when active. */
+.he-stattoggle::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  border-radius: var(--he-radius-md) var(--he-radius-md) 0 0;
+  background: transparent;
+  transition: background var(--he-transition-fast);
+}
+
+.he-stattoggle:hover {
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-lift);
+  transform: translateY(-1px);
+}
+
+.he-stattoggle:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+.he-stattoggle__value {
+  font-family: var(--he-font-display);
+  font-weight: 400;
+  font-size: var(--he-title);
+  line-height: 1.05;
+  color: var(--he-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.he-stattoggle__label {
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
+}
+
+.he-stattoggle__hint {
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+}
+
+/* ---- active (selected) ---- */
+.he-stattoggle--active {
+  border-color: var(--he-text);
+  background: var(--he-surface-2);
+}
+
+.he-stattoggle--active::before {
+  background: var(--he-stattoggle-accent);
+}
+
+.he-stattoggle--active .he-stattoggle__label {
+  color: var(--he-text-dim);
+}
+
+/* ---- zero (empty) ---- */
+.he-stattoggle--zero .he-stattoggle__value {
+  color: var(--he-text-faint);
+}
+
+.he-stattoggle--zero:not(.he-stattoggle--active) .he-stattoggle__label {
+  color: var(--he-text-faint);
+}
+
+/* ---- tones (active accent cap color) ---- */
+.he-stattoggle--ok {
+  --he-stattoggle-accent: var(--he-ok);
+}
+.he-stattoggle--warn {
+  --he-stattoggle-accent: var(--he-warn);
+}
+.he-stattoggle--error {
+  --he-stattoggle-accent: var(--he-error);
+}
+
+/* ---- group ---- */
+.he-stattoggle-group {
+  display: flex;
+  gap: var(--he-space-3);
+  overflow-x: auto;
+}
+
+.he-stattoggle-group--wrap {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.he-stattoggle-group > .he-stattoggle {
+  flex: 0 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-stattoggle {
+    transition: none;
+  }
+  .he-stattoggle:hover {
+    transform: none;
+  }
+}

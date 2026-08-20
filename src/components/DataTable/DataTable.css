@@ -105,6 +105,69 @@
   background: var(--he-surface-2);
 }
 
+.he-table__row--clickable:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+  background: var(--he-surface-2);
+}
+
+/* ---- composite (nested) cell — media + stacked label + trailing ---- */
+.he-table__cell {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-3);
+  min-width: 0;
+}
+
+.he-table__cell.he-table__cell--center {
+  justify-content: center;
+}
+
+.he-table__cell.he-table__cell--end {
+  justify-content: flex-end;
+}
+
+.he-table__cell-media {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.he-table__cell-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.he-table__cell-primary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--he-text);
+}
+
+.he-table__cell--mono .he-table__cell-primary {
+  font-family: var(--he-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.he-table__cell-secondary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+}
+
+.he-table__cell-trailing {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--he-text-faint);
+}
+
 /* ---- alignment ---- */
 .he-table__cell--start {
   text-align: left;

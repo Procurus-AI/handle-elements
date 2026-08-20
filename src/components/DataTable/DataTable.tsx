@@ -1,4 +1,10 @@
-import { useMemo, useState, type HTMLAttributes, type ReactNode } from 'react';
+import {
+  useMemo,
+  useState,
+  type HTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { cx } from '../../lib/cx';
 
 export type DataTableAlign = 'start' | 'center' | 'end';
@@ -162,6 +168,20 @@ export function DataTable<T>({
                   key={rowKey ? rowKey(row, index) : index}
                   className={cx('he-table__row', onRowClick && 'he-table__row--clickable')}
                   onClick={onRowClick ? () => onRowClick(row, index) : undefined}
+                  // Keyboard access for row-click-to-drawer: focusable rows that
+                  // activate on Enter/Space, so the pattern is not mouse-only.
+                  tabIndex={onRowClick ? 0 : undefined}
+                  role={onRowClick ? 'button' : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (e: KeyboardEvent<HTMLTableRowElement>) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            onRowClick(row, index);
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {columns.map((col) => (
                     <td
@@ -179,6 +199,56 @@ export function DataTable<T>({
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+export interface TableCellProps {
+  /** Leading slot — avatar, rank badge, status dot, icon. */
+  media?: ReactNode;
+  /** Primary line. Falls back to `children`. */
+  primary?: ReactNode;
+  /** Secondary line under the primary (dim). */
+  secondary?: ReactNode;
+  /** Trailing node pinned to the cell's end (delta, chevron, menu…). */
+  trailing?: ReactNode;
+  align?: DataTableAlign;
+  /** Tabular numerals for the primary line (metrics/amounts). */
+  mono?: boolean;
+  className?: string;
+  children?: ReactNode;
+}
+
+/**
+ * Composite cell for nested table content — leading media + a stacked
+ * primary/secondary label + an optional trailing node. Use inside a column's
+ * `render` to build leaderboard-style rows without bespoke markup.
+ */
+export function TableCell({
+  media,
+  primary,
+  secondary,
+  trailing,
+  align,
+  mono = false,
+  className,
+  children,
+}: TableCellProps) {
+  return (
+    <div
+      className={cx(
+        'he-table__cell',
+        align && `he-table__cell--${align}`,
+        mono && 'he-table__cell--mono',
+        className,
+      )}
+    >
+      {media != null && <span className="he-table__cell-media">{media}</span>}
+      <span className="he-table__cell-body">
+        <span className="he-table__cell-primary">{primary ?? children}</span>
+        {secondary != null && <span className="he-table__cell-secondary">{secondary}</span>}
+      </span>
+      {trailing != null && <span className="he-table__cell-trailing">{trailing}</span>}
     </div>
   );
 }
