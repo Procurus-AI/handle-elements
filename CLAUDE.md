@@ -1,6 +1,6 @@
 # Handle Elements — conventions
 
-Shared design-system package (`@ponchodelosrios98/handle-elements`). Plain global CSS +
+Shared design-system package (`@procurus-ai/handle-elements`). Plain global CSS +
 design tokens, React 19 peer, zero runtime deps. Source of truth for visuals is the Handle
 Brand Book (Sentient / Neue Haas Unica / IBM Plex Mono; Midnight, Borealis Green, neutrals).
 
