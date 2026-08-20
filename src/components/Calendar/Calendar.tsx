@@ -283,6 +283,8 @@ export interface CalendarPanelRowProps extends Omit<ButtonHTMLAttributes<HTMLBut
   meta?: ReactNode;
   /** Leading status dot. */
   status?: CalendarStatus;
+  /** Leading slot before the title (e.g. an Avatar). */
+  leading?: ReactNode;
   /** Small trailing count/badge. */
   badge?: ReactNode;
   /** Right-aligned value (e.g. a Money amount). */
@@ -291,20 +293,24 @@ export interface CalendarPanelRowProps extends Omit<ButtonHTMLAttributes<HTMLBut
   expandable?: boolean;
   /** Rotate the chevron when expandable. */
   expanded?: boolean;
+  /** Detail content rendered below the row when `expanded` is true. */
+  details?: ReactNode;
 }
 
 export function CalendarPanelRow({
   title,
   meta,
   status,
+  leading,
   badge,
   amount,
   expandable = false,
   expanded = false,
+  details,
   className,
   ...rest
 }: CalendarPanelRowProps) {
-  return (
+  const row = (
     <button
       type="button"
       className={cx('he-cal-panel__row', className)}
@@ -319,6 +325,7 @@ export function CalendarPanelRow({
       {status != null && (
         <span className={cx('he-cal-panel__row-dot', `he-cal-panel__row-dot--${status}`)} aria-hidden />
       )}
+      {leading != null && <span className="he-cal-panel__row-leading">{leading}</span>}
       <span className="he-cal-panel__row-main">
         <span className="he-cal-panel__row-title">{title}</span>
         {meta != null && <span className="he-cal-panel__row-meta">{meta}</span>}
@@ -326,5 +333,14 @@ export function CalendarPanelRow({
       {badge != null && <span className="he-cal-panel__row-badge">{badge}</span>}
       {amount != null && <span className="he-cal-panel__row-amount">{amount}</span>}
     </button>
+  );
+
+  if (details == null) return row;
+
+  return (
+    <div className={cx('he-cal-panel__row-shell', expanded && 'he-cal-panel__row-shell--expanded')}>
+      {row}
+      {expanded && <div className="he-cal-panel__row-details">{details}</div>}
+    </div>
   );
 }

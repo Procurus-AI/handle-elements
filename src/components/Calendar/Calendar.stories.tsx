@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../Button/Button';
+import { Chip } from '../Chip/Chip';
 import { Input } from '../Input/Input';
+import { Money } from '../Money/Money';
 import { Calendar, CalendarPanel, CalendarPanelRow, type CalendarMarker } from './Calendar';
 
 const meta = {
@@ -100,34 +102,44 @@ interface Payment {
   name: string;
   count: number;
   amount: number;
+  policy: string;
+  insurer: string;
+  status: 'Pagado' | 'Pendiente' | 'Vencido';
+  reference: string;
 }
 
 const PAYMENTS: Payment[] = [
-  { name: 'ANA CLAUDIA DIAZ DE RIVERA GALINDO', count: 1, amount: 648.31 },
-  { name: 'ARCELIA SIFUENTES HERNANDEZ', count: 1, amount: 0.02 },
-  { name: 'DE SANTIAGO HEREDIA SANDRA LUZ', count: 1, amount: 4870.7 },
-  { name: 'DIEGO MANUEL DE LA TORRE PRIETO', count: 1, amount: 1468.3 },
-  { name: 'GRUPO JB PROYECTOS Y CONSTRUCCIONES', count: 1, amount: -64.96 },
-  { name: 'HOTEL POSADA DEL RIO SA DE CV', count: 1, amount: 6618.52 },
-  { name: 'ILEANA GOYTIA SALINAS', count: 1, amount: 6480.9 },
-  { name: 'INNOVATIVE AUTOMATION SOLUTIONS', count: 1, amount: 2372.65 },
-  { name: 'IPIRANGA SERVICIOS SAPI DE CV', count: 2, amount: 16051.26 },
-  { name: 'JORGE BITAR TAFICH', count: 1, amount: 879.44 },
-  { name: 'LOGISTICA INTEGRAL DEL NORTE', count: 1, amount: 3210.0 },
-  { name: 'MARIA FERNANDA VELASCO RUIZ', count: 1, amount: 1204.55 },
-  { name: 'SERVICIOS CORPORATIVOS DEL BAJIO', count: 3, amount: 990.65 },
+  { name: 'ANA CLAUDIA DIAZ DE RIVERA GALINDO', count: 1, amount: 648.31, policy: '190835', insurer: 'General de Seguros', status: 'Pagado', reference: 'RX-2931' },
+  { name: 'ARCELIA SIFUENTES HERNANDEZ', count: 1, amount: 0.02, policy: '184212', insurer: 'HDI Seguros', status: 'Pagado', reference: 'RX-2932' },
+  { name: 'DE SANTIAGO HEREDIA SANDRA LUZ', count: 1, amount: 4870.7, policy: '177409', insurer: 'GNP', status: 'Pagado', reference: 'RX-2933' },
+  { name: 'DIEGO MANUEL DE LA TORRE PRIETO', count: 1, amount: 1468.3, policy: '200119', insurer: 'Qualitas', status: 'Pagado', reference: 'RX-2934' },
+  { name: 'GRUPO JB PROYECTOS Y CONSTRUCCIONES', count: 1, amount: -64.96, policy: '182771', insurer: 'Mapfre', status: 'Vencido', reference: 'CR-0192' },
+  { name: 'HOTEL POSADA DEL RIO SA DE CV', count: 1, amount: 6618.52, policy: '190835', insurer: 'General de Seguros', status: 'Pagado', reference: 'RX-2935' },
+  { name: 'ILEANA GOYTIA SALINAS', count: 1, amount: 6480.9, policy: '190847', insurer: 'General de Seguros', status: 'Pagado', reference: 'RX-2936' },
+  { name: 'INNOVATIVE AUTOMATION SOLUTIONS', count: 1, amount: 2372.65, policy: '194022', insurer: 'AXA', status: 'Pendiente', reference: 'RX-2937' },
+  { name: 'IPIRANGA SERVICIOS SAPI DE CV', count: 2, amount: 16051.26, policy: '201994', insurer: 'Zurich', status: 'Pagado', reference: 'RX-2938' },
+  { name: 'JORGE BITAR TAFICH', count: 1, amount: 879.44, policy: '188032', insurer: 'Chubb', status: 'Pagado', reference: 'RX-2939' },
+  { name: 'LOGISTICA INTEGRAL DEL NORTE', count: 1, amount: 3210.0, policy: '176420', insurer: 'HDI Seguros', status: 'Pendiente', reference: 'RX-2940' },
+  { name: 'MARIA FERNANDA VELASCO RUIZ', count: 1, amount: 1204.55, policy: '199380', insurer: 'GNP', status: 'Pagado', reference: 'RX-2941' },
+  { name: 'SERVICIOS CORPORATIVOS DEL BAJIO', count: 3, amount: 990.65, policy: '204110', insurer: 'Mapfre', status: 'Vencido', reference: 'CR-0193' },
 ];
 
 const PAGE_SIZE = 10;
-const mxn = (n: number) =>
-  n.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
 const total = PAYMENTS.reduce((s, p) => s + p.amount, 0);
+
+/** Long screaming-caps names read calmer in title case (Perplexity-style). */
+const titleCase = (s: string) =>
+  s.toLowerCase().replace(/\b[a-záéíóúñ]/g, (c) => c.toUpperCase());
+
+const paymentStatus = (status: Payment['status']) =>
+  status === 'Pagado' ? 'ok' : status === 'Pendiente' ? 'warn' : 'error';
 
 export const WithDetailPanel: Story = {
   name: 'With detail panel (click a day)',
   render: () => {
     const [selected, setSelected] = useState<Date | null>(TODAY);
     const [page, setPage] = useState(1);
+    const [expandedRow, setExpandedRow] = useState<string | null>('HOTEL POSADA DEL RIO SA DE CV');
 
     const pageCount = Math.ceil(PAYMENTS.length / PAGE_SIZE);
     const start = (page - 1) * PAGE_SIZE;
@@ -138,7 +150,16 @@ export const WithDetailPanel: Story = {
       new Intl.DateTimeFormat(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' }).format(selected);
 
     return (
-      <div style={{ display: 'flex', gap: 16, alignItems: 'stretch', padding: 24, background: 'var(--he-bg)', minHeight: 640 }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 16,
+          alignItems: 'stretch',
+          padding: 24,
+          background: 'var(--he-bg)',
+          height: 720,
+        }}
+      >
         <Calendar
           style={{ flex: 1, minWidth: 0 }}
           locale={LOCALE}
@@ -150,55 +171,113 @@ export const WithDetailPanel: Story = {
           onSelectDay={(d) => {
             setSelected(d);
             setPage(1);
+            setExpandedRow(null);
           }}
           actions={HeaderActions}
         />
 
         {selected && (
           <CalendarPanel
-            style={{ width: 360, flexShrink: 0, alignSelf: 'flex-start', position: 'sticky', top: 24, maxHeight: 'calc(100vh - 48px)' }}
+            style={{ width: 380, flexShrink: 0 }}
             title={title}
-            subtitle={`${PAYMENTS.length} pagos · ${mxn(total)}`}
+            subtitle={
+              <>
+                {PAYMENTS.length} pagos&nbsp;·&nbsp;
+                <Money value={total} currency="MXN" locale="es-MX" minimumFractionDigits={2} maximumFractionDigits={2} />
+              </>
+            }
             onClose={() => setSelected(null)}
             closeLabel="Cerrar"
             footer={
               <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => p - 1)}
+                >
+                  ‹ Anterior
+                </Button>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Button variant="ghost" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
-                    ‹ Anterior
-                  </Button>
                   {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
-                    <Button key={p} variant={p === page ? 'default' : 'ghost'} size="icon-sm" onClick={() => setPage(p)}>
+                    <Button
+                      key={p}
+                      variant={p === page ? 'default' : 'ghost'}
+                      size="icon-sm"
+                      aria-current={p === page ? 'page' : undefined}
+                      onClick={() => setPage(p)}
+                    >
                       {p}
                     </Button>
                   ))}
-                  <Button variant="ghost" size="sm" disabled={page === pageCount} onClick={() => setPage((p) => p + 1)}>
-                    Siguiente ›
-                  </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={page === pageCount}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Siguiente ›
+                </Button>
               </>
             }
           >
-            {rows.map((p) => (
-              <CalendarPanelRow
-                key={p.name}
-                expandable
-                title={p.name}
-                badge={p.count}
-                amount={mxn(p.amount)}
-                onClick={() => {}}
-              />
-            ))}
-            <div
-              style={{
-                padding: '8px 16px',
-                fontSize: 'var(--he-caption)',
-                color: 'var(--he-text-faint)',
-                textAlign: 'center',
-              }}
-            >
-              Mostrando {start + 1}–{Math.min(start + PAGE_SIZE, PAYMENTS.length)} de {PAYMENTS.length} resultados
-            </div>
+            {rows.map((p) => {
+              const expanded = expandedRow === p.name;
+              const status = paymentStatus(p.status);
+
+              return (
+                <CalendarPanelRow
+                  key={p.name}
+                  expandable
+                  expanded={expanded}
+                  status={status}
+                  title={titleCase(p.name)}
+                  badge={p.count > 1 ? (
+                    <Chip variant="mono" size="sm">
+                      {p.count}
+                    </Chip>
+                  ) : null}
+                  amount={
+                    <Money
+                      value={p.amount}
+                      currency="MXN"
+                      locale="es-MX"
+                      minimumFractionDigits={2}
+                      maximumFractionDigits={2}
+                    />
+                  }
+                  onClick={() => setExpandedRow((current) => (current === p.name ? null : p.name))}
+                  details={
+                    <div className="he-cal-panel__row-detail-grid">
+                      <span className="he-cal-panel__row-detail-item">
+                        <span className="he-cal-panel__row-detail-label">Póliza</span>
+                        <span className="he-cal-panel__row-detail-value">{p.policy}</span>
+                      </span>
+                      <span className="he-cal-panel__row-detail-item">
+                        <span className="he-cal-panel__row-detail-label">Aseguradora</span>
+                        <span className="he-cal-panel__row-detail-value">{p.insurer}</span>
+                      </span>
+                      <span className="he-cal-panel__row-detail-item">
+                        <span className="he-cal-panel__row-detail-label">Referencia</span>
+                        <span className="he-cal-panel__row-detail-value">{p.reference}</span>
+                      </span>
+                      <span className="he-cal-panel__row-detail-item">
+                        <span className="he-cal-panel__row-detail-label">Estado</span>
+                        <span className="he-cal-panel__row-detail-value he-cal-panel__row-detail-status">
+                          <span className={`he-cal-panel__row-dot he-cal-panel__row-dot--${status}`} aria-hidden />
+                          {p.status}
+                        </span>
+                      </span>
+                    </div>
+                  }
+                />
+              );
+            })}
+            <p className="he-cal-panel__count">
+              Mostrando {start + 1}–{Math.min(start + PAGE_SIZE, PAYMENTS.length)} de {PAYMENTS.length}{' '}
+              resultados
+            </p>
           </CalendarPanel>
         )}
       </div>

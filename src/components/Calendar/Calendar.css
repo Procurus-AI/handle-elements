@@ -2,6 +2,8 @@
  * hairline cells, a filled dark "today" chip, and colored status dots for the
  * events on each day. All color/size values come from --he-* tokens. */
 .he-cal {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   font-family: var(--he-font-sans);
   color: var(--he-text);
@@ -23,12 +25,19 @@
   gap: var(--he-space-3);
 }
 
+/* Month title in the brand display serif (Sentient), light — matches the
+ * brand-book headline treatment rather than a heavy sans. */
 .he-cal__title {
   margin: 0;
-  font-family: var(--he-font-sans);
-  font-size: var(--he-heading);
-  font-weight: 600;
+  font-family: var(--he-font-display);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   color: var(--he-text);
+}
+
+.he-cal__title::first-letter {
+  text-transform: uppercase;
 }
 
 .he-cal__today {
@@ -100,11 +109,12 @@
   padding-bottom: var(--he-space-2);
 }
 
+/* Weekday labels use the brand caption motif: IBM Plex Mono, all-caps, tracked. */
 .he-cal__weekday {
   padding: 0 var(--he-space-3);
-  font-family: var(--he-font-sans);
+  font-family: var(--he-font-mono);
   font-size: var(--he-caption);
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: var(--he-tracking-caps);
   text-transform: uppercase;
   color: var(--he-text-faint);
@@ -113,8 +123,13 @@
 /* ---- month grid ---- */
 /* Hairlines come from the 1px gap over a border-colored track — no double borders. */
 .he-cal__grid {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  /* Rows share the height equally with a sensible floor, so the whole grid
+   * fills its container and bottom-aligns with anything beside it. */
+  grid-auto-rows: minmax(96px, 1fr);
   gap: 1px;
   background: var(--he-border);
   border: 1px solid var(--he-border);
@@ -126,8 +141,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--he-space-2);
-  min-height: 104px;
-  padding: var(--he-space-2) var(--he-space-3);
+  padding: var(--he-space-3);
   border: 0;
   background: var(--he-surface);
   text-align: left;
@@ -264,6 +278,10 @@
   color: var(--he-text);
 }
 
+.he-cal-panel__title::first-letter {
+  text-transform: uppercase;
+}
+
 .he-cal-panel__subtitle {
   margin: 4px 0 0;
   font-size: var(--he-body-sm);
@@ -312,18 +330,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--he-space-3);
+  gap: var(--he-space-2);
   padding: var(--he-space-3) var(--he-space-4);
   border-top: 1px solid var(--he-border);
 }
 
+/* "Showing 1–10 of 13" — quiet centered caption closing the list. */
+.he-cal-panel__count {
+  margin: var(--he-space-2) 0 var(--he-space-1);
+  padding: 0 var(--he-space-4);
+  font-size: var(--he-caption);
+  color: var(--he-text-faint);
+  text-align: center;
+}
+
 /* ---- panel rows ---- */
+.he-cal-panel__row-shell {
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-cal-panel__row-shell--expanded {
+  background: var(--he-surface);
+}
+
 .he-cal-panel__row {
   display: flex;
   align-items: center;
   gap: var(--he-space-2);
   width: 100%;
-  padding: var(--he-space-3) var(--he-space-4);
+  padding: 10px var(--he-space-4);
   border: 0;
   background: none;
   text-align: left;
@@ -337,6 +372,10 @@
   background: var(--he-surface-2);
 }
 
+.he-cal-panel__row-shell--expanded .he-cal-panel__row {
+  background: var(--he-surface);
+}
+
 .he-cal-panel__row:focus-visible {
   outline: 2px solid var(--he-focus);
   outline-offset: -2px;
@@ -346,6 +385,7 @@
   display: inline-flex;
   flex-shrink: 0;
   color: var(--he-text-faint);
+  opacity: 0.75;
   transition: transform var(--he-transition-fast);
 }
 
@@ -358,9 +398,14 @@
   transform: rotate(90deg);
 }
 
+.he-cal-panel__row-leading {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
 .he-cal-panel__row-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: var(--he-radius-full);
   flex-shrink: 0;
 }
@@ -404,7 +449,7 @@
 
 .he-cal-panel__row-badge {
   flex-shrink: 0;
-  min-width: 18px;
+  min-width: 17px;
   text-align: center;
   font-size: var(--he-caption);
   color: var(--he-text-dim);
@@ -414,8 +459,46 @@
 .he-cal-panel__row-amount {
   flex-shrink: 0;
   font-family: var(--he-font-mono);
-  font-size: var(--he-body-sm);
+  font-size: var(--he-caption);
   color: var(--he-text);
   font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+.he-cal-panel__row-details {
+  display: grid;
+  gap: var(--he-space-2);
+  padding: 0 var(--he-space-4) var(--he-space-3) calc(var(--he-space-5) + var(--he-space-4));
+  color: var(--he-text-dim);
+  font-size: var(--he-caption);
+}
+
+.he-cal-panel__row-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--he-space-2) var(--he-space-4);
+}
+
+.he-cal-panel__row-detail-item {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.he-cal-panel__row-detail-label {
+  color: var(--he-text-faint);
+}
+
+.he-cal-panel__row-detail-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--he-text-dim);
+}
+
+.he-cal-panel__row-detail-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
 }

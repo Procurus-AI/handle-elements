@@ -1,5 +1,5 @@
 {
-  "name": "@ponchodelosrios98/handle-elements",
+  "name": "@procurus-ai/handle-elements",
   "version": "0.1.0",
   "description": "Handle design system — brand tokens, fonts, and React components",
   "license": "UNLICENSED",
@@ -39,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ponchodelosrios98/handle-elements.git"
+    "url": "git+https://github.com/Procurus-AI/handle-elements.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
