@@ -62,21 +62,34 @@ export interface StatToggleGroupProps extends HTMLAttributes<HTMLDivElement> {
   label?: string;
   /** Wrap onto multiple rows instead of scrolling. */
   wrap?: boolean;
+  /**
+   * Lay tiles out in a uniform N-column grid (equal widths, aligned rows)
+   * instead of a flex row. Takes precedence over `wrap`.
+   */
+  columns?: number;
 }
 
 /** Row of StatToggles — a filter/segmented control of stat buckets. */
 export function StatToggleGroup({
   label,
   wrap = false,
+  columns,
   className,
   children,
+  style,
   ...rest
 }: StatToggleGroupProps) {
+  const isGrid = columns != null && columns > 0;
   return (
     <div
-      className={cx('he-stattoggle-group', wrap && 'he-stattoggle-group--wrap', className)}
+      className={cx(
+        'he-stattoggle-group',
+        isGrid ? 'he-stattoggle-group--grid' : wrap && 'he-stattoggle-group--wrap',
+        className,
+      )}
       role="group"
       aria-label={label}
+      style={isGrid ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, ...style } : style}
       {...rest}
     >
       {children}

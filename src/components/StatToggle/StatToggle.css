@@ -113,8 +113,18 @@
   overflow: visible;
 }
 
+/* Uniform grid — equal-width tiles that align into clean rows/columns. */
+.he-stattoggle-group--grid {
+  display: grid;
+  overflow: visible;
+}
+
 .he-stattoggle-group > .he-stattoggle {
   flex: 0 0 auto;
+}
+
+.he-stattoggle-group--grid > .he-stattoggle {
+  min-width: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

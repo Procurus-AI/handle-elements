@@ -5,7 +5,9 @@ export { Card, type CardProps, type CardStatus } from './components/Card/Card';
 export { Badge, type BadgeProps, type BadgeTone } from './components/Badge/Badge';
 export {
   StatCard,
+  StatCardGroup,
   type StatCardProps,
+  type StatCardGroupProps,
   type StatCardDeltaDirection,
   type StatCardSize,
   type StatCardVariant,
@@ -24,6 +26,7 @@ export {
   type ListItemProps,
   type ListVariant,
 } from './components/List/List';
+export { Panel, type PanelProps } from './components/Panel/Panel';
 export {
   PageHeader,
   type PageHeaderProps,

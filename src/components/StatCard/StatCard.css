@@ -15,6 +15,9 @@
   text-transform: uppercase;
   letter-spacing: var(--he-tracking-caps);
   color: var(--he-text-faint);
+  /* StatCardGroup sets this so labels reserve a shared height and values align.
+   * Standalone cards default to `auto` (no reservation). */
+  min-height: var(--he-stat-label-min-height, auto);
 }
 
 .he-stat__row {
@@ -84,6 +87,17 @@
 }
 
 .he-stat__footer {
+  /* Pin to the bottom so a row of equal-height cards (a KPI grid) aligns its
+   * footers regardless of how many lines the label/value take. No effect when
+   * the card is its intrinsic height. */
+  margin-top: auto;
   font-size: var(--he-body-sm);
   color: var(--he-text-dim);
+}
+
+/* Aligned grid of stat cards — see StatCardGroup. */
+.he-statcard-group {
+  display: grid;
+  gap: var(--he-space-4);
+  align-items: stretch;
 }

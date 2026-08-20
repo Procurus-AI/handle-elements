@@ -1,0 +1,16 @@
+/* Panel — Card + section PageHeader. The head lays the title block against an
+ * optional aside; the body follows below. Spacing via --he-* tokens only. */
+.he-panel__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--he-space-4);
+  margin-bottom: var(--he-space-5);
+}
+
+.he-panel__aside {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-3);
+  flex-shrink: 0;
+}
