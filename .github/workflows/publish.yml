@@ -1,0 +1,42 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@procurus-ai'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run check:tokens
+      - run: npm run build
+      - name: Pack sanity
+        run: |
+          npm pack --dry-run --json > pack.json
+          node -e "
+            const files = require('./pack.json')[0].files.map(f => f.path);
+            const need = ['dist/index.js','dist/index.cjs','dist/index.d.ts','dist/styles.css','dist/tokens.css','dist/fonts.css'];
+            const missing = need.filter(f => !files.includes(f));
+            const leaked = files.filter(f => /\.stories\.|^\.storybook\/|^src\//.test(f));
+            if (missing.length) { console.error('missing from tarball:', missing); process.exit(1); }
+            if (leaked.length) { console.error('leaked into tarball:', leaked); process.exit(1); }
+            console.log('tarball OK:', files.length, 'files');
+          "
+      - run: npm publish --registry=https://npm.pkg.github.com
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
