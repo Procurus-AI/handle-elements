@@ -12,18 +12,18 @@ Works unchanged in Next.js (App Router) and Vite apps, with or without Tailwind.
 The package is published to GitHub Packages. In the consuming repo, add to `.npmrc`:
 
 ```
-@ponchodelosrios98:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}
+@procurus-ai:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_PACKAGES_TOKEN}
 ```
 
 ```sh
-npm install @ponchodelosrios98/handle-elements
+npm install @procurus-ai/handle-elements
 ```
 
 Optionally alias to a friendlier name in `package.json`:
 
 ```json
-"@handle/elements": "npm:@ponchodelosrios98/handle-elements@^0.1.0"
+"@handle/elements": "npm:@procurus-ai/handle-elements@^0.1.0"
 ```
 
 ## Usage
@@ -31,14 +31,14 @@ Optionally alias to a friendlier name in `package.json`:
 Import the stylesheets once in the app root (e.g. `app/layout.tsx`):
 
 ```tsx
-import '@ponchodelosrios98/handle-elements/fonts.css';
-import '@ponchodelosrios98/handle-elements/styles.css';
+import '@procurus-ai/handle-elements/fonts.css';
+import '@procurus-ai/handle-elements/styles.css';
 ```
 
 Then use components anywhere:
 
 ```tsx
-import { PageHeader, StatCard, Button, StatusPill } from '@ponchodelosrios98/handle-elements';
+import { PageHeader, StatCard, Button, StatusPill } from '@procurus-ai/handle-elements';
 
 <PageHeader
   eyebrow="Operations"
@@ -53,7 +53,7 @@ import { PageHeader, StatCard, Button, StatusPill } from '@ponchodelosrios98/han
 - **Dark theme**: set `data-theme="dark"` on `<html>` (or `he-theme-dark` on a subtree).
   There is no provider and no JS involved.
 - **Tokens only** (e.g. Tailwind apps that just want the palette): import
-  `@ponchodelosrios98/handle-elements/tokens.css` and reference `var(--he-*)`.
+  `@procurus-ai/handle-elements/tokens.css` and reference `var(--he-*)`.
 
 ## Fonts
 
