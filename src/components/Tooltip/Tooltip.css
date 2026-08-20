@@ -1,0 +1,49 @@
+.he-tooltip-anchor,
+.he-hover-card-anchor {
+  display: inline-flex;
+}
+
+.he-tooltip,
+.he-hover-card {
+  position: fixed;
+  z-index: 1200;
+  font-family: var(--he-font-sans);
+  color: var(--he-text);
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-sm);
+  box-shadow: var(--he-shadow-lift);
+  animation: he-floating-in var(--he-transition-fast);
+}
+
+.he-tooltip {
+  max-width: 240px;
+  padding: var(--he-space-2) var(--he-space-3);
+  font-size: var(--he-caption);
+  line-height: 1.35;
+  color: var(--he-text-dim);
+}
+
+.he-hover-card {
+  padding: var(--he-space-4);
+  font-size: var(--he-body-sm);
+  line-height: 1.45;
+}
+
+@keyframes he-floating-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-tooltip,
+  .he-hover-card {
+    animation: none;
+  }
+}

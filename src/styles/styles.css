@@ -17,3 +17,14 @@
 @import '../components/DataTable/DataTable.css';
 @import '../components/Drawer/Drawer.css';
 @import '../components/Sidebar/Sidebar.css';
+@import '../components/Calendar/Calendar.css';
+@import '../components/Money/Money.css';
+@import '../components/Loading/Loading.css';
+@import '../components/Meter/Meter.css';
+@import '../components/EmptyState/EmptyState.css';
+@import '../components/DateText/DateText.css';
+@import '../components/Avatar/Avatar.css';
+@import '../components/Switch/Switch.css';
+@import '../components/Menu/Menu.css';
+@import '../components/Tooltip/Tooltip.css';
+@import '../components/Modal/Modal.css';

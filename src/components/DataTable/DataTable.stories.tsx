@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../Button/Button';
 import { Chip } from '../Chip/Chip';
+import { EmptyState } from '../EmptyState/EmptyState';
+import { Money } from '../Money/Money';
 import { StatusPill } from '../StatusPill/StatusPill';
 import { DataTable, type DataTableColumn } from './DataTable';
 
@@ -30,8 +32,6 @@ const ACCOUNTS: Account[] = [
   { name: 'Meridian Group', owner: 'A. Rivera', arr: 156000, stage: 'Proposal', status: 'ok' },
 ];
 
-const usd = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
-
 const columns: DataTableColumn<Account>[] = [
   { key: 'name', header: 'Account', sortable: true, render: (r) => <strong>{r.name}</strong> },
   { key: 'owner', header: 'Owner', sortable: true },
@@ -57,7 +57,7 @@ const columns: DataTableColumn<Account>[] = [
     sortable: true,
     align: 'end',
     width: '140px',
-    render: (r) => <span style={{ fontFamily: 'var(--he-font-mono)' }}>{usd(r.arr)}</span>,
+    render: (r) => <Money value={r.arr} currency="MXN" />,
   },
 ];
 
@@ -87,7 +87,13 @@ export const WithToolbar: Story = {
 };
 
 export const Empty: Story = {
-  render: () => <DataTable columns={columns} data={[]} emptyState="No accounts match your filters." />,
+  render: () => (
+    <DataTable
+      columns={columns}
+      data={[]}
+      emptyState={<EmptyState size="sm" title="No accounts match your filters." hint="Try a broader saved view." />}
+    />
+  ),
 };
 
 export const Plain: Story = {

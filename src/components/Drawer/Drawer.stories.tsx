@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { Button } from '../Button/Button';
+import { Money } from '../Money/Money';
 import { StatCard } from '../StatCard/StatCard';
 import { Drawer } from './Drawer';
 
@@ -37,10 +38,10 @@ export const Playground: Story = {
           }
         >
           <p style={{ marginTop: 0, color: 'var(--he-text-dim)' }}>
-            Slides in from the {args.side}. Press <kbd>Esc</kbd> or click the scrim to close.
+            Portfolio summary and pending actions for this account.
           </p>
           <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
-            <StatCard label="ARR" value="$210K" delta={{ value: '12%', direction: 'up' }} />
+            <StatCard label="ARR" value={<Money value={210000} currency="MXN" compact />} delta={{ value: '12%', direction: 'up' }} />
             <StatCard label="Open tasks" value="4" footer="2 due this week" />
           </div>
         </Drawer>
@@ -59,7 +60,7 @@ export const LeftNoTitle: Story = {
           Open filters
         </Button>
         <Drawer open={open} onClose={() => setOpen(false)} side="left" width="320px" ariaLabel="Filters">
-          <h3 style={{ marginTop: 0, fontFamily: 'var(--he-font-display)' }}>Filters</h3>
+          <h3 style={{ marginTop: 0, fontFamily: 'var(--he-font-sans)', fontSize: 'var(--he-body)' }}>Filters</h3>
           <p style={{ color: 'var(--he-text-dim)' }}>Panel content scrolls independently of the page.</p>
         </Drawer>
       </>

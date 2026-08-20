@@ -1,0 +1,30 @@
+.he-money {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--he-space-2);
+  font-family: var(--he-font-mono);
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  color: var(--he-text);
+}
+
+.he-money--muted,
+.he-money--empty {
+  color: var(--he-text-faint);
+}
+
+.he-money--positive {
+  color: var(--he-ok);
+}
+
+.he-money--negative {
+  color: var(--he-error);
+}
+
+.he-money__code {
+  font-family: var(--he-font-sans);
+  font-size: 0.75em;
+  font-weight: 500;
+  color: var(--he-text-faint);
+}

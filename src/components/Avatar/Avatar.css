@@ -1,0 +1,119 @@
+.he-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--he-avatar-size);
+  height: var(--he-avatar-size);
+  overflow: hidden;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-full);
+  background: var(--he-avatar-bg, var(--he-neutral-bg));
+  color: var(--he-avatar-color, var(--he-neutral));
+  font-family: var(--he-font-sans);
+  font-size: var(--he-avatar-font);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.he-avatar--xs {
+  --he-avatar-size: 22px;
+  --he-avatar-font: 10px;
+}
+
+.he-avatar--sm {
+  --he-avatar-size: 28px;
+  --he-avatar-font: 11px;
+}
+
+.he-avatar--md {
+  --he-avatar-size: 36px;
+  --he-avatar-font: var(--he-caption);
+}
+
+.he-avatar--lg {
+  --he-avatar-size: 48px;
+  --he-avatar-font: var(--he-body-sm);
+}
+
+.he-avatar--tone-0 {
+  --he-avatar-bg: var(--he-neutral-bg);
+  --he-avatar-color: var(--he-neutral);
+}
+
+.he-avatar--tone-1 {
+  --he-avatar-bg: var(--he-ok-bg);
+  --he-avatar-color: var(--he-ok);
+}
+
+.he-avatar--tone-2 {
+  --he-avatar-bg: var(--he-warn-bg);
+  --he-avatar-color: var(--he-warn);
+}
+
+.he-avatar--tone-3 {
+  --he-avatar-bg: var(--he-error-bg);
+  --he-avatar-color: var(--he-error);
+}
+
+.he-avatar--tone-4 {
+  --he-avatar-bg: var(--he-accent);
+  --he-avatar-color: var(--he-on-accent);
+}
+
+.he-avatar__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.he-avatar__initials {
+  transform: translateY(0.02em);
+}
+
+.he-avatar__status {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 28%;
+  height: 28%;
+  border: 2px solid var(--he-surface);
+  border-radius: var(--he-radius-full);
+  background: var(--he-neutral);
+}
+
+.he-avatar__status--online {
+  background: var(--he-ok);
+}
+
+.he-avatar__status--busy {
+  background: var(--he-warn);
+}
+
+.he-avatar__status--offline {
+  background: var(--he-neutral);
+}
+
+.he-avatar-stack {
+  display: inline-flex;
+  align-items: center;
+}
+
+.he-avatar-stack .he-avatar {
+  box-shadow: 0 0 0 2px var(--he-surface);
+}
+
+.he-avatar-stack .he-avatar + .he-avatar {
+  margin-left: calc(var(--he-avatar-size) * -0.32);
+}
+
+.he-avatar-stack--tight .he-avatar + .he-avatar {
+  margin-left: calc(var(--he-avatar-size) * -0.46);
+}
+
+.he-avatar--more {
+  background: var(--he-surface-2);
+  color: var(--he-text-dim);
+}

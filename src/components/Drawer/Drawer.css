@@ -43,15 +43,20 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--he-space-3);
-  padding: var(--he-space-4) var(--he-space-5);
+  min-height: 56px;
+  padding: var(--he-space-3) var(--he-space-5);
   border-bottom: 1px solid var(--he-border);
 }
 
 .he-drawer__title {
-  font-family: var(--he-font-display);
-  font-size: var(--he-heading);
-  font-weight: 500;
-  line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body);
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .he-drawer__close {
@@ -87,6 +92,8 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--he-space-5);
+  font-size: var(--he-body-sm);
+  line-height: 1.5;
 }
 
 .he-drawer__footer {

@@ -1,0 +1,421 @@
+/* Calendar — a full-width month grid in the Perplexity/Handle idiom: quiet
+ * hairline cells, a filled dark "today" chip, and colored status dots for the
+ * events on each day. All color/size values come from --he-* tokens. */
+.he-cal {
+  width: 100%;
+  font-family: var(--he-font-sans);
+  color: var(--he-text);
+}
+
+/* ---- header ---- */
+.he-cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--he-space-4);
+  margin-bottom: var(--he-space-4);
+  flex-wrap: wrap;
+}
+
+.he-cal__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-3);
+}
+
+.he-cal__title {
+  margin: 0;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-heading);
+  font-weight: 600;
+  color: var(--he-text);
+}
+
+.he-cal__today {
+  padding: 6px 14px;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-full);
+  background: var(--he-surface);
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--he-transition-fast), box-shadow var(--he-transition-fast);
+}
+
+.he-cal__today:hover {
+  background: var(--he-surface-2);
+  box-shadow: var(--he-shadow-card);
+}
+
+.he-cal__arrows {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-1);
+}
+
+.he-cal__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-full);
+  background: var(--he-surface);
+  color: var(--he-text-dim);
+  cursor: pointer;
+  transition: background var(--he-transition-fast), color var(--he-transition-fast);
+}
+
+.he-cal__arrow:hover {
+  background: var(--he-surface-2);
+  color: var(--he-text);
+}
+
+.he-cal__arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.he-cal__today:focus-visible,
+.he-cal__arrow:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+.he-cal__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-2);
+}
+
+/* ---- weekday header ---- */
+.he-cal__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  padding-bottom: var(--he-space-2);
+}
+
+.he-cal__weekday {
+  padding: 0 var(--he-space-3);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-caption);
+  font-weight: 600;
+  letter-spacing: var(--he-tracking-caps);
+  text-transform: uppercase;
+  color: var(--he-text-faint);
+}
+
+/* ---- month grid ---- */
+/* Hairlines come from the 1px gap over a border-colored track — no double borders. */
+.he-cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--he-border);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md);
+  overflow: hidden;
+}
+
+.he-cal__day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-2);
+  min-height: 104px;
+  padding: var(--he-space-2) var(--he-space-3);
+  border: 0;
+  background: var(--he-surface);
+  text-align: left;
+  font: inherit;
+  color: var(--he-text);
+  cursor: pointer;
+  transition: background var(--he-transition-fast);
+}
+
+.he-cal__day:hover {
+  background: var(--he-surface-2);
+}
+
+.he-cal__day:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+}
+
+.he-cal__day--selected {
+  background: var(--he-surface-2);
+}
+
+.he-cal__day--outside {
+  background: var(--he-bg);
+}
+
+.he-cal__day--outside .he-cal__daynum {
+  color: var(--he-text-faint);
+}
+
+.he-cal__day--blank {
+  background: var(--he-surface);
+  cursor: default;
+}
+
+.he-cal__daynum {
+  align-self: flex-start;
+  min-width: 20px;
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  color: var(--he-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* today — filled midnight chip, non-inverting in both themes */
+.he-cal__daynum--today {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: var(--he-radius-full);
+  background: var(--he-action);
+  color: var(--he-on-action);
+  font-weight: 600;
+}
+
+/* ---- day markers (dot + label) ---- */
+.he-cal__markers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-1);
+}
+
+.he-cal__marker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--he-caption);
+  line-height: 1.4;
+  color: var(--he-text-dim);
+}
+
+.he-cal__marker-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-radius-full);
+  flex-shrink: 0;
+}
+
+.he-cal__marker-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-cal__marker--ok .he-cal__marker-dot {
+  background: var(--he-ok);
+}
+.he-cal__marker--warn .he-cal__marker-dot {
+  background: var(--he-warn);
+}
+.he-cal__marker--error .he-cal__marker-dot {
+  background: var(--he-error);
+}
+.he-cal__marker--neutral .he-cal__marker-dot {
+  background: var(--he-text-faint);
+}
+.he-cal__marker--accent .he-cal__marker-dot {
+  background: var(--he-accent);
+}
+
+/* ---- day detail panel ---- */
+.he-cal-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 100%;
+  background: var(--he-surface);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md);
+  overflow: hidden;
+  font-family: var(--he-font-sans);
+  color: var(--he-text);
+}
+
+.he-cal-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--he-space-3);
+  padding: var(--he-space-4);
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-cal-panel__title {
+  margin: 0;
+  font-size: var(--he-body);
+  font-weight: 600;
+  color: var(--he-text);
+}
+
+.he-cal-panel__subtitle {
+  margin: 4px 0 0;
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+}
+
+.he-cal-panel__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--he-radius-full);
+  background: none;
+  color: var(--he-text-dim);
+  cursor: pointer;
+  transition: background var(--he-transition-fast), color var(--he-transition-fast);
+}
+
+.he-cal-panel__close:hover {
+  background: var(--he-surface-2);
+  color: var(--he-text);
+}
+
+.he-cal-panel__close:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+.he-cal-panel__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.he-cal-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--he-space-2) 0;
+}
+
+.he-cal-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--he-space-3);
+  padding: var(--he-space-3) var(--he-space-4);
+  border-top: 1px solid var(--he-border);
+}
+
+/* ---- panel rows ---- */
+.he-cal-panel__row {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  width: 100%;
+  padding: var(--he-space-3) var(--he-space-4);
+  border: 0;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: var(--he-text);
+  cursor: pointer;
+  transition: background var(--he-transition-fast);
+}
+
+.he-cal-panel__row:hover {
+  background: var(--he-surface-2);
+}
+
+.he-cal-panel__row:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+}
+
+.he-cal-panel__row-chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--he-text-faint);
+  transition: transform var(--he-transition-fast);
+}
+
+.he-cal-panel__row-chevron svg {
+  width: 14px;
+  height: 14px;
+}
+
+.he-cal-panel__row[aria-expanded='true'] .he-cal-panel__row-chevron {
+  transform: rotate(90deg);
+}
+
+.he-cal-panel__row-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--he-radius-full);
+  flex-shrink: 0;
+}
+
+.he-cal-panel__row-dot--ok {
+  background: var(--he-ok);
+}
+.he-cal-panel__row-dot--warn {
+  background: var(--he-warn);
+}
+.he-cal-panel__row-dot--error {
+  background: var(--he-error);
+}
+.he-cal-panel__row-dot--neutral {
+  background: var(--he-text-faint);
+}
+.he-cal-panel__row-dot--accent {
+  background: var(--he-accent);
+}
+
+.he-cal-panel__row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.he-cal-panel__row-title {
+  font-size: var(--he-body-sm);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-cal-panel__row-meta {
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+}
+
+.he-cal-panel__row-badge {
+  flex-shrink: 0;
+  min-width: 18px;
+  text-align: center;
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.he-cal-panel__row-amount {
+  flex-shrink: 0;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-body-sm);
+  color: var(--he-text);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
