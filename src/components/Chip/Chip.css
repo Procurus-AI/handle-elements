@@ -54,3 +54,62 @@
   );
   border: 1px solid var(--he-border);
 }
+
+/* An APPLIED filter, distinct from the neutral legend chip. The state is
+ * carried on INK — an ink border and ink label, Card's `selected` idiom — not
+ * on a surface swap. `background: var(--he-surface)` measured pixel-identical
+ * to its host in BOTH themes whenever the chip sits on a card (a DataTable
+ * toolbar, a Panel), so the applied chip had no fill at all while a neutral one
+ * did: in dark that inverted the hierarchy outright. Keeping
+ * --he-surface-2 means the chip separates from a --he-surface card AND from the
+ * --he-bg page. --he-accent stays reserved for Badge/StatusPill fills; a row of
+ * three green pills would shout louder than the data. */
+.he-chip--active {
+  background: var(--he-surface-2);
+  border-color: var(--he-text);
+  color: var(--he-text);
+}
+
+.he-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  margin: 0 -2px 0 0; /* pulls the × toward the pill's right edge, keeping the 5px gap optical */
+  padding: 0;
+  border: 0;
+  border-radius: var(--he-radius-full);
+  background: none;
+  color: var(--he-text-faint);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--he-transition-fast);
+}
+
+.he-chip__remove svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Color-only hover: --he-surface-2 -> --he-surface lifts in light but darkens
+ * in dark, so no fill change is the only treatment that obeys the house rule
+ * in both themes. */
+.he-chip__remove:hover {
+  color: var(--he-text);
+}
+
+.he-chip__remove:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 1px;
+}
+
+.he-chip--sm .he-chip__remove {
+  width: 12px;
+  height: 12px;
+}
+
+.he-chip--sm .he-chip__remove svg {
+  width: 9px;
+  height: 9px;
+}

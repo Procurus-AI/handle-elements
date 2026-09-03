@@ -10,7 +10,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const Box = ({ children }: { children?: React.ReactNode }) => (
-  <Card padding="md" status="neutral">
+  <Card padding="md">
     {children ?? 'Box'}
   </Card>
 );

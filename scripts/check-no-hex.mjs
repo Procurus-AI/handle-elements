@@ -14,7 +14,24 @@ const walk = (dir) => {
     else if (name.endsWith('.css')) {
       const lines = readFileSync(p, 'utf8').split('\n');
       lines.forEach((line, i) => {
-        if (/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/.test(line) && !line.includes('tokens-ok')) {
+        if (line.includes('tokens-ok')) return;
+        // Literal color syntaxes. `color-mix()` is allowed only when every one
+        // of its operands is a var(--he-*) — that is how component CSS derives
+        // a status hairline without introducing a raw value.
+        const literal = /#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(|(?:oklch|oklab|lab|lch|color|light-dark)\(/;
+        const mix = /color-mix\(/;
+        let bad = literal.test(line);
+        if (!bad && mix.test(line)) {
+          // strip `in <colorspace>` and percentages, then require var(--he-*) operands
+          const inner = line.slice(line.indexOf('color-mix(') + 10);
+          const operands = inner
+            .replace(/in\s+[\w-]+(\s+[\w-]+\s+hue)?\s*,/, '')
+            .split(',')
+            .map((s2) => s2.replace(/[\d.]+%/g, '').trim())
+            .filter(Boolean);
+          bad = operands.some((o) => !o.startsWith('var(--he-'));
+        }
+        if (bad) {
           offenders.push(`${path.relative(root, p)}:${i + 1}: ${line.trim()}`);
         }
       });

@@ -2,13 +2,18 @@
   display: flex;
   flex-direction: column;
   gap: var(--he-space-2);
-  padding: var(--he-space-4);
+  /* Container hook, mirroring --he-stat-label-min-height: a rail can retune the
+   * tile's density without a new prop. */
+  padding: var(--he-stat-pad, var(--he-space-4));
   background: var(--he-surface);
   border: 1px solid var(--he-border);
   border-radius: var(--he-radius-md);
 }
 
 .he-stat__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
   font-family: var(--he-font-mono);
   font-size: 10.5px;
   font-weight: 500;
@@ -23,10 +28,16 @@
 .he-stat__row {
   display: flex;
   align-items: baseline;
-  gap: var(--he-space-2);
+  /* A rail cell can be ~190px wide; let the unit/delta wrap under the value
+   * rather than overrun the neighbouring cell's hairline. */
+  flex-wrap: wrap;
+  gap: 0 var(--he-space-2);
 }
 
 .he-stat__value {
+  /* Flex items default to min-width:auto and refuse to shrink below their
+   * content — without this a long value can never wrap inside the row. */
+  min-width: 0;
   font-family: var(--he-font-display);
   font-weight: 400;
   font-size: var(--he-title);
@@ -95,9 +106,62 @@
   color: var(--he-text-dim);
 }
 
+/* Tone dot — StatusPill's 6px doctrine: 28px² of colour instead of a 180px² spine. */
+.he-stat__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-radius-full);
+  flex-shrink: 0;
+}
+
+.he-stat__dot--ok {
+  background: var(--he-ok);
+}
+.he-stat__dot--warn {
+  background: var(--he-warn);
+}
+.he-stat__dot--error {
+  background: var(--he-error);
+}
+.he-stat__dot--neutral {
+  background: var(--he-text-faint);
+}
+.he-stat__dot--accent {
+  background: var(--he-accent);
+  box-shadow: 0 0 0 1px var(--he-accent-line);
+}
+
+/* Visual slot — a Sparkline or Meter, between the value row and the footer. */
+.he-stat__visual {
+  display: block;
+  min-height: var(--he-stat-visual-min-height, auto);
+}
+
 /* Aligned grid of stat cards — see StatCardGroup. */
 .he-statcard-group {
   display: grid;
   gap: var(--he-space-4);
   align-items: stretch;
+}
+
+/* Rail — one bordered surface with interior hairlines. The 1px grid gap over a
+ * --he-border background IS the hairline, so it keeps working when auto-fit
+ * tracks wrap to a second row. */
+.he-statcard-group--rail {
+  gap: 1px;
+  background: var(--he-border);
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-md);
+  overflow: hidden;
+}
+
+/* Any child flattens automatically — a plain <StatCard> needs no variant="plain". */
+.he-statcard-group--rail > * {
+  background: var(--he-surface);
+  border: 0;
+  border-radius: 0;
+}
+
+.he-statcard-group--rail > .he-stat {
+  --he-stat-pad: var(--he-space-4) var(--he-space-5);
 }

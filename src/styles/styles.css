@@ -23,6 +23,7 @@
 @import '../components/Input/SearchInput.css';
 @import '../components/Composer/Composer.css';
 @import '../components/Toolbar/Toolbar.css';
+@import '../components/Pagination/Pagination.css';
 @import '../components/DataTable/DataTable.css';
 @import '../components/Drawer/Drawer.css';
 @import '../components/Sidebar/Sidebar.css';
@@ -48,3 +49,4 @@
 @import '../components/Histogram/Histogram.css';
 @import '../components/Treemap/Treemap.css';
 @import '../components/TrendGrid/TrendGrid.css';
+@import '../components/Timeline/Timeline.css';

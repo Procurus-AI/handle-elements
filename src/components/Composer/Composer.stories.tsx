@@ -14,16 +14,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const MicIcon = (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-    <rect x="5" y="1.5" width="4" height="7" rx="2" stroke="currentColor" strokeWidth="1.3" />
-    <path d="M2.8 6.5C2.8 8.9 4.7 10.6 7 10.6C9.3 10.6 11.2 8.9 11.2 6.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-    <path d="M7 10.6V12.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-  </svg>
-);
-
 export const Minimal: Story = {
-  render: (args) => <Composer {...args} onSubmit={() => {}} style={{ maxWidth: 640 }} />,
+  render: (args) => <Composer {...args} onSubmit={() => {}} maxWidth={640} />,
 };
 
 export const FullToolbar: Story = {
@@ -31,44 +23,78 @@ export const FullToolbar: Story = {
     const [mode, setMode] = useState('search');
     const [value, setValue] = useState('');
     return (
-      <div style={{ maxWidth: 720 }}>
-        <Composer
-          {...args}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          onSubmit={() => setValue('')}
-          submitDisabled={value.trim() === ''}
-          toolbarStart={
-            <>
-              <Button variant="ghost" size="icon-sm" aria-label="Attach">
-                +
-              </Button>
-              <Tabs
-                variant="pills"
-                size="sm"
-                items={[
-                  { value: 'search', label: 'Search' },
-                  { value: 'agent', label: 'Agent' },
-                ]}
-                value={mode}
-                onChange={setMode}
-              />
-            </>
-          }
-          toolbarEnd={
-            <>
-              <Select variant="ghost" size="sm" defaultValue="auto" aria-label="Model">
-                <option value="auto">Model</option>
-                <option value="fast">Fast</option>
-                <option value="thorough">Thorough</option>
-              </Select>
-              <Button variant="ghost" size="icon-sm" aria-label="Dictate">
-                {MicIcon}
-              </Button>
-            </>
-          }
-        />
-      </div>
+      <Composer
+        {...args}
+        maxWidth={720}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onSubmit={() => setValue('')}
+        submitDisabled={value.trim() === ''}
+        onMic={() => {}}
+        toolbarStart={
+          <>
+            <Button variant="ghost" size="icon-sm" aria-label="Attach">
+              +
+            </Button>
+            <Tabs
+              variant="pills"
+              size="sm"
+              items={[
+                { value: 'search', label: 'Search' },
+                { value: 'agent', label: 'Agent' },
+              ]}
+              value={mode}
+              onChange={setMode}
+            />
+          </>
+        }
+        toolbarEnd={
+          <Select variant="ghost" size="sm" defaultValue="auto" aria-label="Model">
+            <option value="auto">Model</option>
+            <option value="fast">Fast</option>
+            <option value="thorough">Thorough</option>
+          </Select>
+        }
+      />
     );
   },
+};
+
+/** The centered greeting composer: hero box, ghost arrow, component-owned chips. */
+export const Hero: Story = {
+  render: () => (
+    <Composer
+      size="lg"
+      align="center"
+      maxWidth={648}
+      placeholder="Ask your records…"
+      submitVariant="ghost"
+      onMic={() => {}}
+      onSubmit={() => {}}
+      suggestions={[
+        { id: 'exp30', label: 'Which policies expire in the next 30 days?', count: 270 },
+        { id: 'carrier', label: 'Premium by carrier' },
+        { id: 'active', label: 'Active policies and total premium' },
+      ]}
+      onSuggestionSelect={(s) => console.log(s.id)}
+    />
+  ),
+};
+
+/** Suggestions are data, not markup — counts, tones and disabled states included. */
+export const Suggestions: Story = {
+  render: (args) => (
+    <Composer
+      {...args}
+      align="start"
+      maxWidth={640}
+      onSubmit={() => {}}
+      suggestions={[
+        { id: 'exp30', label: 'Expiring in 30 days', count: 270 },
+        { id: 'claims', label: 'Open claims', count: 18, countTone: 'neutral' },
+        { id: 'draft', label: 'Draft a renewal email', disabled: true },
+      ]}
+      onSuggestionSelect={(s, i) => console.log(s.id, i)}
+    />
+  ),
 };

@@ -1,7 +1,12 @@
 .he-money {
   display: inline-flex;
   align-items: baseline;
-  gap: var(--he-space-2);
+  /* Wrap, and no row gap when it does: an inline-flex box neither wraps nor
+   * shrinks by default, so `$246.7M` + `MXN` would push past a narrow stat
+   * tile instead of dropping the code to a second line. Column gap only. */
+  flex-wrap: wrap;
+  gap: 0 var(--he-space-2);
+  min-width: 0;
   font-family: var(--he-font-mono);
   font-size: inherit;
   font-variant-numeric: tabular-nums;

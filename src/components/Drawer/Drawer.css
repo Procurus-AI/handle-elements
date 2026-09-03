@@ -5,7 +5,7 @@
   inset: 0;
   z-index: 1000;
   display: flex;
-  background: rgb(20 20 20 / 0.45); /* tokens-ok: scrim overlay, not a surface */
+  background: var(--he-scrim);
   animation: he-drawer-fade var(--he-transition-base);
 }
 

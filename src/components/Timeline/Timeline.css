@@ -1,0 +1,316 @@
+/* Timeline — events on a proportional time axis.
+ *
+ * Geometry arrives as component-scoped custom properties set inline by the TSX
+ * (--he-timeline-h / --he-timeline-lane-h / --he-timeline-marker-max), the same
+ * idiom as --he-columnchart-h and --he-heatmap-cell. Color is never inline:
+ * tone is a class that sets --he-timeline-mark. */
+
+.he-timeline {
+  --he-timeline-axis-h: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-3);
+  width: 100%;
+  font-family: var(--he-font-sans);
+  color: var(--he-chart-ink);
+}
+
+/* The shared tooltip anchor wraps the plot — it must not shrink-wrap it. */
+.he-timeline__tip-anchor {
+  display: block;
+}
+
+/* Reserve half a max-marker on each side so the first and last mark sit FULLY
+ * inside the axis (the old strip's last marker straddled the terminus). */
+.he-timeline__plot {
+  position: relative;
+  padding-inline: calc(var(--he-timeline-marker-max, 22px) / 2);
+}
+
+/* The field is the single coordinate box: bands, the now line, the ridge and
+ * every mark position as a percentage of it, so they can never drift apart. */
+.he-timeline__field {
+  position: relative;
+  height: var(--he-timeline-h, 96px);
+}
+
+/* ---- marks ---- */
+.he-timeline__mark {
+  /* Light theme: every mark fill is a dark/mid ink, so its count reads in the
+   * light action ink. The dark-theme block below flips this once, for all
+   * tones, because every fill lifts toward light there. */
+  --he-timeline-on-mark: var(--he-on-action);
+  position: absolute;
+  transform: translate(-50%, 50%); /* centered on the lane line, both axes */
+  padding: 0;
+  border-radius: var(--he-radius-full);
+  background: var(--he-timeline-mark, var(--he-chart-ink));
+  /* surface-colored halo so overlapping marks always separate visually */
+  border: 1.5px solid var(--he-surface);
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.he-timeline__mark--default {
+  --he-timeline-mark: var(--he-chart-ink);
+}
+
+.he-timeline__mark--ok {
+  --he-timeline-mark: var(--he-chart-pos);
+}
+
+.he-timeline__mark--warn {
+  --he-timeline-mark: var(--he-warn);
+}
+
+.he-timeline__mark--error {
+  --he-timeline-mark: var(--he-chart-neg);
+}
+
+.he-timeline__mark--neutral {
+  --he-timeline-mark: var(--he-neutral);
+}
+
+/* Borealis is 1.11:1 on --he-surface — legal as a fill, invisible as a mark.
+ * Ring it with the authored line token so it stays a mark, never text. */
+.he-timeline__mark--accent {
+  --he-timeline-mark: var(--he-accent);
+  /* Borealis is the one fill that does not invert, so its ink does not either. */
+  --he-timeline-on-mark: var(--he-on-accent);
+  border-color: var(--he-accent-line);
+  opacity: 1;
+}
+
+/* On Midnight every tone fill lifts toward light (ink becomes --he-white, ok/
+ * warn/error/neutral all become pastels), so the count ink flips to midnight.
+ * Without this the default mark is white-on-white: 1.00:1. */
+[data-theme='dark'] .he-timeline__mark,
+.he-theme-dark .he-timeline__mark {
+  --he-timeline-on-mark: var(--he-on-accent);
+}
+
+/* Count sits inside a 18–22px disc: --he-caption would not fit two digits, so
+ * the micro step is authored as a token rather than a bare px here. */
+.he-timeline__mark-count {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-micro);
+  line-height: 1;
+  color: var(--he-timeline-on-mark);
+}
+
+.he-timeline__mark--clickable {
+  cursor: pointer;
+  transition:
+    box-shadow var(--he-transition-fast),
+    opacity var(--he-transition-fast);
+}
+
+/* Hover lifts, never darkens. */
+.he-timeline__mark--clickable:hover {
+  box-shadow: var(--he-shadow-card);
+  opacity: 1;
+}
+
+.he-timeline__mark--clickable:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+/* ---- ridge ---- */
+.he-timeline__ridge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.he-timeline__ridge-fill {
+  fill: var(--he-chart-ink);
+  fill-opacity: 0.16;
+  stroke: none;
+}
+
+.he-timeline__ridge-line {
+  fill: none;
+  stroke: var(--he-chart-ink);
+  stroke-opacity: 0.5;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* --he-heat-0 equals --he-surface-2, so an empty bin would vanish on a
+ * surface-2 panel — the ridge always keeps a hairline baseline. */
+.he-timeline__ridge-base {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--he-chart-grid);
+}
+
+/* ---- bands ---- */
+.he-timeline__bands {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.he-timeline__band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--he-chart-track);
+  opacity: 0.55;
+  border-radius: var(--he-radius-sm);
+}
+
+.he-timeline__band--warn {
+  background: var(--he-warn-bg);
+  opacity: 1;
+}
+
+.he-timeline__band--error {
+  background: var(--he-error-bg);
+  opacity: 1;
+}
+
+.he-timeline__band--ok {
+  background: var(--he-ok-bg);
+  opacity: 1;
+}
+
+/* neutral is a declared TimelineBand tone — without its own rule it fell
+ * through to the base band and was pixel-identical to `default`. */
+.he-timeline__band--neutral {
+  background: var(--he-neutral-bg);
+  opacity: 1;
+}
+
+.he-timeline__band--accent {
+  background: var(--he-heat-1);
+  opacity: 1;
+}
+
+/* Zone labels sit in their own strip ABOVE the field. Inside it they would
+ * share the one lane row with the marks and be struck through by them, since
+ * the field is only as tall as the lanes actually used. */
+.he-timeline__band-label {
+  position: absolute;
+  bottom: calc(100% + var(--he-space-1));
+  left: 0;
+  white-space: nowrap;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+}
+
+/* Reserve the label strip so it cannot collide with whatever sits above. */
+.he-timeline--bandlabels .he-timeline__plot {
+  padding-top: calc(var(--he-caption) * 1.2 + var(--he-space-1));
+}
+
+/* ---- now line ---- */
+.he-timeline__now {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed var(--he-border-strong);
+}
+
+/* ---- axis: its own reserved band, so labels and marks never share pixels ---- */
+.he-timeline__axis {
+  position: relative;
+  height: var(--he-timeline-axis-h, 22px);
+}
+
+.he-timeline__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--he-chart-grid);
+}
+
+.he-timeline__tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.he-timeline__tick-stem {
+  width: 1px;
+  height: 4px;
+  background: var(--he-chart-axis);
+}
+
+/* Axis LABEL text uses --he-text-dim, not --he-chart-axis (= --he-text-faint,
+ * 2.83:1 on white) — axis labels are text and must clear AA. The faint token
+ * stays on the hairline stems, which are not text. */
+.he-timeline__tick-label {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  line-height: 1;
+  color: var(--he-text-dim);
+  white-space: nowrap;
+}
+
+.he-timeline__tick--major .he-timeline__tick-label {
+  color: var(--he-text);
+}
+
+/* ---- size legend (required whenever sizeBy='value') ---- */
+.he-timeline__legend {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-4);
+  flex-wrap: wrap;
+  padding-left: 2px;
+}
+
+.he-timeline__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
+}
+
+.he-timeline__legend-disc {
+  border-radius: var(--he-radius-full);
+  background: var(--he-chart-ink);
+  opacity: 0.85;
+  border: 1.5px solid var(--he-surface);
+  flex-shrink: 0;
+}
+
+.he-timeline__legend-label {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+}
+
+/* ---- screen-reader event list ---- */
+.he-timeline__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  list-style: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-timeline__mark--clickable {
+    transition: none;
+  }
+}

@@ -11,6 +11,14 @@
   display: none;
 }
 
+/* wrap — a second line beats a hidden fourth tab. Scrolling is off here, so
+ * overflow goes back to visible and focus rings are not clipped. */
+.he-tabs--wrap {
+  flex-wrap: wrap;
+  row-gap: var(--he-space-2);
+  overflow: visible;
+}
+
 .he-tab {
   display: inline-flex;
   align-items: center;
@@ -93,7 +101,42 @@
   box-shadow: var(--he-shadow-card);
 }
 
+/* ---- group divider ----
+ * Splits the strip into groups: a hairline, optionally captioned with a marker
+ * ("Beta"). Borealis is the marker's FILL — the caps text on it is midnight via
+ * --he-on-accent, never green-on-light. */
+.he-tabs__divider {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  flex: 0 0 auto;
+  /* Own the group's leading space so the rule does not crowd the previous pill. */
+  margin-inline-start: var(--he-space-2);
+}
+
+.he-tabs__rule {
+  width: 1px;
+  height: 18px;
+  flex: 0 0 auto;
+  background: var(--he-border);
+}
+
+/* Two classes so the caps treatment wins over .he-badge regardless of the order
+ * component stylesheets are imported in. */
+.he-badge.he-tabs__marker {
+  font-family: var(--he-font-mono);
+  font-size: 10px;
+  letter-spacing: var(--he-tracking-caps);
+  /* The tracking adds a trailing gap; pull it back so the pill stays centered. */
+  padding-inline: var(--he-space-2) calc(var(--he-space-2) - 1px);
+  text-transform: uppercase;
+}
+
 /* sm density */
+.he-tabs--sm .he-tabs__rule {
+  height: 16px;
+}
+
 .he-tabs--sm.he-tabs--underline {
   gap: var(--he-space-4);
 }

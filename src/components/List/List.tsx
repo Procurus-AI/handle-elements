@@ -9,21 +9,44 @@ import { cx } from '../../lib/cx';
 
 export type ListVariant = 'divided' | 'plain';
 
+export type ListSize = 'md' | 'sm';
+
+export type ListItemStatus = 'ok' | 'warn' | 'error' | 'accent' | 'neutral';
+
 export interface ListProps extends HTMLAttributes<HTMLUListElement> {
   /** `divided` (default) draws hairlines between rows; `plain` has none. */
   variant?: ListVariant;
   /** Tighter row padding. */
   dense?: boolean;
+  /** Row density. 'md' (default) is today's rhythm; 'sm' is the 36px compact row. */
+  size?: ListSize;
+  /** Reserve the leading gutter so rows WITHOUT a dot/rank still align with rows that have one. */
+  gutter?: boolean;
 }
 
 /**
  * Minimal list primitive — a `<ul>` of `ListItem`s. Covers ranked label→value
  * lists (reasons, opportunities, leaderboards) as well as plain rows.
  */
-export function List({ variant = 'divided', dense = false, className, children, ...rest }: ListProps) {
+export function List({
+  variant = 'divided',
+  dense = false,
+  size = 'md',
+  gutter = false,
+  className,
+  children,
+  ...rest
+}: ListProps) {
   return (
     <ul
-      className={cx('he-list', `he-list--${variant}`, dense && 'he-list--dense', className)}
+      className={cx(
+        'he-list',
+        `he-list--${variant}`,
+        dense && 'he-list--dense',
+        size === 'sm' && 'he-list--sm',
+        gutter && 'he-list--gutter',
+        className,
+      )}
       {...rest}
     >
       {children}
@@ -36,8 +59,12 @@ export interface ListItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'on
   leading?: ReactNode;
   /** Convenience: render a mono rank badge (e.g. 1, 2, 3) in the leading slot. */
   rank?: number;
+  /** Status dot in the leading slot. Ignored when `leading` or `rank` is set. */
+  status?: ListItemStatus;
   /** Primary label. Falls back to `children`. */
   primary?: ReactNode;
+  /** Inline metadata rendered on the SAME line as `primary` (mono, dim). */
+  meta?: ReactNode;
   /** Secondary line under the primary label. */
   secondary?: ReactNode;
   /** Trailing value, right-aligned and tabular (e.g. a count or amount). */
@@ -55,7 +82,9 @@ export interface ListItemProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'on
 export function ListItem({
   leading,
   rank,
+  status,
   primary,
+  meta,
   secondary,
   value,
   trailing,
@@ -69,13 +98,24 @@ export function ListItem({
   const interactive = href != null || typeof onSelect === 'function';
   const lead =
     leading ??
-    (rank != null ? <span className="he-list__rank">{rank}</span> : null);
+    (rank != null ? (
+      <span className="he-list__rank">{rank}</span>
+    ) : status != null ? (
+      <span className={cx('he-list__dot', `he-list__dot--${status}`)} aria-hidden />
+    ) : null);
 
   const inner = (
     <>
       {lead != null && <span className="he-list__leading">{lead}</span>}
       <span className="he-list__content">
-        <span className="he-list__primary">{primary ?? children}</span>
+        {meta != null ? (
+          <span className="he-list__line">
+            <span className="he-list__primary">{primary ?? children}</span>
+            <span className="he-list__meta">{meta}</span>
+          </span>
+        ) : (
+          <span className="he-list__primary">{primary ?? children}</span>
+        )}
         {secondary != null && <span className="he-list__secondary">{secondary}</span>}
       </span>
       {value != null && <span className="he-list__value">{value}</span>}
