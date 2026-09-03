@@ -3,6 +3,7 @@ import { cx } from '../../lib/cx';
 
 export type ChipVariant = 'default' | 'mono' | 'dot';
 export type ChipDotPattern = 'solid' | 'hatch';
+export type ChipTone = 'neutral' | 'active';
 
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: ChipVariant;
@@ -13,6 +14,12 @@ export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   size?: 'sm' | 'md';
   /** Strip the pill chrome (border/background/padding) — e.g. as a chart legend item. */
   plain?: boolean;
+  /** Render a trailing × button. The chip root stays a non-interactive <span>. */
+  onRemove?: () => void;
+  /** aria-label for the × button. Default 'Remove' — pass something specific, e.g. 'Remove filter: Ramo · Vida'. */
+  removeLabel?: string;
+  /** `active` marks an APPLIED filter, distinct from the neutral legend chip. */
+  tone?: ChipTone;
 }
 
 export function Chip({
@@ -21,6 +28,9 @@ export function Chip({
   dotPattern = 'solid',
   size = 'md',
   plain = false,
+  onRemove,
+  removeLabel,
+  tone = 'neutral',
   className,
   children,
   ...rest
@@ -33,6 +43,7 @@ export function Chip({
         `he-chip--${variant}`,
         size === 'sm' && 'he-chip--sm',
         plain && 'he-chip--plain',
+        tone === 'active' && 'he-chip--active',
         className,
       )}
       {...rest}
@@ -46,6 +57,19 @@ export function Chip({
         />
       )}
       {children}
+      {onRemove && (
+        // A child button, not an interactive root: the label must stay unclickable.
+        <button
+          type="button"
+          className="he-chip__remove"
+          aria-label={removeLabel ?? 'Remove'}
+          onClick={onRemove}
+        >
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+      )}
     </span>
   );
 }

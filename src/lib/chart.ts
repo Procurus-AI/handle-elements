@@ -282,3 +282,195 @@ export const heatColor = (intensity: number): string => {
   const bucket = clamp(Math.ceil(clamp(intensity, 0, 1) * 4), 0, 4);
   return `var(--he-heat-${bucket})`;
 };
+
+const DAY_MS = 86400000;
+const MONTH_MS = 30.44 * DAY_MS;
+const YEAR_MS = 365.25 * DAY_MS;
+
+export interface TimeTick {
+  /** epoch ms */
+  value: number;
+  label: string;
+  /** month/year boundary — rendered stronger than the rest */
+  major: boolean;
+}
+
+type TickStep = { kind: 'day' | 'month' | 'year'; n: number };
+
+/** Calendar step ladder, coarsest last. niceScale's 1/2/5×10ⁿ can't express days. */
+const TIME_STEPS: TickStep[] = [
+  { kind: 'day', n: 1 },
+  { kind: 'day', n: 2 },
+  { kind: 'day', n: 7 },
+  { kind: 'day', n: 14 },
+  { kind: 'month', n: 1 },
+  { kind: 'month', n: 3 },
+  { kind: 'month', n: 6 },
+  { kind: 'year', n: 1 },
+];
+
+const stepLength = ({ kind, n }: TickStep): number =>
+  n * (kind === 'day' ? DAY_MS : kind === 'month' ? MONTH_MS : YEAR_MS);
+
+const ceilToMultiple = (v: number, n: number): number => Math.ceil(v / n) * n;
+
+const dayLabel = (locale: string | undefined, value: number): string =>
+  new Intl.DateTimeFormat(locale, { timeZone: 'UTC', day: 'numeric', month: 'short' }).format(value);
+
+/**
+ * Calendar-aware axis ticks across an epoch-ms domain. Everything is computed in
+ * UTC so a server render and a client render agree, and nothing here is locale
+ * dependent beyond the label text.
+ */
+export function timeTicks(
+  start: number,
+  end: number,
+  targetCount = 6,
+  locale?: string,
+): TimeTick[] {
+  if (!(end > start)) return [{ value: start, label: dayLabel(locale, start), major: true }];
+
+  const span = end - start;
+  let step = TIME_STEPS.find((s) => span / stepLength(s) <= targetCount);
+  if (!step) {
+    step = { kind: 'year', n: Math.max(1, Math.ceil(span / (targetCount * YEAR_MS))) };
+  }
+  const { kind, n } = step;
+
+  const values: number[] = [];
+  if (kind === 'day') {
+    const size = n * DAY_MS;
+    for (let t = Math.ceil(start / size) * size; t <= end && values.length < 500; t += size) {
+      values.push(t);
+    }
+  } else if (kind === 'month') {
+    const d = new Date(start);
+    const y = d.getUTCFullYear();
+    let m = ceilToMultiple(d.getUTCMonth(), n);
+    while (Date.UTC(y, m, 1) < start) m += n;
+    for (let t = Date.UTC(y, m, 1); t <= end && values.length < 500; t = Date.UTC(y, (m += n), 1)) {
+      values.push(t);
+    }
+  } else {
+    let y = ceilToMultiple(new Date(start).getUTCFullYear(), n);
+    while (Date.UTC(y, 0, 1) < start) y += n;
+    for (let t = Date.UTC(y, 0, 1); t <= end && values.length < 500; t = Date.UTC((y += n), 0, 1)) {
+      values.push(t);
+    }
+  }
+
+  const monthFmt = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', month: 'short' });
+  const monthYearFmt = new Intl.DateTimeFormat(locale, {
+    timeZone: 'UTC',
+    month: 'short',
+    year: 'numeric',
+  });
+  const yearFmt = new Intl.DateTimeFormat(locale, { timeZone: 'UTC', year: 'numeric' });
+
+  return values.map((value) => {
+    const d = new Date(value);
+    if (kind === 'day') {
+      return { value, label: dayLabel(locale, value), major: d.getUTCDate() === 1 };
+    }
+    if (kind === 'month') {
+      const january = d.getUTCMonth() === 0;
+      return {
+        value,
+        label: (january ? monthYearFmt : monthFmt).format(value),
+        major: january,
+      };
+    }
+    return { value, label: yearFmt.format(value), major: true };
+  });
+}
+
+export interface LaneCandidate {
+  /** normalized position 0..1 */
+  t: number;
+  /** half-width in the SAME normalized units */
+  halfWidth: number;
+}
+
+export interface PackLanesOptions {
+  /** normalized minimum gap between neighbours in a lane. Default 0.006 */
+  minGap?: number;
+  /** Default 4 */
+  maxLanes?: number;
+}
+
+export interface PackLanesResult {
+  /** lane index per item, in ORIGINAL input order */
+  lanes: number[];
+  /** highest lane index used + 1 */
+  laneCount: number;
+  /** true when maxLanes was exhausted and items had to be force-placed */
+  overflow: boolean;
+}
+
+/**
+ * Greedy first-fit lane assignment for items competing for the same axis.
+ * Inputs are normalized (0..1) so the result is resolution-independent: the
+ * layout is identical on the server, on hydration, and after any resize.
+ */
+export function packLanes(
+  items: readonly LaneCandidate[],
+  options?: PackLanesOptions,
+): PackLanesResult {
+  const { minGap = 0.006, maxLanes = 4 } = options ?? {};
+  const order = items
+    .map((_, i) => i)
+    .sort((a, b) => items[a].t - items[b].t || a - b);
+
+  const laneRight: number[] = [];
+  const lanes: number[] = new Array(items.length).fill(0);
+  let overflow = false;
+
+  for (const i of order) {
+    const left = items[i].t - items[i].halfWidth;
+    let lane = laneRight.findIndex((right) => right <= left);
+    if (lane === -1 && laneRight.length < maxLanes) {
+      lane = laneRight.length;
+      laneRight.push(-Infinity);
+    }
+    if (lane === -1) {
+      overflow = true;
+      lane = laneRight.reduce((best, right, l) => (right < laneRight[best] ? l : best), 0);
+    }
+    laneRight[lane] = items[i].t + items[i].halfWidth + minGap;
+    lanes[i] = lane;
+  }
+
+  return { lanes, laneCount: laneRight.length, overflow };
+}
+
+/**
+ * Group items whose positions fall within `threshold` of the group's anchor.
+ * Single pass over the sorted list — deterministic, and stable for equal keys.
+ */
+export function clusterByProximity<T>(
+  items: readonly T[],
+  getT: (item: T) => number,
+  threshold: number,
+): T[][] {
+  if (items.length === 0) return [];
+  const sorted = items
+    .map((item, i) => ({ item, i }))
+    .sort((a, b) => getT(a.item) - getT(b.item) || a.i - b.i)
+    .map((n) => n.item);
+
+  const groups: T[][] = [];
+  let current: T[] = [sorted[0]];
+  let anchor = getT(sorted[0]);
+  for (let i = 1; i < sorted.length; i++) {
+    const t = getT(sorted[i]);
+    if (t - anchor <= threshold) {
+      current.push(sorted[i]);
+    } else {
+      groups.push(current);
+      current = [sorted[i]];
+      anchor = t;
+    }
+  }
+  groups.push(current);
+  return groups;
+}

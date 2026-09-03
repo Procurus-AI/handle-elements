@@ -24,13 +24,24 @@
   --he-surface-2: var(--he-gray-light);
   --he-text: var(--he-midnight);
   --he-text-dim: #5c6068;
-  --he-text-faint: #9b9a98;
+  /* Faint is a TEXT token, so it must clear WCAG AA (4.5:1). The old #9b9a98
+   * measured 2.81:1 on --he-surface, which is why individual components had
+   * begun opting out of it one at a time (chart axis labels, table trailing
+   * text). Measured now: 4.86:1 on --he-surface, 4.65:1 on --he-bg. The tier
+   * below --he-text-dim is carried by size/case/family (10.5px uppercase mono),
+   * not by a lightness that costs legibility. */
+  --he-text-faint: #737170;
   --he-border: #e4e3e0;
   --he-border-strong: var(--he-sandstone);
 
   /* ---- accent (Borealis) ---- */
   --he-accent: var(--he-borealis);
   --he-on-accent: var(--he-midnight);
+  /* Hairline green: Borealis is 1.11:1 on --he-surface, so it is invisible as a 1px line.
+   * Authored per theme (it cannot be derived — mixing toward the border only fades it).
+   * Lines/rings/outlines only, never text. Measured 3.14:1 on --he-surface and
+   * 3.04:1 on --he-bg, so it clears the WCAG 1.4.11 non-text bar on both. */
+  --he-accent-line: #6f8f28;
 
   /* ---- action: non-inverting dark pill (same in both themes) ---- */
   --he-action: var(--he-midnight);
@@ -89,6 +100,8 @@
   --he-body: 15px;
   --he-body-sm: 13px;
   --he-caption: 11.5px;
+  /* Smallest legible step: numerals inside a mark/disc, never running text. */
+  --he-micro: 9px;
   --he-tracking-caps: 0.14em;
 
   /* ---- spacing ---- */
@@ -107,6 +120,12 @@
   --he-radius-lg: 16px;
   --he-radius-full: 999px;
 
+  /* ---- scrim (modal / drawer backdrops) ----
+   * Authored per theme: on Midnight a veil has to be heavier to separate the
+   * lighter surface from the page behind it. */
+  --he-scrim: rgb(20 20 20 / 0.45);
+  --he-scrim-soft: rgb(20 20 20 / 0.34);
+
   /* ---- elevation (hover lifts, never darkens) ---- */
   --he-shadow-card: 0 1px 2px rgb(20 20 20 / 0.05), 0 1px 3px rgb(20 20 20 / 0.04);
   --he-shadow-lift: 0 10px 28px rgb(20 20 20 / 0.1), 0 3px 8px rgb(20 20 20 / 0.05);
@@ -123,12 +142,15 @@
   --he-surface-2: #212633;
   --he-text: var(--he-white);
   --he-text-dim: #a8abb3;
-  --he-text-faint: #6a6f7a;
+  /* AA counterpart of the light value: 4.70:1 on --he-surface (was 3.34:1). */
+  --he-text-faint: #838894;
   --he-border: #2a2f3d;
   --he-border-strong: #3a4050;
 
   --he-accent: var(--he-borealis);
   --he-on-accent: var(--he-midnight);
+  /* hairline green lifts on Midnight (matches --he-heat-4) */
+  --he-accent-line: #a7d24e;
 
   /* action stays dark (non-inverting); hover moves lighter, border separates from bg */
   --he-action: var(--he-midnight);
@@ -167,6 +189,9 @@
   --he-heat-2: #45592f;
   --he-heat-3: #6d8b3a;
   --he-heat-4: #a7d24e;
+
+  --he-scrim: rgb(0 0 0 / 0.62);
+  --he-scrim-soft: rgb(0 0 0 / 0.5);
 
   --he-shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
   --he-shadow-lift: 0 12px 30px rgb(0 0 0 / 0.5), 0 3px 8px rgb(0 0 0 / 0.35);

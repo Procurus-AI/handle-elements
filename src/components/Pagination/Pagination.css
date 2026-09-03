@@ -1,0 +1,101 @@
+/* Pagination — the footer of a record index: range readout, rows-per-page and
+ * prev/next arrows. Carries no padding of its own (like .he-toolbar) so the
+ * host slot — e.g. DataTable's footer — owns the inset and the numbers line up
+ * with the first column. All color/size values come from --he-* tokens. */
+.he-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* survives a narrow container */
+  gap: var(--he-space-3);
+  width: 100%;
+  font-family: var(--he-font-sans);
+}
+
+/* Same type recipe as .he-toolbar__count so the control row and the footer
+ * print their numbers in one voice. --he-text-faint is now an AA token
+ * (measured 4.86:1 on --he-surface, 4.65:1 on --he-bg); before that it was
+ * 2.81:1 and this readout — which is also the aria-live region — was the least
+ * legible text on the page. */
+.he-pagination__range,
+.he-pagination__page {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  color: var(--he-text-faint);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.he-pagination__page {
+  min-width: 4.5em; /* stops the arrows shifting as the page number grows */
+  text-align: center;
+}
+
+.he-pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  margin-left: auto;
+}
+
+.he-pagination--compact .he-pagination__controls {
+  margin-left: 0;
+}
+
+.he-pagination--compact {
+  justify-content: center;
+}
+
+/* Arrow geometry matches the Calendar header (28px round, hairline border).
+ * The hover DIFFERS on purpose: Calendar fills to --he-surface-2, which darkens
+ * in light theme. This lifts instead — stronger border + card shadow, no fill
+ * change — per the house rule. Do not "align" it back to Calendar. */
+.he-pagination__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-full);
+  background: var(--he-surface);
+  color: var(--he-text-dim);
+  cursor: pointer;
+  transition:
+    color var(--he-transition-fast),
+    border-color var(--he-transition-fast),
+    box-shadow var(--he-transition-fast);
+}
+
+.he-pagination__arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.he-pagination__arrow:hover:not(:disabled) {
+  color: var(--he-text);
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-card);
+}
+
+.he-pagination__arrow:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+.he-pagination__arrow:disabled {
+  color: var(--he-text-faint);
+  cursor: default;
+  opacity: 0.55;
+}
+
+.he-pagination--dense .he-pagination__arrow {
+  width: 25px;
+  height: 25px;
+}
+
+.he-pagination--dense .he-pagination__arrow svg {
+  width: 14px;
+  height: 14px;
+}

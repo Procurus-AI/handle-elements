@@ -32,11 +32,62 @@
   font-size: var(--he-body-sm);
 }
 
+/* Hero — the centered greeting. Gives --he-display-1 its first component home;
+ * clamps down to --he-display-2 on narrow viewports. */
+.he-pagehead--hero {
+  align-items: center;
+  gap: var(--he-space-4);
+  padding-block-start: var(--he-space-7);
+  padding-bottom: 0;
+  margin-bottom: var(--he-space-6);
+  border-bottom: none;
+}
+
+.he-pagehead--hero .he-pagehead__title {
+  font-size: clamp(var(--he-display-2), 4.6vw, var(--he-display-1));
+  line-height: 1.02;
+}
+
+/* Divider decoupled from the type scale, and switchable in BOTH directions for
+ * every size — these two follow the size rules above so they always win. */
+.he-pagehead--divider {
+  padding-bottom: var(--he-space-5);
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-pagehead--nodivider {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Centered variant — one column, optical center shared by title, subtitle and aside. */
+.he-pagehead--center {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
+.he-pagehead--center .he-pagehead__main {
+  flex: 0 1 auto;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.he-pagehead--center .he-pagehead__aside {
+  flex-shrink: 1;
+  width: 100%;
+  justify-content: center;
+  margin-top: var(--he-space-5);
+}
+
 .he-pagehead__main {
   min-width: 0;
   /* Grow to fill the row so the lede spans the full width (Perplexity-style)
    * instead of collapsing to its intrinsic width beside the aside. */
   flex: 1 1 auto;
+  /* Optional measure cap (mirrors Container's --he-container-max). */
+  max-width: var(--he-pagehead-measure, none);
 }
 
 .he-pagehead__eyebrow {
@@ -64,6 +115,24 @@
   font-size: var(--he-body);
   line-height: 1.55;
   color: var(--he-text-dim);
+}
+
+/* Subtitle — the dim date/context line. Smaller and tighter than `lede`. */
+.he-pagehead__subtitle {
+  margin: var(--he-space-3) 0 0;
+  font-size: var(--he-body-sm);
+  line-height: 1.4;
+  color: var(--he-text-dim);
+}
+
+.he-pagehead--section .he-pagehead__subtitle {
+  margin-top: var(--he-space-2);
+  font-size: var(--he-caption);
+}
+
+/* When both are present the lede tightens up under the subtitle. */
+.he-pagehead__subtitle + .he-pagehead__lede {
+  margin-top: var(--he-space-2);
 }
 
 .he-pagehead__aside {

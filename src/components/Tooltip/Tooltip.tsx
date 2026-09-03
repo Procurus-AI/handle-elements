@@ -154,7 +154,11 @@ export function Tooltip({
       >
         {children}
       </span>
+      {/* A shared anchor (charts hand one Tooltip the whole plot) can be hovered
+        * with nothing under the cursor — never portal an empty bubble. */}
       {floating.open &&
+        content != null &&
+        content !== false &&
         isBrowser() &&
         createPortal(
           <div

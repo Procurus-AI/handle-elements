@@ -3,6 +3,8 @@ import { cx } from '../../lib/cx';
 
 export type CardStatus = 'ok' | 'warn' | 'error' | 'accent' | 'neutral';
 
+export type CardStatusVariant = 'edge' | 'spine' | 'none';
+
 export interface CardProps extends HTMLAttributes<HTMLElement> {
   /** Rendered element — use 'a' (with href via rest props) for link cards. */
   as?: 'div' | 'article' | 'section' | 'a';
@@ -10,8 +12,16 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
   clickable?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   href?: string;
-  /** Status accent spine down the left edge (health/attention states). */
+  /** Status of the thing the card represents (health/attention states). */
   status?: CardStatus;
+  /**
+   * How `status` is painted. 'edge' (default) recolors the card's OWN 1px border
+   * to a desaturated status line — zero added geometry, radius respected by
+   * construction. 'spine' draws a small inset rounded tick at the left edge.
+   * 'none' paints nothing but still exposes `data-status` + --he-card-status so a
+   * child dot/pill can carry the meaning.
+   */
+  statusVariant?: CardStatusVariant;
   /** Selected state — ink border, for pickable cards. */
   selected?: boolean;
 }
@@ -21,6 +31,7 @@ export function Card({
   clickable = false,
   padding = 'md',
   status,
+  statusVariant = 'edge',
   selected = false,
   className,
   ...rest
@@ -31,9 +42,11 @@ export function Card({
       clickable && 'he-card--clickable',
       `he-card--pad-${padding}`,
       status && `he-card--status-${status}`,
+      status && `he-card--statusvar-${statusVariant}`,
       selected && 'he-card--selected',
       className,
     ),
+    ...(status ? { 'data-status': status } : {}),
     ...rest,
   });
 }

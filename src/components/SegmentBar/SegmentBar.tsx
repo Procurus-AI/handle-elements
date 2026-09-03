@@ -38,6 +38,15 @@ export interface SegmentBarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'c
   formatValue?: (value: number) => ReactNode;
   /** Show the percent-of-total column in the legend. */
   showPercent?: boolean;
+  /**
+   * Track min-width for the legend's auto-fit columns. The legend is one row
+   * per segment by default (`'100%'`), which is right in a narrow card but
+   * costs ~28px of height per segment and, across a full-width host, strands a
+   * label metres from its own number. Give it a value (e.g. `'220px'`) and the
+   * legend flows into as many columns as fit, so a five-part bar reads as one
+   * line under a wide bar and reflows to two or three as the host narrows.
+   */
+  legendMinWidth?: string;
   /** Hairline separators between adjacent segments (track shows through). */
   gap?: boolean;
   /** Describes the whole bar for assistive tech (root is role="img"). */
@@ -75,6 +84,7 @@ export function SegmentBar({
   showLegend = true,
   formatValue = defaultFormat,
   showPercent = true,
+  legendMinWidth,
   gap = true,
   className,
   role = 'img',
@@ -126,7 +136,14 @@ export function SegmentBar({
       </div>
 
       {showLegend && (
-        <ul className="he-segmentbar__legend">
+        <ul
+          className="he-segmentbar__legend"
+          style={
+            legendMinWidth
+              ? ({ '--he-segmentbar-legend-min': legendMinWidth } as CSSProperties)
+              : undefined
+          }
+        >
           {segments.map((seg, i) => {
             const value = values[i];
             const color = toneColor(seg.tone, i, seg.colorIndex);

@@ -1,7 +1,18 @@
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/Button/Button';
-export { Chip, type ChipProps, type ChipVariant, type ChipDotPattern } from './components/Chip/Chip';
+export {
+  Chip,
+  type ChipProps,
+  type ChipVariant,
+  type ChipDotPattern,
+  type ChipTone,
+} from './components/Chip/Chip';
 export { StatusPill, type StatusPillProps, type StatusPillStatus } from './components/StatusPill/StatusPill';
-export { Card, type CardProps, type CardStatus } from './components/Card/Card';
+export {
+  Card,
+  type CardProps,
+  type CardStatus,
+  type CardStatusVariant,
+} from './components/Card/Card';
 export { Badge, type BadgeProps, type BadgeTone } from './components/Badge/Badge';
 export {
   StatCard,
@@ -11,6 +22,8 @@ export {
   type StatCardDeltaDirection,
   type StatCardSize,
   type StatCardVariant,
+  type StatCardTone,
+  type StatCardGroupVariant,
 } from './components/StatCard/StatCard';
 export {
   StatToggle,
@@ -25,6 +38,8 @@ export {
   type ListProps,
   type ListItemProps,
   type ListVariant,
+  type ListSize,
+  type ListItemStatus,
 } from './components/List/List';
 export { Panel, type PanelProps } from './components/Panel/Panel';
 export {
@@ -43,6 +58,7 @@ export {
   PageHeader,
   type PageHeaderProps,
   type PageHeaderSize,
+  type PageHeaderAlign,
 } from './components/PageHeader/PageHeader';
 export { Tabs, type TabsProps, type TabsVariant, type TabItem } from './components/Tabs/Tabs';
 export { Input, type InputProps, type InputVariant } from './components/Input/Input';
@@ -57,7 +73,21 @@ export {
   type ToolbarGroupProps,
   type ResultCountProps,
 } from './components/Toolbar/Toolbar';
-export { Composer, type ComposerProps } from './components/Composer/Composer';
+export {
+  Pagination,
+  pageRange,
+  type PaginationProps,
+  type PaginationLabels,
+  type PageRange,
+} from './components/Pagination/Pagination';
+export {
+  Composer,
+  type ComposerProps,
+  type ComposerSuggestion,
+  type ComposerAlign,
+  type ComposerSize,
+  type ComposerSubmitVariant,
+} from './components/Composer/Composer';
 export {
   DataTable,
   TableCell,
@@ -67,6 +97,8 @@ export {
   type DataTableSort,
   type SortDirection,
   type TableCellProps,
+  type DataTableLayout,
+  type DataTableNulls,
 } from './components/DataTable/DataTable';
 export { Drawer, type DrawerProps, type DrawerSide } from './components/Drawer/Drawer';
 export {
@@ -208,5 +240,15 @@ export {
   type TrendGridProps,
   type TrendGridItem,
 } from './components/TrendGrid/TrendGrid';
+export {
+  Timeline,
+  type TimelineProps,
+  type TimelineEvent,
+  type TimelineBand,
+  type TimelineMark,
+  type TimelineTone,
+  type TimelineVariant,
+  type TimelineClusterMode,
+} from './components/Timeline/Timeline';
 export * as chart from './lib/chart';
 export { cx } from './lib/cx';

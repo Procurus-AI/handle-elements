@@ -37,36 +37,89 @@
   outline-offset: 2px;
 }
 
-/* ---- status spine ---- */
-.he-card[class*='he-card--status-'] {
-  position: relative;
-}
-
-.he-card[class*='he-card--status-']::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  border-radius: var(--he-radius-md) 0 0 var(--he-radius-md);
-  background: var(--he-card-spine, var(--he-neutral));
-}
-
+/* ---- status ----
+ * Status is carried by the card's own border (`edge`, default) so it can never
+ * detach from the 12px corner arc and adds no ink. `--he-card-line` mixes the
+ * status color 90% into the border hairline; both operands are tokens, so it
+ * re-resolves correctly under [data-theme='dark'] with no second authoring
+ * pass. 90% and not less: measured on light, a 45% mix landed at 1.73-1.86:1
+ * against a plain --he-border card, i.e. a status card looked identical to
+ * statusVariant="none". At 90% every status clears 3:1 against the card
+ * surface, the page background AND the plain hairline (light 4.21-4.96:1 vs
+ * --he-surface, 3.28-3.86:1 vs --he-border), and the four hues stay far enough
+ * apart in lightness to be told from one another. Borealis is the exception —
+ * mixing it toward the border makes it vanish on white, so accent uses the
+ * authored --he-accent-line.
+ *
+ * `--he-card-spine` is the paint for the `spine` variant and defaults to the
+ * full-strength status color: a 2px tick sits ON the surface, so unlike the
+ * hairline it does not need mixing. Accent overrides it for the same reason it
+ * overrides the edge — raw Borealis is 1.11:1 on --he-surface and would draw an
+ * invisible spine. Override either custom property to repaint a single card. */
 .he-card--status-ok {
+  --he-card-status: var(--he-ok);
+  --he-card-line: color-mix(in oklab, var(--he-ok) 90%, var(--he-border));
   --he-card-spine: var(--he-ok);
 }
 .he-card--status-warn {
+  --he-card-status: var(--he-warn);
+  --he-card-line: color-mix(in oklab, var(--he-warn) 90%, var(--he-border));
   --he-card-spine: var(--he-warn);
 }
 .he-card--status-error {
+  --he-card-status: var(--he-error);
+  --he-card-line: color-mix(in oklab, var(--he-error) 90%, var(--he-border));
   --he-card-spine: var(--he-error);
 }
-.he-card--status-accent {
-  --he-card-spine: var(--he-accent);
-}
 .he-card--status-neutral {
+  --he-card-status: var(--he-neutral);
+  --he-card-line: color-mix(in oklab, var(--he-neutral) 90%, var(--he-border));
   --he-card-spine: var(--he-neutral);
 }
+.he-card--status-accent {
+  --he-card-status: var(--he-accent);
+  --he-card-line: var(--he-accent-line);
+  --he-card-spine: var(--he-accent-line);
+}
+
+/* edge — recolor the border. No new box, no radius math, no padding shift. */
+.he-card--statusvar-edge {
+  border-color: var(--he-card-line);
+}
+
+/* Hover still LIFTS: the edge keeps its status color and gains the card shadow. */
+.he-card--statusvar-edge.he-card--clickable:hover {
+  border-color: var(--he-card-line);
+  box-shadow: var(--he-shadow-card);
+}
+
+/* spine — opt-in. Vertically inset 2px rounded tick, the same idiom List already
+ * uses for its active row, so the system has one spine geometry instead of three. */
+.he-card--statusvar-spine {
+  position: relative;
+}
+
+.he-card--statusvar-spine::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--he-space-3);
+  bottom: var(--he-space-3);
+  width: 2px;
+  border-radius: var(--he-radius-full);
+  background: var(--he-card-spine, var(--he-card-status, var(--he-neutral)));
+}
+
+/* none — paints nothing; data-status and --he-card-status stay available. */
 
 .he-card--selected {
   border-color: var(--he-text);
+}
+
+/* Selection outranks BOTH hover rules above (same specificity, declared later):
+ * pointing at a selected card must not revert its ink border to the status edge
+ * or to --he-border-strong. The lift still happens. */
+.he-card--selected.he-card--clickable:hover {
+  border-color: var(--he-text);
+  box-shadow: var(--he-shadow-card);
 }

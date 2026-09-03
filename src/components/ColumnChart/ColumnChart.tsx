@@ -11,6 +11,8 @@ export interface ColumnDatum {
   label: ReactNode;
   /** One value per series; `values[k]` is series k. */
   values: number[];
+  /** Per-column tone override — wins over the series tone. */
+  tone?: ColumnTone;
 }
 
 export interface ColumnSeries {
@@ -47,6 +49,19 @@ export interface ColumnChartProps extends Omit<HTMLAttributes<HTMLDivElement>, '
   barGap?: number;
   /** Gap between column groups, in px. */
   groupGap?: number;
+  /** Accent this column index (wins over `datum.tone` and the series tone). */
+  highlightIndex?: number;
+  /** Fade the non-highlighted columns. */
+  dimOthers?: boolean;
+  /** Print one mono value label above each column. No-op for grouped multi-series. */
+  showValues?: boolean;
+  /** Max bar width in px. Defaults to the 22px cap; pass ~56 for a wide 12-month block. */
+  barMaxWidth?: number;
+  /** Draw an explicit axis rule under the plot even when `showGrid` is false. */
+  showBaseline?: boolean;
+  /** Promote each column to a <button>. */
+  onSelectColumn?: (datum: ColumnDatum, index: number) => void;
+  selectedIndex?: number;
 }
 
 const toneVar: Record<Exclude<ColumnTone, 'series'>, string> = {
@@ -80,9 +95,16 @@ export function ColumnChart({
   formatValue = defaultFormat,
   barGap = 4,
   groupGap = 14,
+  highlightIndex,
+  dimOthers = false,
+  showValues = false,
+  barMaxWidth,
+  showBaseline = false,
+  onSelectColumn,
+  selectedIndex,
   className,
   style,
-  role = 'img',
+  role,
   'aria-label': ariaLabel,
   ...rest
 }: ColumnChartProps) {
@@ -107,6 +129,12 @@ export function ColumnChart({
 
   const legendOn = showLegend ?? seriesCount > 1;
 
+  // Tone resolution per bar: highlight wins, then the datum, then the series.
+  const toneAt = (d: ColumnDatum, i: number, k: number): ColumnTone =>
+    highlightIndex === i ? 'accent' : d.tone ?? seriesMeta[k]?.tone ?? 'series';
+  const barColor = (tone: ColumnTone, k: number): string =>
+    tone === 'series' ? colors[k] : toneVar[tone];
+
   const label =
     ariaLabel ??
     `Column chart, ${data.length} ${data.length === 1 ? 'column' : 'columns'}${
@@ -115,11 +143,24 @@ export function ColumnChart({
 
   return (
     <div
-      className={cx('he-columnchart', stacked && 'he-columnchart--stacked', className)}
-      role={role}
+      className={cx(
+        'he-columnchart',
+        stacked && 'he-columnchart--stacked',
+        showValues && 'he-columnchart--values',
+        showXLabels && 'he-columnchart--xlabels',
+        showBaseline && 'he-columnchart--baseline',
+        className,
+      )}
+      role={role ?? (onSelectColumn ? 'group' : 'img')}
       aria-label={label}
       aria-describedby={titleId}
-      style={{ '--he-columnchart-h': `${height}px`, ...style } as CSSProperties}
+      style={
+        {
+          '--he-columnchart-h': `${height}px`,
+          ...(barMaxWidth != null ? { '--he-columnchart-bar-max': `${barMaxWidth}px` } : null),
+          ...style,
+        } as CSSProperties
+      }
       {...rest}
     >
       <span id={titleId} hidden>
@@ -144,30 +185,75 @@ export function ColumnChart({
             </div>
           )}
           <div className="he-columnchart__groups" style={{ gap: `${groupGap}px` }}>
-            {data.map((d, i) => (
-              <div className="he-columnchart__group" key={i} style={{ gap: `${barGap}px` }}>
-                <div className="he-columnchart__stack">
-                  {seriesMeta.map((meta, k) => {
-                    const value = d.values[k] ?? 0;
-                    if (!(value > 0)) return null;
-                    const pct = (value / domainMax) * 100;
-                    return (
-                      <div
-                        className="he-columnchart__bar"
-                        key={k}
-                        style={{ height: `${pct}%`, background: colors[k] }}
-                        title={`${textOf(meta?.name) ?? `Series ${k + 1}`}: ${textOf(
-                          formatValue(value),
-                        )}`}
-                      />
-                    );
-                  })}
+            {data.map((d, i) => {
+              // One label per column only where a single number is unambiguous.
+              const magnitude = stacked
+                ? sum(d.values.slice(0, seriesCount))
+                : seriesCount === 1
+                  ? d.values[0] ?? 0
+                  : null;
+              const body = (
+                <>
+                  <div className="he-columnchart__stack">
+                    {seriesMeta.map((meta, k) => {
+                      const value = d.values[k] ?? 0;
+                      if (!(value > 0)) return null;
+                      const pct = (value / domainMax) * 100;
+                      const tone = toneAt(d, i, k);
+                      return (
+                        <div
+                          className={cx(
+                            'he-columnchart__bar',
+                            tone === 'accent' && 'he-columnchart__bar--accent',
+                          )}
+                          key={k}
+                          style={{ height: `${pct}%`, background: barColor(tone, k) }}
+                          title={`${textOf(meta?.name) ?? `Series ${k + 1}`}: ${textOf(
+                            formatValue(value),
+                          )}`}
+                        />
+                      );
+                    })}
+                    {showValues && magnitude != null && (
+                      <span
+                        className="he-columnchart__value"
+                        style={{ bottom: `${(magnitude / domainMax) * 100}%` }}
+                      >
+                        {formatValue(magnitude)}
+                      </span>
+                    )}
+                  </div>
+                  {showXLabels && <span className="he-columnchart__xlabel">{d.label}</span>}
+                </>
+              );
+              const groupClass = cx(
+                'he-columnchart__group',
+                dimOthers && highlightIndex != null && highlightIndex !== i && 'he-columnchart__group--dim',
+              );
+              return onSelectColumn ? (
+                <button
+                  type="button"
+                  key={i}
+                  className={cx(
+                    groupClass,
+                    'he-columnchart__group--clickable',
+                    selectedIndex === i && 'he-columnchart__group--selected',
+                  )}
+                  onClick={() => onSelectColumn(d, i)}
+                  aria-pressed={selectedIndex === i}
+                  aria-label={`${textOf(d.label) ?? `Column ${i + 1}`}${
+                    magnitude != null ? `, ${textOf(formatValue(magnitude)) ?? ''}` : ''
+                  }`}
+                  style={{ gap: `${barGap}px` }}
+                >
+                  {body}
+                </button>
+              ) : (
+                <div className={groupClass} key={i} style={{ gap: `${barGap}px` }}>
+                  {body}
                 </div>
-                {showXLabels && (
-                  <span className="he-columnchart__xlabel">{d.label}</span>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

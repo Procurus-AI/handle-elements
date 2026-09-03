@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card } from '../Card/Card';
+import { Grid, Stack } from '../Layout/Layout';
 import { PageHeader } from '../PageHeader/PageHeader';
-import { List, ListItem } from './List';
+import { Panel } from '../Panel/Panel';
+import { List, ListItem, type ListItemStatus } from './List';
 
 const meta = {
   title: 'Elements/List',
@@ -9,6 +11,8 @@ const meta = {
   argTypes: {
     variant: { control: 'inline-radio', options: ['divided', 'plain'] },
     dense: { control: 'boolean' },
+    size: { control: 'inline-radio', options: ['md', 'sm'] },
+    gutter: { control: 'boolean' },
   },
 } satisfies Meta<typeof List>;
 
@@ -77,6 +81,123 @@ export const Plain: Story = {
     </Card>
   ),
 };
+
+// Renewals/receipts that need a human today. Only the exceptions carry a dot —
+// that is the point of the leading slot, and `gutter` keeps the rest aligned.
+const attention: { id: string; customer: string; policy: string; due: string; urgency?: ListItemStatus }[] = [
+  { id: 'a1', customer: 'Modelos Economicos Aho Sapi de C.V.', policy: '687457622', due: 'overdue', urgency: 'error' },
+  { id: 'a2', customer: 'Regio Gas S.A. de C.V.', policy: '628515652', due: 'overdue', urgency: 'error' },
+  { id: 'a3', customer: 'Juan Manuel Santillan Rodriguez', policy: '688165414', due: 'due in 1d', urgency: 'warn' },
+  { id: 'a4', customer: 'Cesar Gabriel Guerra Ramon', policy: '628537110', due: 'due in 1d', urgency: 'warn' },
+  { id: 'a5', customer: 'Inovek Monterrey S.A. de C.V.', policy: '570346098', due: 'due in 1d', urgency: 'warn' },
+  { id: 'a6', customer: 'Cristina Peña Gonzalez', policy: '628537221', due: 'due in 4d' },
+  { id: 'a7', customer: 'Transportes del Bajío S.A.', policy: '570349911', due: 'due in 6d' },
+  { id: 'a8', customer: 'Grupo Alimenticio Norte', policy: '687451188', due: 'due in 9d' },
+  { id: 'a9', customer: 'Maria Fernanda Olvera', policy: '628530077', due: 'due in 12d' },
+  { id: 'a10', customer: 'Constructora Peninsular S.A.P.I.', policy: '570341402', due: 'due in 18d' },
+  { id: 'a11', customer: 'Refacciones Industriales Meza', policy: '687459630', due: 'due in 23d' },
+];
+
+// The six fat status Cards from the dashboard hero, rebuilt with zero custom
+// styling: one flush Panel, one compact List, 11 rows in the same vertical space.
+export const NeedsYourAttention: Story = {
+  render: () => (
+    <Panel flush title="Needs your attention" lede="0 overdue receipts · 270 renewals ≤30d">
+      <List variant="divided" size="sm" gutter>
+        {attention.map((r) => (
+          <ListItem
+            key={r.id}
+            href="#"
+            status={r.urgency}
+            primary={r.customer}
+            meta={`Policy ${r.policy}`}
+            value={r.due}
+          />
+        ))}
+      </List>
+    </Panel>
+  ),
+};
+
+// 67px → 36px, same data, side by side.
+export const Density: Story = {
+  render: () => (
+    <Grid columns={3} gap={4}>
+      {([
+        ['default', {}],
+        ['dense', { dense: true }],
+        ['size="sm" gutter', { size: 'sm', gutter: true }],
+      ] as const).map(([caption, props]) => (
+        <Stack key={caption} gap={2}>
+          <Caption>{caption}</Caption>
+          <Card padding="sm">
+            <List variant="divided" {...props}>
+              {attention.map((r) => (
+                <ListItem
+                  key={r.id}
+                  status={r.urgency}
+                  primary={r.customer}
+                  meta={`Policy ${r.policy}`}
+                  value={r.due}
+                />
+              ))}
+            </List>
+          </Card>
+        </Stack>
+      ))}
+    </Grid>
+  ),
+};
+
+// `meta` is the one-line slot; `secondary` is always a second line.
+export const InlineMeta: Story = {
+  render: () => (
+    <Grid columns={2} gap={4}>
+      <Stack gap={2}>
+        <Caption>meta — one line</Caption>
+        <Card padding="sm">
+          <List size="sm" gutter>
+            {attention.slice(0, 5).map((r) => (
+              <ListItem key={r.id} status={r.urgency} primary={r.customer} meta={`Policy ${r.policy}`} value={r.due} />
+            ))}
+          </List>
+        </Card>
+      </Stack>
+      <Stack gap={2}>
+        <Caption>secondary — two lines</Caption>
+        <Card padding="sm">
+          <List size="sm" gutter>
+            {attention.slice(0, 5).map((r) => (
+              <ListItem
+                key={r.id}
+                status={r.urgency}
+                primary={r.customer}
+                secondary={`Policy ${r.policy}`}
+                value={r.due}
+              />
+            ))}
+          </List>
+        </Card>
+      </Stack>
+    </Grid>
+  ),
+};
+
+function Caption({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        fontFamily: 'var(--he-font-mono)',
+        fontSize: 11,
+        textTransform: 'uppercase',
+        letterSpacing: 'var(--he-tracking-caps)',
+        color: 'var(--he-text-faint)',
+      }}
+    >
+      {children}
+    </span>
+  );
+}
 
 function Chevron() {
   return (

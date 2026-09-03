@@ -15,7 +15,11 @@ export interface StatToggleProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
    * to force it. A zero toggle stays clickable but reads as inactive/empty.
    */
   zero?: boolean;
-  /** Accent used by the active indicator (and value in status tones). */
+  /**
+   * Urgency of the bucket, shown as a small dot on the label. Selection is
+   * carried by the tile's fill, not by tone, so a tone reads the same whether
+   * or not the tile is active.
+   */
   tone?: StatToggleTone;
   /** Optional supporting caption under the value. */
   hint?: ReactNode;
@@ -51,7 +55,10 @@ export function StatToggle({
       {...rest}
     >
       <span className="he-stattoggle__value">{value}</span>
-      <span className="he-stattoggle__label">{label}</span>
+      <span className="he-stattoggle__label">
+        {tone !== 'default' && <span className="he-stattoggle__dot" aria-hidden />}
+        {label}
+      </span>
       {hint != null && <span className="he-stattoggle__hint">{hint}</span>}
     </button>
   );

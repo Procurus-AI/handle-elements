@@ -64,7 +64,13 @@
   margin: var(--he-space-3) 0 0;
   padding: 0;
   display: grid;
-  gap: var(--he-space-2);
+  /* One row per segment by default. `legendMinWidth` sets the custom property
+   * and the legend auto-fits into columns instead — a five-part bar then costs
+   * one row of height under a full-width host rather than five, and each label
+   * keeps its own number within a track's width instead of at the far edge of
+   * the page. */
+  grid-template-columns: repeat(auto-fit, minmax(var(--he-segmentbar-legend-min, 100%), 1fr));
+  gap: var(--he-space-2) var(--he-space-4);
 }
 
 .he-segmentbar__legend-item {

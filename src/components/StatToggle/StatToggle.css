@@ -1,6 +1,9 @@
 /* StatToggle — a clickable stat tile that carries a selected + zero state.
- * Base is a quiet surface; hover lifts; active shows a tone accent cap and an
- * ink border; zero fades the numerals. All color via --he-* tokens. */
+ * Base is a quiet surface; hover lifts; selected fills to a light grey; zero
+ * fades the numerals. Selection is carried by the surface, never by a colored
+ * bar — a phosphorescent cap on a white tile reads as decoration, not state.
+ * `tone` is urgency, and it rides a small dot on the label, the same idiom
+ * ListItem uses. All color via --he-* tokens. */
 .he-stattoggle {
   position: relative;
   display: flex;
@@ -19,18 +22,7 @@
     background var(--he-transition-fast),
     box-shadow var(--he-transition-fast),
     transform var(--he-transition-fast);
-  --he-stattoggle-accent: var(--he-accent);
-}
-
-/* Tone accent cap — appears when active. */
-.he-stattoggle::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  border-radius: var(--he-radius-md) var(--he-radius-md) 0 0;
-  background: transparent;
-  transition: background var(--he-transition-fast);
+  --he-stattoggle-dot: var(--he-neutral);
 }
 
 .he-stattoggle:hover {
@@ -45,6 +37,9 @@
 }
 
 .he-stattoggle__value {
+  /* Grid tiles get minmax(0, 1fr) tracks, so the value must be allowed to wrap
+   * inside the tile instead of overrunning its border. */
+  min-width: 0;
   font-family: var(--he-font-display);
   font-weight: 400;
   font-size: var(--he-title);
@@ -54,6 +49,9 @@
 }
 
 .he-stattoggle__label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-family: var(--he-font-mono);
   font-size: 10.5px;
   font-weight: 500;
@@ -62,23 +60,38 @@
   color: var(--he-text-faint);
 }
 
+/* Tone dot — urgency, carried at the scale of a bullet. Borealis appears here
+ * as a FILL, which is the only way it may appear on a light surface. */
+.he-stattoggle__dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: var(--he-radius-full);
+  background: var(--he-stattoggle-dot);
+}
+
 .he-stattoggle__hint {
   font-size: var(--he-body-sm);
   color: var(--he-text-dim);
 }
 
-/* ---- active (selected) ---- */
+/* ---- active (selected) ----
+ * The fill IS the selection. A light-grey tile against white neighbours is
+ * unambiguous at a glance, and the hairline only firms up to the hover weight
+ * so the tile never gains ink on being chosen. */
 .he-stattoggle--active {
-  border-color: var(--he-text);
+  border-color: var(--he-border-strong);
   background: var(--he-surface-2);
-}
-
-.he-stattoggle--active::before {
-  background: var(--he-stattoggle-accent);
 }
 
 .he-stattoggle--active .he-stattoggle__label {
   color: var(--he-text-dim);
+}
+
+/* Selected already sits on --he-surface-2, so lift it with shadow alone rather
+ * than a fill that would match the resting state. */
+.he-stattoggle--active:hover {
+  background: var(--he-surface-2);
 }
 
 /* ---- zero (empty) ---- */
@@ -90,15 +103,18 @@
   color: var(--he-text-faint);
 }
 
-/* ---- tones (active accent cap color) ---- */
+/* ---- tones (dot color) ---- */
+.he-stattoggle--accent {
+  --he-stattoggle-dot: var(--he-accent);
+}
 .he-stattoggle--ok {
-  --he-stattoggle-accent: var(--he-ok);
+  --he-stattoggle-dot: var(--he-ok);
 }
 .he-stattoggle--warn {
-  --he-stattoggle-accent: var(--he-warn);
+  --he-stattoggle-dot: var(--he-warn);
 }
 .he-stattoggle--error {
-  --he-stattoggle-accent: var(--he-error);
+  --he-stattoggle-dot: var(--he-error);
 }
 
 /* ---- group ---- */

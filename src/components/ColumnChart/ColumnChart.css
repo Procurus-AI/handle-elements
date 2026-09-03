@@ -71,6 +71,7 @@
 }
 
 .he-columnchart__group {
+  position: relative;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
@@ -81,6 +82,7 @@
 
 /* Bars within a group: grouped = side by side, stacked = vertical. */
 .he-columnchart__stack {
+  position: relative;
   display: flex;
   flex: 1 1 auto;
   align-items: flex-end;
@@ -100,14 +102,14 @@
 .he-columnchart__bar {
   flex: 1 1 0;
   min-width: 2px;
-  max-width: 22px;
+  max-width: var(--he-columnchart-bar-max, 22px);
   border-radius: 2px 2px 0 0;
   transition: height var(--he-transition-base);
 }
 
 .he-columnchart--stacked .he-columnchart__bar {
   width: 100%;
-  max-width: 26px;
+  max-width: var(--he-columnchart-bar-max, 26px);
   flex: 0 0 auto;
   border-radius: 0;
   margin-inline: auto;
@@ -117,16 +119,31 @@
   border-radius: 2px 2px 0 0;
 }
 
+/* The x label is taken OUT OF FLOW and hung under the plot. In flow it ate the
+ * bottom of the group, so the bars were a percentage of a shorter box than the
+ * gridlines/baseline/y ticks — the two scales shared a top but not a zero and
+ * every bar was understated. Now the plot's height IS the value domain. */
 .he-columnchart__xlabel {
-  margin-top: 8px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--he-space-2);
   font-family: var(--he-font-mono);
   font-size: var(--he-caption);
   line-height: 1.2;
-  color: var(--he-chart-axis);
+  /* Axis labels are TEXT: --he-chart-axis (= --he-text-faint) is 2.83:1 on
+   * white and fails AA. The faint token stays on the gridlines. */
+  color: var(--he-text-dim);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* …and the row reserves exactly that hung label's box below the plot. */
+.he-columnchart--xlabels .he-columnchart__plot-row {
+  padding-bottom: calc(var(--he-caption) * 1.2 + var(--he-space-2));
 }
 
 /* Legend items are Chip (dot + plain) — see ColumnChart.tsx. */
@@ -137,8 +154,88 @@
   padding-left: 2px;
 }
 
+/* Borealis fills are 1.11:1 on --he-surface — an accent bar must carry a
+ * hairline so it can never be invisible. The fill stays pure Borealis, so the
+ * brand rule (accent = fill) holds. */
+.he-columnchart__bar--accent {
+  outline: 1px solid var(--he-accent-line);
+  outline-offset: -1px;
+}
+
+/* Value labels — one mono number per column, riding the top of the bar. */
+.he-columnchart--values .he-columnchart__plot-row {
+  padding-top: var(--he-space-4);
+}
+
+/* `bottom: <pct>%` already puts the label's BOTTOM edge at the bar's top, so a
+ * translateY(-100%) on top of it lifted the number a second full line-height —
+ * the peak column's value escaped the plot entirely. Margin is the only gap. */
+.he-columnchart__value {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin-bottom: var(--he-space-1);
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  line-height: 1;
+  color: var(--he-text-dim);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Explicit zero line, so bars rest on something with showGrid={false}. */
+.he-columnchart--baseline .he-columnchart__plot::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--he-chart-grid);
+  pointer-events: none;
+}
+
+/* Clickable columns — the whole slot is the target. Hover swaps in the quiet
+ * --he-surface-2 fill, the same treatment Button ghost / .he-table__row--clickable
+ * / Calendar use. Note this is a fill swap, not a lightening: --he-surface-2 is
+ * lighter than --he-surface in dark and darker in light. */
+.he-columnchart__group--clickable {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--he-radius-sm);
+  transition: background var(--he-transition-fast);
+}
+
+.he-columnchart__group--clickable:hover {
+  background: var(--he-surface-2);
+}
+
+.he-columnchart__group--selected {
+  background: var(--he-surface-2);
+}
+
+.he-columnchart__group--selected .he-columnchart__xlabel {
+  color: var(--he-text);
+}
+
+.he-columnchart__group--clickable:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+}
+
+.he-columnchart__group--dim .he-columnchart__bar {
+  opacity: 0.35;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .he-columnchart__bar {
+  .he-columnchart__bar,
+  .he-columnchart__group--clickable {
     transition: none;
   }
 }

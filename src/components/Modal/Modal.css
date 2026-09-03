@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
   padding: var(--he-space-5);
-  background: rgb(20 20 20 / 0.34); /* tokens-ok: scrim overlay, not a surface */
+  background: var(--he-scrim-soft);
   animation: he-modal-fade var(--he-transition-base);
 }
 

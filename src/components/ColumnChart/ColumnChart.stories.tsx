@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card } from '../Card/Card';
 import { PageHeader } from '../PageHeader/PageHeader';
@@ -101,3 +102,98 @@ function Panel({ label, children }: { label: string; children: React.ReactNode }
     </section>
   );
 }
+
+// Policies renewing per month, the shot1 data — one component, no companion row.
+const months: ColumnDatum[] = [
+  { label: 'S', values: [285] },
+  { label: 'O', values: [311] },
+  { label: 'N', values: [330] },
+  { label: 'D', values: [287] },
+  { label: 'J', values: [341] },
+  { label: 'F', values: [314] },
+  { label: 'M', values: [419] },
+  { label: 'A', values: [379] },
+  { label: 'M', values: [405] },
+  { label: 'J', values: [761] },
+  { label: 'J', values: [338] },
+  { label: 'A', values: [171] },
+];
+
+/**
+ * The renewals block: wide bars carrying their own numbers, so the detached row
+ * of boxed 'S 285 / O 311 / …' labels under the old chart disappears entirely.
+ */
+export const NextTwelveMonths: Story = {
+  render: () => {
+    const [month, setMonth] = useState(0);
+    return (
+      <Card style={{ width: 640 }}>
+        <PageHeader size="section" eyebrow="Renewals" title="Next 12 months" lede="Policies renewing" />
+        <ColumnChart
+          data={months}
+          series={[{ name: 'Policies renewing', tone: 'ink' }]}
+          height={180}
+          barMaxWidth={56}
+          showValues
+          showBaseline
+          showYLabels={false}
+          showGrid
+          highlightIndex={month}
+          selectedIndex={month}
+          onSelectColumn={(_d, i) => setMonth(i)}
+        />
+      </Card>
+    );
+  },
+};
+
+/** Per-column tone — the accent column carries its --he-accent-line outline. */
+export const PerColumnTone: Story = {
+  render: () => (
+    <Card style={{ width: 640 }}>
+      <ColumnChart
+        data={months.map((d, i) =>
+          i === 9 ? { ...d, tone: 'accent' as const }
+          : i === 6 ? { ...d, tone: 'warn' as const }
+          : i === 11 ? { ...d, tone: 'neutral' as const }
+          : d,
+        )}
+        series={[{ name: 'Policies renewing', tone: 'ink' }]}
+        height={180}
+        barMaxWidth={48}
+        showYLabels={false}
+      />
+    </Card>
+  ),
+};
+
+/** The column as its own filter control: select one, fade the rest. */
+export const Selectable: Story = {
+  render: () => {
+    const [i, setI] = useState(9);
+    return (
+      <Card style={{ width: 640 }}>
+        <ColumnChart
+          data={months}
+          series={[{ name: 'Policies renewing', tone: 'ink' }]}
+          height={180}
+          barMaxWidth={48}
+          dimOthers
+          highlightIndex={i}
+          selectedIndex={i}
+          onSelectColumn={(_d, n) => setI(n)}
+        />
+      </Card>
+    );
+  },
+};
+
+/** showValues prints the column TOTAL when stacked, and nothing when grouped. */
+export const ValuesStacked: Story = {
+  render: () => (
+    <Card style={{ width: 480, display: 'grid', gap: 28 }}>
+      <ColumnChart data={weekly} series={funnel} stacked showValues height={200} />
+      <ColumnChart data={weekly} series={funnel} showValues height={200} />
+    </Card>
+  ),
+};

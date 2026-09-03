@@ -14,3 +14,31 @@
   gap: var(--he-space-3);
   flex-shrink: 0;
 }
+
+.he-panel__body {
+  min-width: 0;
+}
+
+/* Flush — the body bleeds to the card edges so dividers span the full width and
+ * a List reads as one table. Rows get their inset back through the List's own
+ * --he-list-row-pad-inline hook (no cross-component selectors).
+ *
+ * Because the body reaches the card's padding box and its rows are squared, the
+ * CARD has to do the clipping — otherwise the last row's hover fill paints
+ * straight over the 12px corner arc. Menus and tooltips portal to <body>, so
+ * nothing that must escape the panel is affected. */
+.he-panel--flush {
+  overflow: hidden;
+}
+
+.he-panel--flush > .he-panel__head {
+  margin-bottom: var(--he-space-4);
+}
+
+.he-panel--flush > .he-panel__body {
+  --he-list-row-pad-inline: var(--he-panel-pad, var(--he-space-5));
+  --he-list-row-radius: 0;
+  margin-inline: calc(-1 * var(--he-panel-pad, var(--he-space-5)));
+  margin-bottom: calc(-1 * var(--he-panel-pad, var(--he-space-5)));
+  border-top: 1px solid var(--he-border);
+}

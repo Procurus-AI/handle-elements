@@ -21,7 +21,8 @@
   align-items: center;
   gap: var(--he-space-3);
   width: 100%;
-  padding: var(--he-space-3) var(--he-space-2);
+  padding-block: var(--he-space-3);
+  padding-inline: var(--he-list-row-pad-inline, var(--he-space-2));
   margin: 0;
   text-align: left;
   font: inherit;
@@ -29,7 +30,52 @@
 }
 
 .he-list--dense .he-list__row {
-  padding: var(--he-space-2) var(--he-space-2);
+  padding-block: var(--he-space-2);
+}
+
+/* Compact row — the density step for attention/movement panels. 36px pitch. */
+.he-list--sm .he-list__row {
+  padding-block: var(--he-space-2);
+  min-height: 36px;
+  gap: var(--he-space-3);
+}
+
+/* Leading gutter — .he-list__content is :first-child exactly when no leading
+ * slot was rendered, so undotted rows keep the same text origin as dotted ones. */
+.he-list--gutter {
+  --he-list-leading-w: 6px;
+}
+
+.he-list--gutter .he-list__row > .he-list__content:first-child {
+  margin-left: calc(var(--he-list-leading-w) + var(--he-space-3));
+}
+
+/* Status dot — same 6px geometry and doctrine as StatusPill__dot. */
+.he-list__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-radius-full);
+  flex-shrink: 0;
+}
+
+.he-list__dot--ok {
+  background: var(--he-ok);
+}
+.he-list__dot--warn {
+  background: var(--he-warn);
+}
+.he-list__dot--error {
+  background: var(--he-error);
+}
+.he-list__dot--neutral {
+  background: var(--he-text-faint);
+}
+
+/* Borealis is a fill, but at 1.11:1 a bare 6px disc vanishes on --he-surface;
+ * the authored line token rings it so it stays visible without becoming text. */
+.he-list__dot--accent {
+  background: var(--he-accent);
+  box-shadow: 0 0 0 1px var(--he-accent-line);
 }
 
 /* Interactive rows (button / link) reset native chrome and gain hover + focus. */
@@ -38,7 +84,10 @@ a.he-list__row {
   border: 0;
   background: none;
   cursor: pointer;
-  border-radius: var(--he-radius-sm);
+  /* Hook: a full-bleed container (Panel `flush`) squares the corners and does
+   * its own clipping, so the fill spans the full width without poking past the
+   * card's arc. */
+  border-radius: var(--he-list-row-radius, var(--he-radius-sm));
   text-decoration: none;
   transition: background var(--he-transition-fast);
 }
@@ -57,6 +106,8 @@ a.he-list__row {
   background: var(--he-surface-2);
 }
 
+/* The spine is a LINE, not a fill: bare Borealis is 1.11:1 on --he-surface, so
+ * the same authored hairline the accent dot rings itself with is used here. */
 .he-list__item--active::before {
   content: '';
   position: absolute;
@@ -65,7 +116,7 @@ a.he-list__row {
   bottom: var(--he-space-2);
   width: 2px;
   border-radius: var(--he-radius-full);
-  background: var(--he-accent);
+  background: var(--he-accent-line);
 }
 
 /* ---- rank badge ---- */
@@ -96,6 +147,7 @@ a.he-list__row {
 }
 
 .he-list__primary {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -109,6 +161,34 @@ a.he-list__row {
   white-space: nowrap;
   font-size: var(--he-caption);
   color: var(--he-text-dim);
+}
+
+/* Primary + inline meta on one line — the slot that keeps a compact row to one line. */
+.he-list__line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--he-space-2);
+  min-width: 0;
+}
+
+/* The record NAME is the payload of the row, so it keeps a floor and the mono
+ * metadata yields first. Without this the meta's `flex: 0 0 auto` made the name
+ * the only shrinkable box and "HDI Seguros" clipped to "H…" in a narrow rail. */
+.he-list__line .he-list__primary {
+  flex: 0 1 auto;
+  min-width: min(8ch, 100%);
+}
+
+.he-list__meta {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-text-dim);
+  white-space: nowrap;
 }
 
 /* ---- trailing ---- */

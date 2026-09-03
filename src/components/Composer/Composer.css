@@ -6,6 +6,7 @@
   border-radius: var(--he-radius-lg);
   box-shadow: var(--he-shadow-card);
   padding: var(--he-space-3) var(--he-space-3) var(--he-space-2);
+  max-width: var(--he-composer-max, none);
   transition:
     border-color var(--he-transition-fast),
     box-shadow var(--he-transition-fast);
@@ -30,7 +31,7 @@
   color: var(--he-text);
   resize: none;
   field-sizing: content;
-  min-height: 28px;
+  min-height: var(--he-composer-input-min-h, 28px);
   max-height: 240px;
 }
 
@@ -84,4 +85,99 @@
 .he-composer__submit:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+/* Hero size — an airier box for a centered greeting composer. */
+.he-composer--lg {
+  --he-composer-input-min-h: 56px;
+  padding: var(--he-space-4) var(--he-space-4) var(--he-space-3);
+  border-radius: var(--he-radius-lg);
+}
+
+/* Field = shell + the suggestions the component now owns. The field claims the
+ * full inline size so the shell is never sized by the suggestion row beside it
+ * (in a centered PageHeader aside the field is a flex item, not a block). */
+.he-composer-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Auto margins on the CROSS axis cancel `align-self: stretch`, which would size
+ * the shell to fit-content and make --he-composer-max unreachable. The explicit
+ * width keeps the stretch; max-width still caps it and the auto margins then
+ * only absorb the leftover, i.e. center it. */
+.he-composer-field--center > .he-composer {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.he-composer-field__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--he-space-2);
+  margin-top: var(--he-space-3);
+}
+
+.he-composer-field--center .he-composer-field__suggestions {
+  justify-content: center;
+}
+
+/* Mic — ghost icon control, same 32px box as the submit so the two align. */
+.he-composer__mic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--he-radius-full);
+  background: transparent;
+  color: var(--he-text-dim);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background var(--he-transition-fast),
+    color var(--he-transition-fast);
+}
+
+.he-composer__mic:hover {
+  background: var(--he-surface-2);
+  color: var(--he-text);
+}
+
+.he-composer__mic--active {
+  background: var(--he-surface-2);
+  color: var(--he-text);
+}
+
+.he-composer__mic:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+/* Ghost submit — the bare arrow from the hero composer, without giving up
+ * onSubmit's Enter-to-submit. Hover lightens, never darkens. */
+.he-composer__submit--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--he-text);
+}
+
+.he-composer__submit--ghost:hover:not(:disabled) {
+  background: var(--he-surface-2);
+  box-shadow: none;
+}
+
+.he-composer__submit--ghost:disabled {
+  opacity: 1;
+  color: var(--he-text-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-composer__mic {
+    transition: none;
+  }
 }
