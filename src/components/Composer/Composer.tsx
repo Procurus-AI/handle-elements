@@ -1,4 +1,4 @@
-import type { CSSProperties, KeyboardEvent, ReactNode, TextareaHTMLAttributes } from 'react';
+import type { CSSProperties, KeyboardEvent, ReactNode, Ref, TextareaHTMLAttributes } from 'react';
 import { cx } from '../../lib/cx';
 import { Badge, type BadgeTone } from '../Badge/Badge';
 import { Button } from '../Button/Button';
@@ -15,7 +15,7 @@ export interface ComposerSuggestion {
 }
 
 export type ComposerAlign = 'start' | 'center';
-export type ComposerSize = 'md' | 'lg';
+export type ComposerSize = 'sm' | 'md' | 'lg';
 export type ComposerSubmitVariant = 'solid' | 'ghost';
 
 /**
@@ -47,10 +47,18 @@ export interface ComposerProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   align?: ComposerAlign;
   /** Caps the shell (not the textarea) — a number (px) or any CSS length. */
   maxWidth?: number | string;
-  /** `lg` is the airier hero box. Default `md`. */
+  /** `sm` is the inline comment box — square corners, no shadow, 13px input.
+   *  `lg` is the airier hero box. Default `md`. */
   size?: ComposerSize;
   /** className lands on the container; use inputClassName for the textarea. */
   inputClassName?: string;
+  /**
+   * Ref to the underlying <textarea>. A caller that drafts text into the
+   * composer from somewhere else on the screen needs a handle to focus it and
+   * scroll it into view — text that lands off-screen reads as a control that
+   * did nothing.
+   */
+  inputRef?: Ref<HTMLTextAreaElement>;
 }
 
 export function Composer({
@@ -71,6 +79,7 @@ export function Composer({
   size = 'md',
   className,
   inputClassName,
+  inputRef,
   onKeyDown,
   rows = 1,
   ...rest
@@ -87,8 +96,16 @@ export function Composer({
     toolbarStart != null || toolbarEnd != null || onSubmit != null || onMic != null;
 
   const shell = (
-    <div className={cx('he-composer', size === 'lg' && 'he-composer--lg', className)}>
+    <div
+      className={cx(
+        'he-composer',
+        size === 'sm' && 'he-composer--sm',
+        size === 'lg' && 'he-composer--lg',
+        className,
+      )}
+    >
       <textarea
+        ref={inputRef}
         className={cx('he-composer__input', inputClassName)}
         rows={rows}
         onKeyDown={handleKeyDown}

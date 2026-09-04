@@ -1,5 +1,14 @@
 /* Panel — Card + section PageHeader. The head lays the title block against an
  * optional aside; the body follows below. Spacing via --he-* tokens only. */
+
+/* A Panel is a bleedable surface, so it republishes the shared bleed hook at its
+ * own boundary. --he-bleed-pad inherits; without this line a Section `flush`
+ * inside a Panel inside a Drawer would resolve the DRAWER's inset and overhang
+ * the card's border. Nearest surface wins because the nearest surface writes it. */
+.he-panel {
+  --he-bleed-pad: var(--he-panel-pad, var(--he-space-5));
+}
+
 .he-panel__head {
   display: flex;
   align-items: flex-end;

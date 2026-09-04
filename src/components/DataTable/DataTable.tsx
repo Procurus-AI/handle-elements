@@ -64,6 +64,11 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   /** Stable React key per row. Defaults to the row index. */
   rowKey?: (row: T, index: number) => string | number;
   onRowClick?: (row: T, index: number) => void;
+  /**
+   * Marks the row backing an open drawer/detail view. Painted as a --he-surface-2
+   * fill plus a weight step on the first cell — never an edge bar.
+   */
+  isRowSelected?: (row: T, index: number) => boolean;
   /** Controlled sort. Omit for internal (uncontrolled) sorting. */
   sort?: DataTableSort | null;
   onSortChange?: (sort: DataTableSort | null) => void;
@@ -126,6 +131,7 @@ export function DataTable<T>({
   data,
   rowKey,
   onRowClick,
+  isRowSelected,
   sort: controlledSort,
   onSortChange,
   defaultSort = null,
@@ -284,43 +290,54 @@ export function DataTable<T>({
                 </td>
               </tr>
             ) : (
-              pagedData.map((row, index) => (
-                <tr
-                  key={rowKey ? rowKey(row, index) : index}
-                  className={cx('he-table__row', onRowClick && 'he-table__row--clickable')}
-                  onClick={onRowClick ? () => onRowClick(row, index) : undefined}
-                  // Keyboard access for row-click-to-drawer: focusable rows that
-                  // activate on Enter/Space, so the pattern is not mouse-only.
-                  tabIndex={onRowClick ? 0 : undefined}
-                  role={onRowClick ? 'button' : undefined}
-                  onKeyDown={
-                    onRowClick
-                      ? (e: KeyboardEvent<HTMLTableRowElement>) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            onRowClick(row, index);
+              pagedData.map((row, index) => {
+                const selected = isRowSelected?.(row, index) ?? false;
+                return (
+                  <tr
+                    key={rowKey ? rowKey(row, index) : index}
+                    className={cx(
+                      'he-table__row',
+                      onRowClick && 'he-table__row--clickable',
+                      selected && 'he-table__row--selected',
+                    )}
+                    // aria-current, not aria-selected: the row already carries
+                    // role="button" when onRowClick is set, and aria-selected is
+                    // not valid there.
+                    aria-current={selected ? 'true' : undefined}
+                    onClick={onRowClick ? () => onRowClick(row, index) : undefined}
+                    // Keyboard access for row-click-to-drawer: focusable rows that
+                    // activate on Enter/Space, so the pattern is not mouse-only.
+                    tabIndex={onRowClick ? 0 : undefined}
+                    role={onRowClick ? 'button' : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (e: KeyboardEvent<HTMLTableRowElement>) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              onRowClick(row, index);
+                            }
                           }
-                        }
-                      : undefined
-                  }
-                >
-                  {columns.map((col) => (
-                    <td
-                      key={col.key}
-                      className={cx(
-                        'he-table__td',
-                        col.align && `he-table__cell--${col.align}`,
-                        col.truncate && 'he-table__td--truncate',
-                        col.className,
-                      )}
-                    >
-                      {col.render
-                        ? col.render(row, index)
-                        : ((row as Record<string, unknown>)[col.key] as ReactNode) ?? null}
-                    </td>
-                  ))}
-                </tr>
-              ))
+                        : undefined
+                    }
+                  >
+                    {columns.map((col) => (
+                      <td
+                        key={col.key}
+                        className={cx(
+                          'he-table__td',
+                          col.align && `he-table__cell--${col.align}`,
+                          col.truncate && 'he-table__td--truncate',
+                          col.className,
+                        )}
+                      >
+                        {col.render
+                          ? col.render(row, index)
+                          : ((row as Record<string, unknown>)[col.key] as ReactNode) ?? null}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

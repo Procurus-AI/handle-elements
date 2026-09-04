@@ -1,0 +1,66 @@
+/* DescriptionList — label/value pairs at record-drawer density. Two intrinsic
+ * columns that collapse to one when the tracks would go under --he-dl-col-min.
+ * No media query and no container-type: the collapse is driven by the grid's
+ * own inline size, so a 420px drawer and a 420px panel column behave alike. */
+.he-dl {
+  --he-dl-col-min: 168px;
+  --he-dl-gap: var(--he-space-4);
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(max(var(--he-dl-col-min), calc((100% - var(--he-dl-gap)) / 2)), 1fr)
+  );
+  column-gap: var(--he-dl-gap);
+  row-gap: var(--he-space-4);
+  align-content: start;
+  margin: 0;
+  min-width: 0;
+}
+
+.he-dl--cols-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.he-dl__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-1);
+  min-width: 0;
+}
+
+.he-dl__item--wide {
+  grid-column: 1 / -1;
+}
+
+/* dt reuses .he-stat__label's values verbatim — the system keeps one caps tier. */
+.he-dl__label {
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  line-height: 1.3;
+  color: var(--he-text-faint);
+}
+
+.he-dl__value {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body);
+  line-height: 1.35;
+  color: var(--he-text);
+  font-variant-numeric: tabular-nums;
+  /* A long value wraps inside its own cell instead of overrunning the
+   * neighbouring track; align-content:start keeps the other label's baseline put. */
+  overflow-wrap: anywhere;
+}
+
+.he-dl--sm .he-dl__value {
+  font-size: var(--he-body-sm);
+}
+
+/* The library's none idiom: an em dash in faint, same as Money/DateText. */
+.he-dl__value--empty {
+  color: var(--he-text-faint);
+}

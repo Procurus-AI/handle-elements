@@ -27,6 +27,7 @@
   font-family: var(--he-font-sans);
   box-shadow: var(--he-shadow-lift);
   outline: none;
+  transition: width var(--he-transition-base);
 }
 
 .he-drawer--right .he-drawer__panel {
@@ -38,40 +39,49 @@
   animation: he-drawer-in-left var(--he-transition-base);
 }
 
+/* Header — a flex sibling of the scroller, never inside it, so eyebrow/title/meta
+ * keep the record identified for the whole length of a long body. */
 .he-drawer__header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--he-space-3);
-  min-height: 56px;
-  padding: var(--he-space-4) var(--he-space-5);
+  gap: var(--he-space-4);
+  min-height: 48px;
+  padding: var(--he-space-3) var(--he-space-4) var(--he-space-3) var(--he-space-5);
   border-bottom: 1px solid var(--he-border);
 }
 
 .he-drawer__heading {
   display: flex;
   flex-direction: column;
-  gap: var(--he-space-2);
+  gap: var(--he-space-1);
   min-width: 0;
 }
 
 .he-drawer__eyebrow {
   font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  font-weight: 500;
   text-transform: uppercase;
-  color: var(--he-text-dim);
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
 }
 
 .he-drawer__title {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--he-font-sans);
+  margin: 0;
+  font-family: var(--he-font-display);
+  font-weight: 300;
   font-size: var(--he-heading);
-  font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.15;
+  color: var(--he-text);
+  /* A record name is the payload of the header; clamping to two lines is what
+   * lets it live here instead of being pushed into the scrolling body. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .he-drawer__meta {
@@ -79,6 +89,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--he-space-1) var(--he-space-3);
+  margin-top: var(--he-space-1);
   font-size: var(--he-body-sm);
   color: var(--he-text-dim);
 }
@@ -89,14 +100,25 @@
   flex: 0 0 auto;
 }
 
-.he-drawer__close {
+/* Every header control clusters at the trailing edge; the group owns the push,
+ * so close stays last in both reading and tab order. */
+.he-drawer__actions {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  flex-shrink: 0;
+  gap: var(--he-space-1);
+  margin-left: auto;
+}
+
+.he-drawer__close,
+.he-drawer__action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 28px;
   height: 28px;
-  margin-left: auto;
   padding: 0;
   border: 1px solid transparent;
   border-radius: var(--he-radius-sm);
@@ -108,12 +130,14 @@
     color var(--he-transition-fast);
 }
 
-.he-drawer__close:hover {
+.he-drawer__close:hover,
+.he-drawer__action:hover {
   background: var(--he-surface-2);
   color: var(--he-text);
 }
 
-.he-drawer__close:focus-visible {
+.he-drawer__close:focus-visible,
+.he-drawer__action:focus-visible {
   outline: 2px solid var(--he-focus);
   outline-offset: 2px;
 }
@@ -121,9 +145,47 @@
 .he-drawer__body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--he-space-5);
+  padding: var(--he-drawer-body-pad, var(--he-space-5));
+  /* Publishes its own inset so a full-bleed section (Section `flush`) can cancel
+   * it without hard-coding 24px — the same contract Panel.css uses. */
+  --he-bleed-pad: var(--he-drawer-body-pad, var(--he-space-5));
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   font-size: var(--he-body-sm);
   line-height: 1.5;
+}
+
+/* Collapsed, `aside` is simply the last block in the scroller. */
+.he-drawer__main,
+.he-drawer__aside {
+  min-width: 0;
+}
+
+.he-drawer__aside {
+  margin-top: var(--he-space-6);
+}
+
+/* Expanded WITH an aside, the extra width becomes a second column instead of
+ * slack in every row. Both columns share the one scroller, so the record reads
+ * as one document; the hairline between them is the only new ink. */
+.he-drawer__panel--split .he-drawer__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  padding: 0;
+}
+
+.he-drawer__panel--split .he-drawer__main,
+.he-drawer__panel--split .he-drawer__aside {
+  /* Each column is now the nearest bleedable surface, so each republishes the
+   * hook a `Section flush` reads — otherwise a flush row would bleed to the
+   * BODY's inset and run straight across the divider. */
+  --he-bleed-pad: var(--he-drawer-body-pad, var(--he-space-5));
+  padding: var(--he-drawer-body-pad, var(--he-space-5));
+}
+
+.he-drawer__panel--split .he-drawer__aside {
+  margin-top: 0;
+  border-left: 1px solid var(--he-border);
 }
 
 .he-drawer__footer {
@@ -163,8 +225,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* The side-specific selectors that set the slide-in outrank a bare
+   * `.he-drawer__panel`, so the override has to match their specificity. */
   .he-drawer,
-  .he-drawer__panel {
+  .he-drawer--right .he-drawer__panel,
+  .he-drawer--left .he-drawer__panel {
     animation: none;
+  }
+
+  .he-drawer__panel {
+    transition: none;
   }
 }

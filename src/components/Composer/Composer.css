@@ -94,6 +94,33 @@
   border-radius: var(--he-radius-lg);
 }
 
+/* sm — the inline comment box. Sheds the card chrome (16px radius + shadow)
+ * that makes the default shell a surface: inside a Panel or a Drawer this must
+ * read as one field on a hairline, not as a nested card. */
+.he-composer--sm {
+  border-radius: var(--he-radius-sm);
+  box-shadow: none;
+  padding: var(--he-space-2);
+  --he-composer-input-min-h: 22px;
+}
+
+.he-composer--sm .he-composer__input {
+  font-size: var(--he-body-sm);
+  padding: 0 var(--he-space-1);
+}
+
+.he-composer--sm .he-composer__bar {
+  margin-top: var(--he-space-1);
+}
+
+/* At rest it is a single hairline row; on focus it lifts (never darkens) and
+ * becomes unambiguously a field. Declared after the base :focus-within so the
+ * lighter card shadow wins over --he-shadow-lift. */
+.he-composer--sm:focus-within {
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-card);
+}
+
 /* Field = shell + the suggestions the component now owns. The field claims the
  * full inline size so the shell is never sized by the suggestion row beside it
  * (in a centered PageHeader aside the field is a flex item, not a block). */

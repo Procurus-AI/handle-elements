@@ -1,3 +1,12 @@
+/* Popover surface + menu rows.
+ *
+ * The popover is a bounded, clipping column: `overflow: hidden` keeps a
+ * full-bleed header/footer inside the corner arc, and the max-height/max-width
+ * custom properties are written by the placement helper so the list scrolls
+ * instead of running off screen. Row state is a FILL plus a check glyph —
+ * never a spine, never a colored bar.
+ */
+
 .he-popover__trigger {
   display: inline-flex;
 }
@@ -10,6 +19,11 @@
 .he-popover {
   position: fixed;
   z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: var(--he-popover-max-height, 60vh);
+  max-width: var(--he-popover-max-width, calc(100vw - var(--he-space-4)));
   background: var(--he-surface);
   border: 1px solid var(--he-border);
   border-radius: var(--he-radius-sm);
@@ -19,14 +33,98 @@
   animation: he-popover-in var(--he-transition-fast);
 }
 
+.he-popover[data-placement^='top'] {
+  transform-origin: bottom;
+}
+
+/* The 4px pad lives on .he-menu, so header/footer can be full-bleed hairlines. */
 .he-menu-popover {
-  padding: var(--he-space-1);
+  padding: 0;
 }
 
 .he-menu {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+  padding: var(--he-space-1);
+  min-width: 176px;
+}
+
+/* The gutter reserves the bar's width, so a row fill stops short of it instead of
+ * running underneath. `both-edges` because a one-sided gutter insets the rows 15px
+ * on the right and 0 on the left — visibly off-centre on platforms with classic
+ * scrollbars, and invisible on macOS overlay ones, i.e. a different layout per
+ * machine. */
+.he-menu__scroll {
   display: grid;
   gap: var(--he-space-1);
-  min-width: 176px;
+  align-content: start;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+}
+
+.he-menu__header {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--he-border);
+}
+
+.he-menu__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  padding: var(--he-space-2) var(--he-space-3);
+  color: var(--he-text-faint);
+}
+
+/* The input is borderless and drops the UA ring, so the ring lives on the ROW —
+ * it hugs the full-bleed header instead of an invisible box, and Tab into the
+ * filter is visible (WCAG 2.4.7) like every other control in the library. */
+.he-menu__filter:focus-within {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+  border-radius: var(--he-radius-xs);
+}
+
+.he-menu__filter-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--he-text);
+  font: inherit;
+  font-size: var(--he-body-sm);
+  outline: none;
+}
+
+.he-menu__filter-input::placeholder {
+  color: var(--he-text-faint);
+}
+
+.he-menu__footer {
+  flex: 0 0 auto;
+  margin-top: var(--he-space-1);
+  padding-top: var(--he-space-1);
+  border-top: 1px solid var(--he-border);
+  background: var(--he-surface);
+}
+
+.he-menu__group + .he-menu__group {
+  margin-top: var(--he-space-2);
+}
+
+.he-menu__group-label {
+  padding: var(--he-space-2) var(--he-space-3) var(--he-space-1);
+  color: var(--he-text-faint);
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: var(--he-tracking-caps);
+  text-transform: uppercase;
 }
 
 .he-menu__item {
@@ -48,10 +146,28 @@
   text-align: left;
 }
 
-.he-menu__item:hover:not(:disabled),
-.he-menu__item:focus-visible {
+/* Three states, three renderings: hover lifts, the keyboard highlight adds the
+ * house focus ring, checked adds the glyph and weight. The ring is painted only
+ * while the surface is being driven from the keyboard — `data-he-nav` mirrors
+ * `:focus-visible`, which cannot be used here because the item never holds DOM
+ * focus (the highlight rides aria-activedescendant) and because a filter input
+ * always matches it. Pointing at the list hands the highlight back to :hover. */
+.he-menu__item:hover:not(:disabled) {
   background: var(--he-surface-2);
-  outline: none;
+}
+
+[data-he-nav='keyboard'] .he-menu__item--active {
+  background: var(--he-surface-2);
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+}
+
+.he-menu__item--checked {
+  background: var(--he-surface-2);
+}
+
+.he-menu__item--checked .he-menu__item-label {
+  font-weight: 500;
 }
 
 .he-menu__item:disabled {
@@ -67,11 +183,61 @@
   color: var(--he-error);
 }
 
+/* 41.4px: 12px padding-block + a 29.4px two-line text column. */
+.he-menu__item--rich {
+  grid-template-columns: auto minmax(0, 1fr) 16px;
+  gap: var(--he-space-3);
+  padding: 6px var(--he-space-3);
+  min-height: 0;
+  border-radius: calc(var(--he-radius-sm) - 2px);
+}
+
+.he-menu__item-media {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.he-menu__item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
 .he-menu__item-label {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.he-menu__item--rich .he-menu__item-label {
+  line-height: 1.2;
+}
+
+.he-menu__item-sublabel {
+  overflow: hidden;
+  color: var(--he-text-faint);
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-menu__item-check {
+  display: inline-flex;
+  justify-content: center;
+  width: 16px;
+  color: var(--he-text);
+}
+
+/* --he-neutral-bg IS --he-surface-2 in both themes, so a tone-0 avatar would
+ * dissolve into a checked row's fill. Reassert the disc contextually through
+ * Avatar's own custom-property hook — no token changes, no Avatar edits. */
+.he-menu__item--checked .he-menu__item-media .he-avatar {
+  --he-avatar-bg: var(--he-surface);
+  --he-avatar-color: var(--he-text-dim);
+  border-color: var(--he-border-strong);
 }
 
 .he-menu__shortcut {

@@ -3,7 +3,7 @@ import { cx } from '../../lib/cx';
 
 export type CardStatus = 'ok' | 'warn' | 'error' | 'accent' | 'neutral';
 
-export type CardStatusVariant = 'edge' | 'spine' | 'none';
+export type CardStatusVariant = 'edge' | 'none';
 
 export interface CardProps extends HTMLAttributes<HTMLElement> {
   /** Rendered element — use 'a' (with href via rest props) for link cards. */
@@ -17,9 +17,13 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
   /**
    * How `status` is painted. 'edge' (default) recolors the card's OWN 1px border
    * to a desaturated status line — zero added geometry, radius respected by
-   * construction. 'spine' draws a small inset rounded tick at the left edge.
-   * 'none' paints nothing but still exposes `data-status` + --he-card-status so a
-   * child dot/pill can carry the meaning.
+   * construction. 'none' paints nothing but still exposes `data-status` +
+   * --he-card-status so a child dot/pill can carry the meaning.
+   *
+   * There is no spine variant: a status bar at the edge of a surface is a
+   * rejected pattern in this system — `edge` recolours the card's own border for
+   * zero added geometry, and `none` leaves `data-status` + --he-card-status for a
+   * child dot or pill.
    */
   statusVariant?: CardStatusVariant;
   /** Selected state — ink border, for pickable cards. */

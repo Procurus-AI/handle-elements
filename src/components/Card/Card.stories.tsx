@@ -4,9 +4,11 @@ import { StatusPill } from '../StatusPill/StatusPill';
 import { Card, type CardStatus, type CardStatusVariant } from './Card';
 
 /**
- * `statusVariant` defaults to `edge` as of this release: `status` recolors the
- * card's own 1px border instead of drawing a full-bleed bar. `spine` is still
- * available and now renders a small inset tick, not the old edge-to-edge bar.
+ * `statusVariant` defaults to `edge`: `status` recolors the card's own 1px
+ * border instead of drawing a bar. There is no spine variant. A status bar at
+ * the edge of a surface is a rejected pattern here; `edge` recolours the card's
+ * own 1px border, and `none` exposes `data-status` so a child dot or StatusPill
+ * carries the meaning.
  */
 const meta = {
   title: 'Elements/Card',
@@ -15,7 +17,7 @@ const meta = {
     padding: { control: 'select', options: ['none', 'sm', 'md', 'lg'] },
     as: { control: 'select', options: ['div', 'article', 'section', 'a'] },
     status: { control: 'select', options: [undefined, 'ok', 'warn', 'error', 'accent', 'neutral'] },
-    statusVariant: { control: 'inline-radio', options: ['edge', 'spine', 'none'] },
+    statusVariant: { control: 'inline-radio', options: ['edge', 'none'] },
     selected: { control: 'boolean' },
   },
 } satisfies Meta<typeof Card>;
@@ -58,12 +60,12 @@ export const Status: Story = {
 };
 Status.storyName = 'Status — edge (default)';
 
-// The three treatments side by side. `none` is the pattern the attention rows
-// want: the pill already states the status, so the card stays quiet.
+// Both treatments side by side. `none` is the pattern the attention rows want:
+// the pill already states the status, so the card stays quiet.
 export const StatusVariants: Story = {
   render: () => (
-    <Grid columns={3} gap={4}>
-      {(['edge', 'spine', 'none'] as const).map((variant: CardStatusVariant) => (
+    <Grid columns={2} gap={4}>
+      {(['edge', 'none'] as const).map((variant: CardStatusVariant) => (
         <Stack key={variant} gap={3}>
           <span
             style={{

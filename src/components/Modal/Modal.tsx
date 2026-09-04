@@ -57,10 +57,14 @@ export function Modal({
   useEffect(() => {
     if (!open) return;
     const { overflow } = document.body.style;
+    const opener = document.activeElement as HTMLElement | null;
     document.body.style.overflow = 'hidden';
     panelRef.current?.focus();
     return () => {
       document.body.style.overflow = overflow;
+      // Hand focus back to whatever opened the dialog. Dropping it on <body>
+      // restarts a keyboard user at the top of the document (WCAG 2.4.3).
+      if (opener && opener !== document.body && document.contains(opener)) opener.focus();
     };
   }, [open]);
 

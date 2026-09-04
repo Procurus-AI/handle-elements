@@ -26,6 +26,12 @@ export {
   type StatCardGroupVariant,
 } from './components/StatCard/StatCard';
 export {
+  DescriptionList,
+  DescriptionItem,
+  type DescriptionListProps,
+  type DescriptionItemProps,
+} from './components/DescriptionList/DescriptionList';
+export {
   StatToggle,
   StatToggleGroup,
   type StatToggleProps,
@@ -60,7 +66,21 @@ export {
   type PageHeaderSize,
   type PageHeaderAlign,
 } from './components/PageHeader/PageHeader';
+export {
+  Section,
+  SectionLink,
+  type SectionProps,
+  type SectionLinkProps,
+  type SectionTier,
+} from './components/Section/Section';
 export { Tabs, type TabsProps, type TabsVariant, type TabItem } from './components/Tabs/Tabs';
+export {
+  Segmented,
+  type SegmentedProps,
+  type SegmentedOption,
+  type SegmentedTone,
+} from './components/Segmented/Segmented';
+export { ThemeSwitch, type ThemeSwitchProps } from './components/ThemeSwitch/ThemeSwitch';
 export { Input, type InputProps, type InputVariant } from './components/Input/Input';
 export { Textarea, type TextareaProps } from './components/Input/Textarea';
 export { Select, type SelectProps } from './components/Input/Select';
@@ -137,10 +157,16 @@ export { Switch, type SwitchProps } from './components/Switch/Switch';
 export {
   Dropdown,
   Menu,
+  MenuFilter,
+  MenuGroup,
   MenuItem,
+  MenuLabel,
   MenuSeparator,
   Popover,
+  type MenuFilterProps,
+  type MenuGroupProps,
   type MenuItemProps,
+  type MenuLabelProps,
   type MenuProps,
   type MenuSeparatorProps,
   type PopoverPlacement,
@@ -240,6 +266,14 @@ export {
   type TrendGridProps,
   type TrendGridItem,
 } from './components/TrendGrid/TrendGrid';
+/* Feed is the VERTICAL record history; Timeline is a horizontal chart.
+ * They are not variants of each other. */
+export {
+  Feed,
+  type FeedProps,
+  type FeedItem,
+  type FeedItemTone,
+} from './components/Feed/Feed';
 export {
   Timeline,
   type TimelineProps,
@@ -252,3 +286,10 @@ export {
 } from './components/Timeline/Timeline';
 export * as chart from './lib/chart';
 export { cx } from './lib/cx';
+export {
+  applyTheme,
+  systemTheme,
+  watchSystemTheme,
+  themeBootScript,
+  type ThemeMode,
+} from './lib/theme';

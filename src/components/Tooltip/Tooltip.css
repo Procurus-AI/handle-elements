@@ -16,7 +16,11 @@
   animation: he-floating-in var(--he-transition-fast);
 }
 
+/* A tooltip is never a hit target. If it lands over its own anchor (a short
+ * viewport leaves nowhere else to go) a portalled bubble that took the pointer
+ * would fire pointerleave on the anchor, unmount itself, and loop forever. */
 .he-tooltip {
+  pointer-events: none;
   max-width: 240px;
   padding: var(--he-space-2) var(--he-space-3);
   font-size: var(--he-caption);

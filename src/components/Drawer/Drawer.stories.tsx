@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '../Button/Button';
 import { Money } from '../Money/Money';
 import { StatCard } from '../StatCard/StatCard';
+import { StatusPill } from '../StatusPill/StatusPill';
 import { Tabs } from '../Tabs/Tabs';
 import { Drawer } from './Drawer';
 
@@ -118,6 +119,88 @@ export const WithTabs: Story = {
           )}
           {tab === 'triage' && <p style={{ color: 'var(--he-text-dim)' }}>Highest-priority item first.</p>}
           {tab === 'history' && <p style={{ color: 'var(--he-text-dim)' }}>Timeline of changes.</p>}
+        </Drawer>
+      </>
+    );
+  },
+};
+
+/**
+ * The header is a flex sibling of the scroller, so eyebrow/title/meta can never
+ * scroll away. Every control clusters at the trailing edge.
+ */
+export const WithActions: Story = {
+  name: 'Header actions',
+  render: () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>Open receipt</Button>
+        <Drawer
+          open={open}
+          onClose={() => setOpen(false)}
+          width="420px"
+          eyebrow="Receipt"
+          title="Receipt 30125559390"
+          meta={<StatusPill status="warn" label="Pending" />}
+          actions={
+            <Button variant="ghost" size="icon-sm" aria-label="More">
+              …
+            </Button>
+          }
+          footer={
+            <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
+              View in Receipts
+            </Button>
+          }
+        >
+          <p style={{ marginTop: 0, color: 'var(--he-text-dim)' }}>
+            Issued 12 Feb · Due 12 Mar · Policy AUT-4471
+          </p>
+          <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
+            <StatCard label="Amount" value={<Money value={18240} currency="MXN" />} />
+            <StatCard label="Days open" value="19" footer="Escalates at 30" />
+          </div>
+        </Drawer>
+      </>
+    );
+  },
+};
+
+/**
+ * Expand widens the panel over the same scrim — the table behind stays visible for
+ * context. Width transitions on `--he-transition-base` and is nulled under
+ * `prefers-reduced-motion`.
+ */
+export const Expandable: Story = {
+  name: 'Expandable',
+  render: () => {
+    const [open, setOpen] = useState(false);
+    const [expanded, setExpanded] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>Open record</Button>
+        <Drawer
+          open={open}
+          onClose={() => setOpen(false)}
+          width="480px"
+          eyebrow="Customer"
+          title="Zazil Selene Montero Sanchez"
+          meta={<StatusPill status="ok" label="Active" />}
+          expanded={expanded}
+          onToggleExpand={() => setExpanded((v) => !v)}
+          footer={
+            <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
+              Ask about this customer
+            </Button>
+          }
+        >
+          {Array.from({ length: 24 }, (_, i) => (
+            <p key={i} style={{ marginTop: i === 0 ? 0 : 16, color: 'var(--he-text-dim)' }}>
+              {i + 1}. Renewal correspondence, endorsement history and payment notes for this
+              record. Scroll the body: the identity block above never moves.
+            </p>
+          ))}
         </Drawer>
       </>
     );

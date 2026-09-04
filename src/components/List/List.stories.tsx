@@ -183,6 +183,61 @@ export const InlineMeta: Story = {
   ),
 };
 
+/**
+ * The two sanctioned ways to mark a row, side by side.
+ *
+ * **Selection is a FILL** (`active`) — a `--he-surface-2` wash plus a weight step
+ * on the primary. There is no spine, no bar and no accent edge anywhere in this
+ * library; that pattern has been rejected four times and this story is the
+ * anchor that keeps it out. **A current choice is a CHECK** in `trailing`.
+ */
+export const ActiveRow: Story = {
+  render: () => (
+    <Grid columns={2} gap={4}>
+      <Stack gap={2}>
+        <Caption>selection — a fill</Caption>
+        <Card padding="sm">
+          <List size="sm">
+            {attention.slice(0, 4).map((r, i) => (
+              <ListItem
+                key={r.id}
+                active={i === 1}
+                onSelect={() => {}}
+                primary={r.customer}
+                secondary={`Policy ${r.policy}`}
+                value={r.due}
+              />
+            ))}
+          </List>
+        </Card>
+      </Stack>
+      <Stack gap={2}>
+        <Caption>current choice — a check</Caption>
+        <Card padding="sm">
+          <List size="sm">
+            {['Todos los clientes', 'Solo mis clientes', 'Sin pólizas activas'].map((label, i) => (
+              <ListItem
+                key={label}
+                onSelect={() => {}}
+                primary={label}
+                trailing={i === 1 ? <Check /> : undefined}
+              />
+            ))}
+          </List>
+        </Card>
+      </Stack>
+    </Grid>
+  ),
+};
+
+function Check() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function Caption({ children }: { children: React.ReactNode }) {
   return (
     <span

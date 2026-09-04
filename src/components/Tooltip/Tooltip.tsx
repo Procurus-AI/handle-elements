@@ -1,5 +1,7 @@
 import {
+  useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -41,24 +43,42 @@ function isBrowser(): boolean {
   return typeof document !== 'undefined';
 }
 
+const OPPOSITE: Record<TooltipPlacement, TooltipPlacement> = {
+  top: 'bottom',
+  bottom: 'top',
+  left: 'right',
+  right: 'left',
+};
+
+/* FLIP, never clamp, along the main axis. Clamping a `top` tooltip on a short
+ * viewport parks the bubble in the 8px gutter — i.e. straddling its own anchor.
+ * The cross axis is still clamped: sliding sideways can't cover the anchor. */
 function positionFor(anchor: HTMLElement, placement: TooltipPlacement, width = 0, height = 0): FloatingPosition {
   const rect = anchor.getBoundingClientRect();
   const offset = 8;
+  const gutter = 8;
   const viewportWidth = document.documentElement.clientWidth;
   const viewportHeight = document.documentElement.clientHeight;
-  const gutter = 8;
 
-  let top = rect.top - height - offset;
-  let left = rect.left + rect.width / 2 - width / 2;
+  const room: Record<TooltipPlacement, number> = {
+    top: rect.top - gutter - offset,
+    bottom: viewportHeight - rect.bottom - gutter - offset,
+    left: rect.left - gutter - offset,
+    right: viewportWidth - rect.right - gutter - offset,
+  };
+  const needed = placement === 'top' || placement === 'bottom' ? height : width;
+  const flipped = OPPOSITE[placement];
+  const side =
+    room[placement] >= needed || room[placement] >= room[flipped] ? placement : flipped;
 
-  if (placement === 'bottom') top = rect.bottom + offset;
-  if (placement === 'right') {
+  let top: number;
+  let left: number;
+  if (side === 'top' || side === 'bottom') {
+    top = side === 'top' ? rect.top - height - offset : rect.bottom + offset;
+    left = rect.left + rect.width / 2 - width / 2;
+  } else {
     top = rect.top + rect.height / 2 - height / 2;
-    left = rect.right + offset;
-  }
-  if (placement === 'left') {
-    top = rect.top + rect.height / 2 - height / 2;
-    left = rect.left - width - offset;
+    left = side === 'left' ? rect.left - width - offset : rect.right + offset;
   }
 
   return {
@@ -71,25 +91,27 @@ function useDelayedOpen(openDelay: number, closeDelay: number) {
   const [open, setOpen] = useState(false);
   const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const delays = useRef({ openDelay, closeDelay });
+  delays.current = { openDelay, closeDelay };
 
-  const clear = () => {
+  const clear = useCallback(() => {
     if (openTimer.current) clearTimeout(openTimer.current);
     if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
+  }, []);
 
-  useEffect(() => clear, []);
+  useEffect(() => clear, [clear]);
 
-  return {
-    open,
-    show: () => {
-      clear();
-      openTimer.current = setTimeout(() => setOpen(true), openDelay);
-    },
-    hide: () => {
-      clear();
-      closeTimer.current = setTimeout(() => setOpen(false), closeDelay);
-    },
-  };
+  const show = useCallback(() => {
+    clear();
+    openTimer.current = setTimeout(() => setOpen(true), delays.current.openDelay);
+  }, [clear]);
+
+  const hide = useCallback(() => {
+    clear();
+    closeTimer.current = setTimeout(() => setOpen(false), delays.current.closeDelay);
+  }, [clear]);
+
+  return { open, show, hide };
 }
 
 export function Tooltip({
@@ -106,29 +128,50 @@ export function Tooltip({
   const anchorRef = useRef<HTMLSpanElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const floating = useDelayedOpen(delay, 0);
+  const { hide } = floating;
   const [position, setPosition] = useState<FloatingPosition | null>(null);
 
+  /* NEVER position from an unmeasured bubble. `positionFor` subtracts the bubble's
+   * own height for `top`/`left`/`right`, so a height of 0 on pointerEnter (the
+   * portal does not exist yet) put a top-placed tooltip 8px above the ANCHOR's top
+   * edge — i.e. straddling the anchor, under the cursor. Because the bubble is
+   * portalled to <body> it is not a descendant of the anchor, so the anchor
+   * immediately took pointerleave, the tooltip unmounted, pointerenter fired
+   * again… and a `placement="top"` tooltip never became visible at all. Staying
+   * `null` keeps it `visibility: hidden` for exactly one frame, until the
+   * post-mount effect measures the real box. */
   const updatePosition = (event?: ReactPointerEvent<HTMLSpanElement>) => {
     if (!isBrowser()) return;
     if (followCursor && event) {
       setPosition({ top: event.clientY + 14, left: event.clientX + 14 });
       return;
     }
-    if (!anchorRef.current) return;
-    setPosition(
-      positionFor(
-        anchorRef.current,
-        placement,
-        contentRef.current?.offsetWidth ?? 0,
-        contentRef.current?.offsetHeight ?? 0,
-      ),
-    );
+    const anchor = anchorRef.current;
+    const bubble = contentRef.current;
+    if (!anchor) return;
+    if (!bubble) {
+      setPosition(null);
+      return;
+    }
+    setPosition(positionFor(anchor, placement, bubble.offsetWidth, bubble.offsetHeight));
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!floating.open || followCursor) return;
     updatePosition();
   }, [floating.open, followCursor, placement]);
+
+  /* WCAG 1.4.13: hover/focus content must be dismissible without moving focus. On
+   * the collapsed rail the tooltip is the row's only visible name, so it has to be
+   * possible to get it out of the way. */
+  useEffect(() => {
+    if (!floating.open || !isBrowser()) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') hide();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [floating.open, hide]);
 
   return (
     <>
@@ -197,19 +240,19 @@ export function HoverCard({
   const floating = useDelayedOpen(openDelay, closeDelay);
   const [position, setPosition] = useState<FloatingPosition | null>(null);
 
+  // Same rule as Tooltip: measure first, position second (see the note above).
   const updatePosition = () => {
-    if (!isBrowser() || !anchorRef.current) return;
-    setPosition(
-      positionFor(
-        anchorRef.current,
-        placement,
-        (contentRef.current?.offsetWidth ?? Number(width)) || 0,
-        contentRef.current?.offsetHeight ?? 0,
-      ),
-    );
+    const anchor = anchorRef.current;
+    const bubble = contentRef.current;
+    if (!isBrowser() || !anchor) return;
+    if (!bubble) {
+      setPosition(null);
+      return;
+    }
+    setPosition(positionFor(anchor, placement, bubble.offsetWidth, bubble.offsetHeight));
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (floating.open) updatePosition();
   }, [floating.open, placement, width]);
 

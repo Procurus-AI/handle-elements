@@ -101,22 +101,15 @@ a.he-list__row {
   outline-offset: -2px;
 }
 
-/* Active row — subtle fill + an accent spine. */
+/* Active row — a fill plus weight. No pseudo-element, no spine, no bar: the
+ * fill IS the selection. A list that marks a CURRENT CHOICE should pass a check
+ * glyph in `trailing`. */
 .he-list__item--active .he-list__row {
   background: var(--he-surface-2);
 }
 
-/* The spine is a LINE, not a fill: bare Borealis is 1.11:1 on --he-surface, so
- * the same authored hairline the accent dot rings itself with is used here. */
-.he-list__item--active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: var(--he-space-2);
-  bottom: var(--he-space-2);
-  width: 2px;
-  border-radius: var(--he-radius-full);
-  background: var(--he-accent-line);
+.he-list__item--active .he-list__primary {
+  font-weight: 500;
 }
 
 /* ---- rank badge ---- */

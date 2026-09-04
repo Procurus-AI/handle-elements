@@ -111,6 +111,20 @@
   background: var(--he-surface-2);
 }
 
+/* Selected row — the row backing an open drawer. A fill plus weight, the same
+ * doctrine as .he-sidebar-item--active and .he-list__item--active. Never an
+ * edge bar: an accent spine on a selected row is a rejected pattern here, and a
+ * raw Borealis hairline measures 1.11:1 on --he-surface. Declared after the
+ * hover rule so pointing at a selected row keeps the same fill instead of
+ * flickering. */
+.he-table__row--selected {
+  background: var(--he-surface-2);
+}
+
+.he-table__row--selected .he-table__td:first-child {
+  font-weight: 500;
+}
+
 /* ---- composite (nested) cell — media + stacked label + trailing ---- */
 .he-table__cell {
   display: flex;

@@ -14,7 +14,7 @@ export interface FormatRelativeTimeOptions {
   nullLabel?: string;
 }
 
-const DEFAULT_LOCALE = 'es-MX';
+export const DEFAULT_LOCALE = 'es-MX';
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
@@ -52,7 +52,11 @@ export function formatDateTime(input: DateInput | null | undefined, options: For
   if (!isValidDate(input)) return nullLabel;
 
   return new Intl.DateTimeFormat(options.locale ?? DEFAULT_LOCALE, {
-    dateStyle: options.dateStyle ?? 'medium',
+    // `medium` is the default only when NOTHING was asked for. Asking for a
+    // timeStyle alone means you want the clock time — a feed grouped by day
+    // prints "12:00 p.m." under its own "1 sep 2026" heading, not the heading
+    // again with a time bolted on.
+    dateStyle: options.dateStyle ?? (options.timeStyle == null ? 'medium' : undefined),
     timeStyle: options.timeStyle,
     timeZone: options.timeZone,
   }).format(toDate(input));
@@ -70,8 +74,17 @@ export function formatRelativeTime(input: DateInput | null | undefined, options:
     return (options.locale ?? DEFAULT_LOCALE).startsWith('es') ? 'ahora' : 'now';
   }
 
-  const unit = UNITS.find((candidate) => abs < candidate.limit) ?? UNITS[UNITS.length - 1];
-  const amount = Math.max(1, Math.round(abs / unit.size));
+  const index = UNITS.findIndex((candidate) => abs < candidate.limit);
+  const unitIndex = index === -1 ? UNITS.length - 1 : index;
+  let unit = UNITS[unitIndex];
+  let amount = Math.max(1, Math.round(abs / unit.size));
+  // Rounding can push the magnitude up into this unit's own limit — 59.9 minutes
+  // becomes "60m" when it should be "1h". Promote instead of printing the overshoot,
+  // so a feed never stacks "60m ago" directly above "1h ago".
+  if (unitIndex < UNITS.length - 1 && amount * unit.size >= unit.limit) {
+    unit = UNITS[unitIndex + 1];
+    amount = Math.max(1, Math.round(abs / unit.size));
+  }
   const es = (options.locale ?? DEFAULT_LOCALE).startsWith('es');
   const suffix = es ? unit.es : unit.en;
 

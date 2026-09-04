@@ -1,0 +1,173 @@
+/* Segmented — one-of-N at row scale. The track is TRANSPARENT and the selected
+ * pill is --he-surface, which measures LIGHTER than the rail behind it in both
+ * themes (white on the light bg, Midnight on the black bg). The canonical
+ * "white pill on a grey track" cannot be used here — --he-surface vs
+ * --he-surface-2 is 1.12:1 in both themes AND inverts direction in dark, so a
+ * surface-2 track would make selection DARKEN on dark. Selection is carried by
+ * ink + hairline + shadow, never by a colored bar. */
+.he-segmented {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-sm);
+  background: transparent;
+  font-family: var(--he-font-sans);
+  /* Placement hook: on a --he-surface card, set this to --he-surface-2. */
+  --he-segmented-selected: var(--he-surface);
+}
+
+.he-segmented--block {
+  width: 100%;
+}
+
+.he-segmented--block .he-segmented__option {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.he-segmented__option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 0 var(--he-space-3);
+  appearance: none;
+  margin: 0;
+  border: 1px solid transparent;
+  border-radius: calc(var(--he-radius-sm) - 2px);
+  background: transparent;
+  color: var(--he-text-dim);
+  font-family: inherit;
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    color var(--he-transition-fast),
+    background var(--he-transition-fast),
+    border-color var(--he-transition-fast);
+}
+
+.he-segmented__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.he-segmented__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+/* Hover changes COLOR only — a --he-surface-2 fill DARKENS against --he-surface
+ * in light and LIFTS against it in dark, so no fill change is the only treatment
+ * that obeys the hover-lifts rule in both themes (Chip.css:95-100). */
+.he-segmented__option:hover:not(:disabled):not(.he-segmented__option--selected) {
+  color: var(--he-text);
+}
+
+.he-segmented__option:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -1px;
+}
+
+.he-segmented__option:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Selected carries an INK hairline, not a sandstone one. Measured: the pill's
+ * fill is 1.04:1 on the light rail and 1.09:1 on the dark one — a fill this
+ * close to its backdrop cannot be the indicator, and --he-border-strong only
+ * reached 1.65:1 / 1.78:1, both under the 3:1 bar for identifying a control's
+ * state. --he-text clears it in both themes (16.9:1 light, 18.9:1 dark) and is
+ * the same idiom Card already uses for `selected`. Still no bar, still no
+ * color — a monochrome outline. */
+.he-segmented__option--selected {
+  background: var(--he-segmented-selected);
+  border-color: var(--he-text);
+  box-shadow: var(--he-shadow-card);
+  color: var(--he-text);
+}
+
+/* Tone dot — consequence at the scale of a bullet (StatToggle.css:63-71,
+ * StatusPill.css). Never a band, a bar or a tinted background. */
+.he-segmented__dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: var(--he-radius-full);
+  background: var(--he-segmented-dot, var(--he-neutral));
+}
+
+.he-segmented__dot--ok {
+  --he-segmented-dot: var(--he-ok);
+}
+.he-segmented__dot--warn {
+  --he-segmented-dot: var(--he-warn);
+}
+.he-segmented__dot--error {
+  --he-segmented-dot: var(--he-error);
+}
+.he-segmented__dot--accent {
+  --he-segmented-dot: var(--he-accent);
+}
+
+/* sizes: md = 30px overall (2px pad + 2x1px border + 24px option) — lands on the
+ * rail's 29-30px row rhythm, measured. sm = 26px. */
+.he-segmented--sm .he-segmented__option {
+  min-height: 20px;
+  padding: 0 var(--he-space-2);
+  font-size: var(--he-caption);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-segmented__option {
+    transition: none;
+  }
+}
+
+/* Collapsed toggle — the 56px-rail affordance. Same geometry and centring as
+ * ThemeSwitch's toggle (ThemeSwitch.css) so the two controls sit on one line
+ * down the rail; the tone dot rides along so a non-production environment is
+ * still legible when the words are gone. */
+.he-segmented__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 0 auto;
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--he-radius-sm);
+  background: transparent;
+  color: var(--he-text-dim);
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    color var(--he-transition-fast),
+    background var(--he-transition-fast);
+}
+
+.he-segmented__toggle:hover {
+  color: var(--he-text);
+  background: var(--he-surface-2);
+}
+
+.he-segmented__toggle:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -1px;
+}
+
+.he-segmented__toggle-text {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}

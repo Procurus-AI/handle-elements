@@ -49,37 +49,26 @@
  * --he-surface, 3.28-3.86:1 vs --he-border), and the four hues stay far enough
  * apart in lightness to be told from one another. Borealis is the exception —
  * mixing it toward the border makes it vanish on white, so accent uses the
- * authored --he-accent-line.
- *
- * `--he-card-spine` is the paint for the `spine` variant and defaults to the
- * full-strength status color: a 2px tick sits ON the surface, so unlike the
- * hairline it does not need mixing. Accent overrides it for the same reason it
- * overrides the edge — raw Borealis is 1.11:1 on --he-surface and would draw an
- * invisible spine. Override either custom property to repaint a single card. */
+ * authored --he-accent-line. Override --he-card-line to repaint a single card. */
 .he-card--status-ok {
   --he-card-status: var(--he-ok);
   --he-card-line: color-mix(in oklab, var(--he-ok) 90%, var(--he-border));
-  --he-card-spine: var(--he-ok);
 }
 .he-card--status-warn {
   --he-card-status: var(--he-warn);
   --he-card-line: color-mix(in oklab, var(--he-warn) 90%, var(--he-border));
-  --he-card-spine: var(--he-warn);
 }
 .he-card--status-error {
   --he-card-status: var(--he-error);
   --he-card-line: color-mix(in oklab, var(--he-error) 90%, var(--he-border));
-  --he-card-spine: var(--he-error);
 }
 .he-card--status-neutral {
   --he-card-status: var(--he-neutral);
   --he-card-line: color-mix(in oklab, var(--he-neutral) 90%, var(--he-border));
-  --he-card-spine: var(--he-neutral);
 }
 .he-card--status-accent {
   --he-card-status: var(--he-accent);
   --he-card-line: var(--he-accent-line);
-  --he-card-spine: var(--he-accent-line);
 }
 
 /* edge — recolor the border. No new box, no radius math, no padding shift. */
@@ -91,23 +80,6 @@
 .he-card--statusvar-edge.he-card--clickable:hover {
   border-color: var(--he-card-line);
   box-shadow: var(--he-shadow-card);
-}
-
-/* spine — opt-in. Vertically inset 2px rounded tick, the same idiom List already
- * uses for its active row, so the system has one spine geometry instead of three. */
-.he-card--statusvar-spine {
-  position: relative;
-}
-
-.he-card--statusvar-spine::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: var(--he-space-3);
-  bottom: var(--he-space-3);
-  width: 2px;
-  border-radius: var(--he-radius-full);
-  background: var(--he-card-spine, var(--he-card-status, var(--he-neutral)));
 }
 
 /* none — paints nothing; data-status and --he-card-status stay available. */

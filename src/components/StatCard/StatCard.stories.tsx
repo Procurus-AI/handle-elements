@@ -101,7 +101,7 @@ export const RailResponsive: Story = {
   ),
 };
 
-// The dot replaces wrapping a tile in a spined Card — 28px² of colour, not 180px².
+// The dot replaces marking a tile with a coloured bar — 28px² of colour, not 180px².
 export const Tones: Story = {
   render: () => (
     <StatCardGroup columns={5}>

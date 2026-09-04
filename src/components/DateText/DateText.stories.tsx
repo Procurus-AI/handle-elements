@@ -43,6 +43,8 @@ export const Relative: Story = {
 export const Absolute: Story = {
   render: () => (
     <div style={{ display: 'grid', gap: 12 }}>
+      <DateText date={dates[0]} dateStyle="medium" timeStyle="short" />
+      {/* timeStyle alone is the clock time alone — the form a day-grouped feed uses. */}
       <DateText date={dates[0]} timeStyle="short" />
       <DateText date={dates[1]} variant="mono" />
       <DateText date={null} />

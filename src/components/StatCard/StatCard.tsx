@@ -19,8 +19,8 @@ export interface StatCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'chi
   unit?: ReactNode;
   delta?: { value: ReactNode; direction: StatCardDeltaDirection };
   /**
-   * 6px status dot before the label — the direct replacement for wrapping a KPI
-   * tile in a spined Card. Inside a rail, set `tone` on every tile or none: a
+   * 6px status dot before the label — the direct replacement for marking a KPI
+   * tile with a coloured bar. Inside a rail, set `tone` on every tile or none: a
    * mixed row shifts untoned labels left by 14px.
    */
   tone?: StatCardTone;

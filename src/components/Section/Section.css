@@ -1,0 +1,172 @@
+/* Section — a borderless titled block: heading + optional count + optional
+ * trailing action, at drawer density. No border, no background, no padding: a
+ * Section inside a Drawer or a Panel must not become a second surface. */
+.he-section {
+  min-width: 0;
+}
+
+/* 32px between top-level sections; 24px between sub-sections nested in one. */
+.he-section + .he-section {
+  margin-top: var(--he-space-6);
+}
+
+.he-section__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--he-space-2);
+  min-width: 0;
+}
+
+.he-section__action {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* ---- section tier: the bold-sans block head ---- */
+.he-section__title {
+  margin: 0;
+  min-width: 0;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--he-text);
+}
+
+.he-section__count {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-text-faint);
+}
+
+/* ---- sub tier: the mono-caps sub-head. Values are .he-stat__label's, verbatim,
+ * so the system keeps ONE caps tier. ---- */
+.he-section--sub .he-section__title {
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
+}
+
+.he-section--sub .he-section__count {
+  font-size: 10.5px;
+  letter-spacing: var(--he-tracking-caps);
+}
+
+/* ---- head -> body rhythm ---- */
+.he-section__head + .he-section__body,
+.he-section__head + .he-section__empty {
+  margin-top: var(--he-space-3);
+}
+
+.he-section--sub .he-section__head + .he-section__body,
+.he-section--sub .he-section__head + .he-section__empty {
+  margin-top: var(--he-space-2);
+}
+
+.he-section__body {
+  min-width: 0;
+}
+
+/* Body rhythm: 16px between arbitrary children, 24px between nested sections. */
+.he-section__body > * + * {
+  margin-top: var(--he-space-4);
+}
+
+.he-section__body > .he-section + .he-section {
+  margin-top: var(--he-space-5);
+}
+
+/* ---- trailing link — the quiet arrow link a section head takes. Not a Button:
+ * `variant="link"` is underlined and `ghost size="xs"` is a 25px pill, and a
+ * section head wants neither on its baseline. Dim ink that goes to full ink on
+ * hover, so the hover LIFTS in contrast rather than darkening a surface. ---- */
+.he-section__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-caption);
+  line-height: 1.3;
+  color: var(--he-text-dim);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--he-transition-fast);
+}
+
+.he-section__link:not(:disabled):hover {
+  color: var(--he-text);
+}
+
+/* A section action that has run out of things to do goes faint and stops
+ * offering a pointer. Without this a disabled SectionLink is byte-identical to
+ * a live one and still brightens on hover — a control that looks live and does
+ * nothing. */
+.he-section__link:disabled {
+  color: var(--he-text-faint);
+  cursor: default;
+}
+
+.he-section__link:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+  border-radius: var(--he-radius-xs);
+}
+
+.he-section__link-glyph {
+  flex: 0 0 auto;
+}
+
+/* ---- empty: one dim line, NOT an EmptyState. Measured, EmptyState's leanest
+ * configuration is 51.5px against a ~20px line and its title is 15px/600
+ * against a 13px drawer body. ---- */
+.he-section__empty {
+  margin: 0;
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+}
+
+/* ---- flush: bleed hairline rows to the containing surface's edge. Reads the
+ * ONE hook every bleedable surface publishes at its own boundary,
+ * --he-bleed-pad: .he-drawer__body publishes the drawer's inset, .he-panel
+ * re-publishes its own padding (Panel.css). Falls back to the 24px default.
+ * Drives List's own hooks — no cross-component selectors.
+ *
+ * Reading two hooks here was the bug: --he-bleed-pad INHERITS, so a drawer's
+ * 24px beat a nested `Panel padding="sm"`'s 12px and the rows hung 11px past the
+ * card's border on both sides. A custom property can only name the nearest
+ * surface if every surface republishes it.
+ *
+ * A surface bleeds ONCE: put `flush` on the Section OR on the Panel around it,
+ * never both — measured, two bleeds pull the rows 23px PAST the card's border on
+ * each side. ---- */
+.he-section--flush > .he-section__body {
+  --he-section-pad: var(--he-bleed-pad, var(--he-space-5));
+  --he-list-row-pad-inline: var(--he-section-pad);
+  --he-list-row-radius: 0;
+  margin-inline: calc(-1 * var(--he-section-pad));
+  border-block: 1px solid var(--he-border);
+}
+
+/* Below a flush body the content already reaches the surface edge, so a nested
+ * flush Section contributes no second pull. Its rows keep the inset they
+ * inherited — only the negative margin is dropped. */
+.he-section--flush > .he-section__body .he-section--flush > .he-section__body {
+  margin-inline: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-section__link {
+    transition: none;
+  }
+}

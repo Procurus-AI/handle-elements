@@ -34,8 +34,16 @@ export function formatCurrency(value: number | null | undefined, options: Format
   if (value == null || !Number.isFinite(value)) return nullLabel;
 
   const compact = options.compact ?? false;
+  // The default maximum is derived from the VALUE (whole pesos for integers and
+  // anything over 100), so asking only for a minimum used to throw:
+  // Intl rejects minimumFractionDigits > maximumFractionDigits, and
+  // `<Money value={15566.23} minimumFractionDigits={2} />` took the whole render
+  // down with a RangeError. A requested minimum raises the derived maximum, and
+  // an explicit maximum wins over the minimum rather than throwing.
+  const requestedMin = options.minimumFractionDigits ?? 0;
   const maximumFractionDigits =
-    options.maximumFractionDigits ?? defaultFractionDigits(value, compact);
+    options.maximumFractionDigits ?? Math.max(defaultFractionDigits(value, compact), requestedMin);
+  const minimumFractionDigits = Math.min(requestedMin, maximumFractionDigits);
 
   return new Intl.NumberFormat(options.locale ?? DEFAULT_LOCALE, {
     style: 'currency',
@@ -44,7 +52,7 @@ export function formatCurrency(value: number | null | undefined, options: Format
     currencySign: options.accounting ? 'accounting' : 'standard',
     notation: compact ? 'compact' : 'standard',
     compactDisplay: 'short',
-    minimumFractionDigits: options.minimumFractionDigits ?? 0,
+    minimumFractionDigits,
     maximumFractionDigits,
     signDisplay: options.signDisplay,
   }).format(value);

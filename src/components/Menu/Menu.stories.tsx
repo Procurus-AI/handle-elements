@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
+import { Avatar } from '../Avatar/Avatar';
 import { Button } from '../Button/Button';
-import { Menu, MenuItem, MenuSeparator, Popover } from './Menu';
+import { EmptyState } from '../EmptyState/EmptyState';
+import { Modal } from '../Modal/Modal';
+import { Menu, MenuFilter, MenuGroup, MenuItem, MenuSeparator, Popover } from './Menu';
 
 const meta = {
   title: 'Elements/Menu',
@@ -44,6 +47,276 @@ export const ControlledPopover: Story = {
           </span>
         </div>
       </Popover>
+    );
+  },
+};
+
+/* ------------------------- example: org switcher --------------------------- */
+
+interface Account {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+}
+
+interface Tenant {
+  tenantId: string;
+  name: string;
+  accounts: Account[];
+}
+
+/* Two tenants hold an account named "Alfonso de los rios" — the pair that was
+ * indistinguishable in the screenshot. Groups are keyed on tenantId and headed
+ * by the tenant name, so one heading appears per org; the sublabel
+ * (`handle.mx · Owner` vs `handle-qa.mx · Admin`) is what separates the twins. */
+const tenants: Tenant[] = [
+  {
+    tenantId: 'ten_handle_prod',
+    name: 'Handle',
+    accounts: [
+      { id: 'acc_1', name: 'Alfonso de los rios', slug: 'handle.mx', role: 'Owner' },
+      { id: 'acc_2', name: 'Mesa de control', slug: 'handle.mx', role: 'Operaciones' },
+      { id: 'acc_3', name: 'Renovaciones', slug: 'handle.mx', role: 'Analista' },
+    ],
+  },
+  {
+    tenantId: 'ten_handle_qa',
+    name: 'Handle QA',
+    accounts: [
+      { id: 'acc_4', name: 'Alfonso de los rios', slug: 'handle-qa.mx', role: 'Admin' },
+      { id: 'acc_5', name: 'Soporte', slug: 'handle-qa.mx', role: 'Soporte' },
+    ],
+  },
+  {
+    tenantId: 'ten_acme_qa',
+    name: 'Acme Brokers QA',
+    accounts: [
+      { id: 'acc_6', name: 'poncho', slug: 'acme-qa.mx', role: 'Admin' },
+      { id: 'acc_7', name: 'Alfonso DR', slug: 'click-dev.mx', role: 'Owner' },
+    ],
+  },
+];
+
+const allAccounts = tenants.flatMap((tenant) => tenant.accounts);
+
+export const OrgSwitcher: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          'The full recipe: one heading per TENANT ID (never per display name), `tone={0}` avatars so colour ' +
+          'carries no false signal, a sublabel that separates the two accounts sharing a name, and the current ' +
+          'account marked with a check on a quiet fill — `role="menuitemradio"` with `aria-checked`, no spine. ' +
+          'The filter lives in `header` because a textbox is not a valid child of `role="menu"`; "Cerrar sesión" ' +
+          'lives in `footer`, pinned outside the scroll box.',
+      },
+    },
+  },
+  render: () => {
+    const [query, setQuery] = useState('');
+    const [currentId, setCurrentId] = useState('acc_1');
+    const needle = query.trim().toLowerCase();
+    const groups = tenants
+      .map((tenant) => ({
+        ...tenant,
+        accounts: tenant.accounts.filter(
+          (account) => !needle || `${account.name} ${account.slug} ${account.role}`.toLowerCase().includes(needle),
+        ),
+      }))
+      .filter((tenant) => tenant.accounts.length > 0);
+    const current = allAccounts.find((account) => account.id === currentId) as Account;
+
+    return (
+      <div style={{ display: 'flex', alignItems: 'flex-end', height: '100vh', padding: 16 }}>
+        <Menu
+          label="Cuentas"
+          placement="top-start"
+          /* The query belongs to one opening — see AppShell.stories.tsx. */
+          onOpenChange={(next) => {
+            if (!next) setQuery('');
+          }}
+          header={
+            <MenuFilter
+              value={query}
+              onValueChange={setQuery}
+              label="Filtrar organizaciones"
+              placeholder="Filtrar organizaciones…"
+            />
+          }
+          footer={
+            <MenuItem destructive onSelect={() => undefined}>
+              Cerrar sesión
+            </MenuItem>
+          }
+          trigger={
+            <Button variant="outline">
+              {current.name} · {current.slug}
+            </Button>
+          }
+        >
+          {groups.length === 0 ? (
+            <EmptyState size="sm" title="Sin resultados" hint={`Nada coincide con “${query}”.`} />
+          ) : (
+            groups.map((tenant) => (
+              <MenuGroup key={tenant.tenantId} label={tenant.name}>
+                {tenant.accounts.map((account) => (
+                  <MenuItem
+                    key={account.id}
+                    checked={account.id === currentId}
+                    media={<Avatar size="sm" tone={0} name={account.name} />}
+                    sublabel={`${account.slug} · ${account.role}`}
+                    onSelect={() => setCurrentId(account.id)}
+                  >
+                    {account.name}
+                  </MenuItem>
+                ))}
+              </MenuGroup>
+            ))
+          )}
+        </Menu>
+      </div>
+    );
+  },
+};
+
+/* ------------------------- example: viewport flip -------------------------- */
+
+export const NearViewportEdge: Story = {
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        story:
+          '`placement="bottom-start"` on a trigger pinned to the bottom of the viewport: the menu flips upward ' +
+          'rather than covering its own trigger. The flip only fires when the preferred side cannot fit AND the ' +
+          'other side is strictly roomier, so a menu never jumps sides for no gain.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'flex', alignItems: 'flex-end', height: '100vh', padding: 16 }}>
+      <Menu trigger={<Button variant="outline">Bottom-anchored</Button>} label="Acciones" placement="bottom-start">
+        <MenuItem>Abrir cuenta</MenuItem>
+        <MenuItem>Asignar responsable</MenuItem>
+        <MenuItem>Exportar CSV</MenuItem>
+        <MenuSeparator />
+        <MenuItem destructive>Archivar</MenuItem>
+      </Menu>
+    </div>
+  ),
+};
+
+/* --------------------------- example: overflow ----------------------------- */
+
+export const Overflowing: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Thirty rows against a bounded popover: the list scrolls inside `.he-menu__scroll` while the footer ' +
+          'stays pinned. `scrollbar-gutter: stable` reserves the bar, so no row fill ever runs underneath it.',
+      },
+    },
+  },
+  render: () => (
+    <Menu
+      trigger={<Button variant="outline">30 pólizas</Button>}
+      label="Pólizas"
+      footer={<MenuItem>Ver todas</MenuItem>}
+    >
+      {Array.from({ length: 30 }, (_, index) => (
+        <MenuItem key={index} shortcut={`P-${100 + index}`}>{`Póliza ${100 + index}`}</MenuItem>
+      ))}
+    </Menu>
+  ),
+};
+
+/* --------------------------- docs: keyboard --------------------------------- */
+
+const keyboardContract: [string, string][] = [
+  ['Tab', 'reaches the trigger once — the trigger is a real control, not a bare span'],
+  ['Enter / Space / ↓ / ↑', 'open the menu; ↓ seeds the first row, ↑ the last, otherwise the checked row'],
+  ['↓ / ↑ / Home / End', 'move the highlight (aria-activedescendant); it wraps'],
+  ['a–z', 'type-ahead when there is no filter; when a MenuFilter is present, typing filters instead'],
+  ['Enter', 'selects the highlighted row, closes, and returns focus to the trigger'],
+  ['Escape', 'closes and returns focus to the trigger — and does not close an enclosing Modal'],
+  ['Tab (while open)', 'closes and returns focus to the trigger; the next Tab then moves on naturally'],
+];
+
+export const Keyboard: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The whole surface is reachable without a mouse. Focus stays on one holder — the menu root, or the ' +
+          'filter input when there is one — and the highlight rides `aria-activedescendant`, so there is exactly ' +
+          'one roving mechanism. Rows are `tabIndex={-1}`: they never take DOM focus.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'grid', gap: 24, justifyItems: 'start' }}>
+      <Menu trigger={<Button variant="outline">Probar teclado</Button>} label="Acciones">
+        <MenuItem>Abrir cuenta</MenuItem>
+        <MenuItem>Asignar responsable</MenuItem>
+        <MenuItem disabled>Duplicar (deshabilitado)</MenuItem>
+        <MenuItem>Exportar CSV</MenuItem>
+        <MenuSeparator />
+        <MenuItem destructive>Archivar</MenuItem>
+      </Menu>
+      <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '6px 16px', margin: 0, maxWidth: 640 }}>
+        {keyboardContract.map(([keys, effect]) => (
+          <Fragment key={keys}>
+            <dt style={{ fontFamily: 'var(--he-font-mono)', fontSize: 'var(--he-caption)', whiteSpace: 'nowrap' }}>
+              {keys}
+            </dt>
+            <dd style={{ margin: 0, color: 'var(--he-text-dim)', fontSize: 'var(--he-body-sm)' }}>{effect}</dd>
+          </Fragment>
+        ))}
+      </dl>
+    </div>
+  ),
+};
+
+/* --------------------------- example: inside a modal ------------------------ */
+
+export const InsideModal: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Escape is handled on the popover content, which stops propagation — so one Escape closes the menu and ' +
+          'leaves the dialog open. A second Escape closes the dialog.',
+      },
+    },
+  },
+  render: () => {
+    const [open, setOpen] = useState(true);
+    return (
+      <>
+        <Button variant="outline" onClick={() => setOpen(true)}>
+          Abrir diálogo
+        </Button>
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          title="Reasignar renovación"
+          description="Escape cierra primero el menú, no el diálogo."
+          footer={
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+          }
+        >
+          <Menu trigger={<Button variant="outline">Responsable</Button>} label="Responsables">
+            <MenuItem checked>Alfonso de los rios</MenuItem>
+            <MenuItem checked={false}>Mesa de control</MenuItem>
+            <MenuItem checked={false}>Renovaciones</MenuItem>
+          </Menu>
+        </Modal>
+      </>
     );
   },
 };

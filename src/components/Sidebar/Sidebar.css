@@ -26,9 +26,30 @@
   padding: var(--he-space-3) var(--he-space-2) var(--he-space-4);
 }
 
+/* Pinned block between the scroll region and the account row (settings, theme,
+ * environment). Same hairline and 225px content box as the footer, so everything
+ * in it lines up with the nav rows above. */
+.he-sidebar__utility {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--he-border);
+  padding: var(--he-space-2) var(--he-space-3);
+  display: grid;
+  gap: 2px;
+}
+
 .he-sidebar__footer {
   border-top: 1px solid var(--he-border);
   padding: var(--he-space-2) var(--he-space-3);
+}
+
+/* Popover wraps its trigger in an inline-flex span. In a block slot that wrapper
+ * shrink-wraps, so the account row's width — and with it its fill, focus ring and
+ * chevron — would depend on how long the selected account's name is, and would
+ * never line up with the nav rows or the theme/environment tracks. */
+.he-sidebar__footer > .he-popover__trigger,
+.he-sidebar__utility > .he-popover__trigger {
+  display: flex;
+  width: 100%;
 }
 
 /* rows */
@@ -61,6 +82,8 @@
   outline-offset: -2px;
 }
 
+/* Active is a fill plus weight — no pseudo-element, no spine, in this file or
+ * any other. List's active row uses the same idiom. */
 .he-sidebar-item--active {
   background: var(--he-surface-2);
   font-weight: 500;
@@ -216,6 +239,9 @@
 .he-sidebar-account__sublabel {
   font-size: var(--he-caption);
   color: var(--he-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .he-sidebar-account__end {
@@ -223,6 +249,20 @@
   align-items: center;
   flex-shrink: 0;
   color: var(--he-text-dim);
+}
+
+/* Open keeps the hover fill: the trigger reads as owning the popover without
+ * turning into a block — the row already has 8px radius inside the footer pad. */
+.he-sidebar-account--open {
+  background: var(--he-surface-2);
+}
+
+.he-sidebar-account__chevron {
+  transition: transform var(--he-transition-fast);
+}
+
+.he-sidebar-account--open .he-sidebar-account__chevron {
+  transform: rotate(180deg);
 }
 
 /* collapsed — icon-only rail; sections and text melt away */
@@ -257,9 +297,21 @@
   display: none;
 }
 
-.he-sidebar--collapsed .he-sidebar__footer {
+.he-sidebar--collapsed .he-sidebar__footer,
+.he-sidebar--collapsed .he-sidebar__utility {
   padding-left: var(--he-space-2);
   padding-right: var(--he-space-2);
+}
+
+.he-sidebar--collapsed .he-sidebar__utility {
+  justify-items: center;
+}
+
+/* Collapsed rows are wrapped in Tooltip's anchor to carry their name; the anchor
+ * is inline-flex by default, which would let the rail flow rows side by side. */
+.he-sidebar--collapsed .he-tooltip-anchor {
+  display: flex;
+  width: 100%;
 }
 
 .he-sidebar--collapsed .he-sidebar-account {

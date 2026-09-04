@@ -6,6 +6,10 @@
  *
  * Dark theme follows the attribute model: the app sets data-theme="dark" on <html>
  * (or .he-theme-dark on a subtree). Never key on prefers-color-scheme.
+ * Caveat: .he-theme-dark on a SUBTREE does not reach portalled surfaces — Menu,
+ * Modal, Drawer and Tooltip all createPortal to document.body — so html[data-theme]
+ * is the only fully supported mechanism. `color-scheme` below keeps UA-painted
+ * chrome (scrollbars, form controls, caret) in step with the token set.
  * Brand accessibility rules baked in: Borealis Green is a fill or dark-bg accent,
  * never text on light backgrounds; Sandstone is faint-text-only on light.
  */
@@ -19,6 +23,7 @@
   --he-black: #141414;
 
   /* ---- surfaces & text (light, default) ---- */
+  color-scheme: light;
   --he-bg: var(--he-white);
   --he-surface: #ffffff;
   --he-surface-2: var(--he-gray-light);
@@ -137,6 +142,7 @@
 
 [data-theme='dark'],
 .he-theme-dark {
+  color-scheme: dark;
   --he-bg: var(--he-black);
   --he-surface: var(--he-midnight);
   --he-surface-2: #212633;

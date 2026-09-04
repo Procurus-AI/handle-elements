@@ -1,0 +1,236 @@
+/* Feed — a record's vertical history. The rail is derived from the node column
+ * width, so it can never drift off-axis: a hand-built feed puts the rail on the
+ * body column's left border, ~10px off the node centre, and it then reads as a
+ * blockquote bar rather than a timeline. */
+.he-feed {
+  --he-feed-node: 22px;      /* rail column width; also Avatar size="xs" (22px) */
+  --he-feed-marker: 16px;    /* the ring */
+  --he-feed-gutter: var(--he-space-3);
+  font-family: var(--he-font-sans);
+  color: var(--he-text);
+  min-width: 0;
+}
+
+.he-feed__compose {
+  margin-bottom: var(--he-space-3);
+}
+
+.he-feed__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.he-feed__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--he-feed-node) minmax(0, 1fr);
+  column-gap: var(--he-feed-gutter);
+  align-items: start;
+  padding-block: var(--he-space-3);
+  /* Off-screen rows skip layout and paint but stay in the DOM for find-in-page,
+   * tab order and screen readers. No virtualizer — that would be a runtime dep. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+}
+
+/* The rail. Axial by construction: half the node column, always. */
+.he-feed__item::before,
+.he-feed__day::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--he-feed-node) / 2);
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  margin-left: -0.5px;
+  background: var(--he-border);
+}
+
+/* Start and end AT a node, never trailing into whitespace. */
+.he-feed__list > :first-child::before {
+  top: calc(var(--he-space-3) + var(--he-feed-marker) / 2);
+}
+
+.he-feed__list > :last-child::before {
+  bottom: auto;
+  height: calc(var(--he-space-3) + var(--he-feed-marker) / 2);
+}
+
+/* A leading day heading carries no node, so the rail would start above the
+ * first marker; hand the start back to the item below it. */
+.he-feed__list > .he-feed__day:first-child::before {
+  content: none;
+}
+
+.he-feed__list > .he-feed__day:first-child + .he-feed__item::before {
+  top: calc(var(--he-space-3) + var(--he-feed-marker) / 2);
+}
+
+/* Node = ring + dot. The --he-surface fill is what punches the node out of the
+ * rail: no z-index, no mask. A ring, never a bar. */
+.he-feed__node {
+  grid-column: 1;
+  justify-self: center;
+  width: var(--he-feed-marker);
+  height: var(--he-feed-marker);
+  border-radius: var(--he-radius-full);
+  background: var(--he-surface);
+  box-shadow: 0 0 0 1px var(--he-border);
+  display: grid;
+  place-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* The Avatar is exactly the node column wide and carries its own opaque fill and
+ * hairline, so it punches the rail out by itself — the same fill-not-shadow
+ * mechanism the dot node uses above. No surface ring: `content-visibility: auto`
+ * on the item implies paint containment, and a 2px spread on an avatar whose
+ * border box starts at the item's border box is clipped flat on its left edge. */
+.he-feed__node--actor {
+  width: var(--he-feed-node);
+  height: var(--he-feed-node);
+  box-shadow: none;
+}
+
+.he-feed__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-radius-full);
+  background: var(--he-feed-dot, var(--he-text));
+}
+
+/* Tone is a 6px fill only — StatusPill's doctrine, never a line, never text.
+ *
+ * And it is OPT-IN, for state the row's own words do not already carry. A feed
+ * whose every row is tinted is redundant encoding: measured on the customer
+ * drawer, five dot colours restated five phrases already printed beside them
+ * ("cancelado", "emitido", "renovada"), and the chroma was the only colour on an
+ * otherwise monochrome surface. Default is ink; reach for a tone when the row
+ * text alone cannot tell you something went wrong.
+ *
+ * There is no `accent` tone. Borealis is 1.11:1 on --he-surface, so a 6px disc
+ * needs a hairline ring to be seen at all — a fill that has to be rescued by a
+ * line is decoration, and no history event is "Borealis". */
+.he-feed__item--ok { --he-feed-dot: var(--he-ok); }
+.he-feed__item--warn { --he-feed-dot: var(--he-warn); }
+.he-feed__item--error { --he-feed-dot: var(--he-error); }
+.he-feed__item--neutral { --he-feed-dot: var(--he-text-faint); }
+
+.he-feed__content {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-1);
+  min-width: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+/* The interactive fill bleeds into the gutter on the left, where there is room,
+ * and pads on the right instead — `content-visibility` implies paint
+ * containment, so a negative right margin would be clipped at the item edge. */
+a.he-feed__content,
+button.he-feed__content {
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: var(--he-radius-sm);
+  padding: var(--he-space-1) var(--he-space-2);
+  margin: calc(-1 * var(--he-space-1)) 0 calc(-1 * var(--he-space-1)) calc(-1 * var(--he-space-2));
+  transition: background var(--he-transition-fast);
+}
+
+a.he-feed__content:hover,
+button.he-feed__content:hover {
+  background: var(--he-surface-2);
+}
+
+a.he-feed__content:focus-visible,
+button.he-feed__content:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: -2px;
+}
+
+.he-feed__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--he-space-2);
+  min-width: 0;
+}
+
+.he-feed__kind {
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-feed__time {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: var(--he-caption);
+  color: var(--he-text-faint);
+  white-space: nowrap;
+}
+
+/* Wraps. A history entry is prose, not a table cell. */
+.he-feed__title {
+  font-size: var(--he-body-sm);
+  line-height: 1.4;
+  color: var(--he-text);
+  overflow-wrap: anywhere;
+}
+
+.he-feed__body {
+  margin: 0;
+  font-size: var(--he-body-sm);
+  line-height: 1.5;
+  color: var(--he-text-dim);
+  overflow-wrap: anywhere;
+}
+
+.he-feed__meta {
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+}
+
+.he-feed__day {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--he-feed-node) minmax(0, 1fr);
+  column-gap: var(--he-feed-gutter);
+  padding-block: var(--he-space-3) var(--he-space-1);
+}
+
+.he-feed__day-label {
+  grid-column: 2;
+  margin: 0;
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
+}
+
+.he-feed__empty {
+  margin: 0;
+  font-size: var(--he-body-sm);
+  color: var(--he-text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a.he-feed__content,
+  button.he-feed__content {
+    transition: none;
+  }
+}

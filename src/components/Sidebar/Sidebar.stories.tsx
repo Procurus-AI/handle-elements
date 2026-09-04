@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { Avatar as HeAvatar } from '../Avatar/Avatar';
 import { Button } from '../Button/Button';
+import { EmptyState } from '../EmptyState/EmptyState';
+import { Menu, MenuFilter, MenuGroup, MenuItem } from '../Menu/Menu';
 import { StatusPill } from '../StatusPill/StatusPill';
 import { Sidebar, SidebarFooterItem, SidebarHeader, SidebarItem, SidebarSection } from './Sidebar';
 
@@ -300,4 +303,255 @@ export const Minimal: Story = {
       </main>
     </div>
   ),
+};
+
+/* ---------------------- example: account switcher (canonical) --------------- */
+
+interface SwitcherAccount {
+  id: string;
+  name: string;
+  slug: string;
+  role: string;
+}
+
+interface SwitcherTenant {
+  tenantId: string;
+  name: string;
+  accounts: SwitcherAccount[];
+}
+
+/* The screenshot's failure case, kept as a fixture: two accounts whose names
+ * differ only in a capital R, sitting in two different tenants. Grouping by
+ * tenantId (not by the account name) puts each under exactly one heading, and
+ * the two tenants carry names that tell them apart — which is what the repeated
+ * "HANDLE" heading failed to do. */
+const tenants: SwitcherTenant[] = [
+  {
+    tenantId: 'ten_handle_prod',
+    name: 'Handle',
+    accounts: [
+      { id: 'acc_1', name: 'Alfonso de los rios', slug: 'handle.mx', role: 'Owner' },
+      { id: 'acc_2', name: 'Mesa de control', slug: 'handle.mx', role: 'Operaciones' },
+    ],
+  },
+  {
+    tenantId: 'ten_handle_qa',
+    name: 'Handle QA',
+    accounts: [{ id: 'acc_3', name: 'Alfonso de los Rios', slug: 'handle-qa.mx', role: 'Admin' }],
+  },
+  {
+    tenantId: 'ten_acme_qa',
+    name: 'Acme Brokers QA',
+    accounts: [
+      { id: 'acc_4', name: 'poncho', slug: 'acme-qa.mx', role: 'Admin' },
+      { id: 'acc_5', name: 'Renovaciones', slug: 'acme-qa.mx', role: 'Analista' },
+    ],
+  },
+  {
+    tenantId: 'ten_click_dev',
+    name: 'Click Seguros Dev',
+    accounts: [
+      { id: 'acc_6', name: 'Alfonso DR', slug: 'click-dev.mx', role: 'Owner' },
+      { id: 'acc_7', name: 'Soporte', slug: 'click-dev.mx', role: 'Soporte' },
+    ],
+  },
+];
+
+function useSwitcher() {
+  const [rawOpen, setRawOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [currentId, setCurrentId] = useState('acc_1');
+  const open = rawOpen;
+  /* The query is scoped to one opening. Letting it survive means the next open
+   * shows "Sin resultados" for a string the user has long forgotten typing. */
+  const setOpen = (next: boolean) => {
+    setRawOpen(next);
+    if (!next) setQuery('');
+  };
+  const needle = query.trim().toLowerCase();
+  const groups = tenants
+    .map((tenant) => ({
+      ...tenant,
+      accounts: tenant.accounts.filter((a) => !needle || `${a.name} ${a.slug} ${a.role}`.toLowerCase().includes(needle)),
+    }))
+    .filter((tenant) => tenant.accounts.length > 0);
+  const current = tenants.flatMap((t) => t.accounts).find((a) => a.id === currentId) as SwitcherAccount;
+  return { open, setOpen, query, setQuery, currentId, setCurrentId, groups, current };
+}
+
+export const AccountSwitcher: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The canonical organisation switcher — copy this rather than hand-building one. Three rules the library ' +
+          'cannot enforce for you: (1) group by TENANT ID, never by display name — grouping on the name is what ' +
+          'printed one heading per row instead of one per organisation, and give tenants names that tell them ' +
+          'apart ("Handle" / "Handle QA"), because two identical headings explain nothing; (2) one heading per ' +
+          'group, and no heading at all when there is only one group; (3) `tone={0}` on every switcher Avatar — ' +
+          'the automatic tone hashes the name, so the two accounts called "Alfonso de los rios" would get the same ' +
+          'tone AND the same "AR" initials, which is colour that carries no information. Those two rows stay ' +
+          'distinguishable through their group and sublabel (`Handle · handle.mx · Owner` vs `Handle QA · ' +
+          'handle-qa.mx · Admin`), and the current one is marked with a check, never a bar.',
+      },
+    },
+  },
+  render: () => {
+    const s = useSwitcher();
+    return (
+      <div style={{ display: 'flex', height: '100vh', margin: -16 }}>
+        <Sidebar
+          footer={
+            <Menu
+              label="Cuentas"
+              placement="top-start"
+              matchTriggerWidth
+              open={s.open}
+              onOpenChange={s.setOpen}
+              header={
+                <MenuFilter
+                  value={s.query}
+                  onValueChange={s.setQuery}
+                  label="Filtrar organizaciones"
+                  placeholder="Filtrar organizaciones…"
+                />
+              }
+              footer={
+                <MenuItem destructive onSelect={() => undefined}>
+                  Cerrar sesión
+                </MenuItem>
+              }
+              trigger={
+                <SidebarFooterItem
+                  open={s.open}
+                  chevron
+                  media={<HeAvatar size="sm" tone={0} name={s.current.name} />}
+                  label={s.current.name}
+                  sublabel={`${s.current.slug} · ${s.current.role}`}
+                />
+              }
+            >
+              {s.groups.length === 0 ? (
+                <EmptyState size="sm" title="Sin resultados" hint={`Nada coincide con “${s.query.trim()}”.`} />
+              ) : (
+                s.groups.map((tenant) => (
+                <MenuGroup key={tenant.tenantId} label={tenant.name}>
+                  {tenant.accounts.map((account) => (
+                    <MenuItem
+                      key={account.id}
+                      checked={account.id === s.currentId}
+                      media={<HeAvatar size="sm" tone={0} name={account.name} />}
+                      sublabel={`${account.slug} · ${account.role}`}
+                      onSelect={() => s.setCurrentId(account.id)}
+                    >
+                      {account.name}
+                    </MenuItem>
+                  ))}
+                  </MenuGroup>
+                ))
+              )}
+            </Menu>
+          }
+        >
+          <SidebarHeader>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--he-text)' }}>
+              {icons.brandmark}
+              <span style={{ fontFamily: 'var(--he-font-display)', fontSize: 17 }}>handle</span>
+            </span>
+          </SidebarHeader>
+          <SidebarItem icon={icons.plus} label="Cotizaciones" active />
+          <SidebarItem icon={icons.artifacts} label="Renovaciones" />
+          <SidebarItem icon={icons.computer} label="Conciliación" />
+        </Sidebar>
+        <main style={{ flex: 1, background: 'var(--he-surface)', padding: 40 }}>
+          <p style={{ color: 'var(--he-text-dim)' }}>Click the account row to open the switcher.</p>
+        </main>
+      </div>
+    );
+  },
+};
+
+/* --------------------- example: switcher on the 56px rail ------------------- */
+
+export const CollapsedRailSwitcher: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The same switcher on the collapsed rail: the trigger keeps its accessible name (the label becomes ' +
+          '`aria-label` plus a right-placed Tooltip when the text is hidden), and the popover opens beside the ' +
+          '56px rail instead of matching its width.',
+      },
+    },
+  },
+  render: () => {
+    const s = useSwitcher();
+    return (
+      <div style={{ display: 'flex', height: '100vh', margin: -16 }}>
+        <Sidebar
+          collapsed
+          footer={
+            <Menu
+              label="Cuentas"
+              placement="top-start"
+              open={s.open}
+              onOpenChange={s.setOpen}
+              header={
+                <MenuFilter
+                  value={s.query}
+                  onValueChange={s.setQuery}
+                  label="Filtrar organizaciones"
+                  placeholder="Filtrar organizaciones…"
+                />
+              }
+              footer={
+                <MenuItem destructive onSelect={() => undefined}>
+                  Cerrar sesión
+                </MenuItem>
+              }
+              trigger={
+                <SidebarFooterItem
+                  open={s.open}
+                  chevron
+                  media={<HeAvatar size="sm" tone={0} name={s.current.name} />}
+                  label={s.current.name}
+                  sublabel={`${s.current.slug} · ${s.current.role}`}
+                />
+              }
+            >
+              {s.groups.length === 0 ? (
+                <EmptyState size="sm" title="Sin resultados" hint={`Nada coincide con “${s.query.trim()}”.`} />
+              ) : (
+                s.groups.map((tenant) => (
+                <MenuGroup key={tenant.tenantId} label={tenant.name}>
+                  {tenant.accounts.map((account) => (
+                    <MenuItem
+                      key={account.id}
+                      checked={account.id === s.currentId}
+                      media={<HeAvatar size="sm" tone={0} name={account.name} />}
+                      sublabel={`${account.slug} · ${account.role}`}
+                      onSelect={() => s.setCurrentId(account.id)}
+                    >
+                      {account.name}
+                    </MenuItem>
+                  ))}
+                  </MenuGroup>
+                ))
+              )}
+            </Menu>
+          }
+        >
+          <SidebarHeader>
+            <span style={{ color: 'var(--he-text)', display: 'inline-flex' }}>{icons.brandmark}</span>
+          </SidebarHeader>
+          <SidebarItem icon={icons.plus} label="Cotizaciones" active />
+          <SidebarItem icon={icons.artifacts} label="Renovaciones" />
+          <SidebarItem icon={icons.computer} label="Conciliación" />
+        </Sidebar>
+        <main style={{ flex: 1, background: 'var(--he-surface)', padding: 40 }}>
+          <p style={{ color: 'var(--he-text-dim)' }}>Hover a rail row for its name; click the avatar to switch.</p>
+        </main>
+      </div>
+    );
+  },
 };
