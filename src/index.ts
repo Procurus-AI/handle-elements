@@ -80,7 +80,6 @@ export {
   type SegmentedOption,
   type SegmentedTone,
 } from './components/Segmented/Segmented';
-export { ThemeSwitch, type ThemeSwitchProps } from './components/ThemeSwitch/ThemeSwitch';
 export { Input, type InputProps, type InputVariant } from './components/Input/Input';
 export { Textarea, type TextareaProps } from './components/Input/Textarea';
 export { Select, type SelectProps } from './components/Input/Select';
@@ -127,11 +126,13 @@ export {
   SidebarItem,
   SidebarSection,
   SidebarFooterItem,
+  SidebarFooterRow,
   type SidebarProps,
   type SidebarHeaderProps,
   type SidebarItemProps,
   type SidebarSectionProps,
   type SidebarFooterItemProps,
+  type SidebarFooterRowProps,
 } from './components/Sidebar/Sidebar';
 export { Money, type MoneyProps, type MoneyTone } from './components/Money/Money';
 export { Spinner, type SpinnerProps } from './components/Loading/Spinner';
@@ -162,6 +163,8 @@ export {
   MenuItem,
   MenuLabel,
   MenuSeparator,
+  MenuStatic,
+  MenuSub,
   Popover,
   type MenuFilterProps,
   type MenuGroupProps,
@@ -169,6 +172,9 @@ export {
   type MenuLabelProps,
   type MenuProps,
   type MenuSeparatorProps,
+  type MenuStaticProps,
+  type MenuSubProps,
+  type PopoverActions,
   type PopoverPlacement,
   type PopoverProps,
 } from './components/Menu/Menu';
@@ -288,8 +294,11 @@ export * as chart from './lib/chart';
 export { cx } from './lib/cx';
 export {
   applyTheme,
+  resolveTheme,
   systemTheme,
   watchSystemTheme,
+  watchResolvedTheme,
   themeBootScript,
   type ThemeMode,
+  type ThemePreference,
 } from './lib/theme';

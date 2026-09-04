@@ -5,7 +5,7 @@ import { Button } from '../Button/Button';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { Menu, MenuFilter, MenuGroup, MenuItem } from '../Menu/Menu';
 import { StatusPill } from '../StatusPill/StatusPill';
-import { Sidebar, SidebarFooterItem, SidebarHeader, SidebarItem, SidebarSection } from './Sidebar';
+import { Sidebar, SidebarFooterItem, SidebarFooterRow, SidebarHeader, SidebarItem, SidebarSection } from './Sidebar';
 
 const meta = {
   title: 'Elements/Sidebar',
@@ -76,6 +76,17 @@ const icons = {
       <path d="M6.3 11.8C6.5 12.4 7 12.8 7.5 12.8C8 12.8 8.5 12.4 8.7 11.8" {...stroke} />
     </svg>
   ),
+  /* Unread is drawn INSIDE the glyph — one <svg>, no positioned wrapper and no inline
+   * style object. A 2.4r dot at the icon's top-right, punched out of the bell with a
+   * surface-coloured ring so it reads as a mark rather than part of the drawing. */
+  bellUnread: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <path d="M7.5 2C5.3 2 4 3.7 4 5.7C4 8.6 2.8 9.5 2.8 9.5H12.2C12.2 9.5 11 8.6 11 5.7C11 3.7 9.7 2 7.5 2Z" {...stroke} />
+      <path d="M6.3 11.8C6.5 12.4 7 12.8 7.5 12.8C8 12.8 8.5 12.4 8.7 11.8" {...stroke} />
+      <circle cx="11.6" cy="3.2" r="3.4" fill="var(--he-surface)" />
+      <circle cx="11.6" cy="3.2" r="2.4" fill="var(--he-ok)" />
+    </svg>
+  ),
 };
 
 function Avatar({ name }: { name: string }) {
@@ -102,6 +113,22 @@ function Avatar({ name }: { name: string }) {
 }
 
 export const AppShell: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The bell sits BESIDE the account trigger, inside a `SidebarFooterRow`, never in its `end` slot. ' +
+          'Three reasons, in order of how badly each bites: `.he-popover__trigger` toggles on any click within ' +
+          'itself, so a nested bell would open the account menu instead of ringing; a `<button>` inside ' +
+          "`SidebarFooterItem`'s `<button>` is invalid HTML; and the ARIA delegate probe takes the FIRST " +
+          'focusable descendant, so DOM order would decide which control claims `aria-expanded`. Putting the ' +
+          'bell in `end` also left the row with NO open affordance at all — hence `chevron="updown"` here, the ' +
+          'stacked glyph that says "alternatives" rather than "expands", and which does not rotate on open. ' +
+          'Unread is state you must be able to see WITHOUT opening anything, which is why it is a mark on the ' +
+          'bell and not a row inside the account menu.',
+      },
+    },
+  },
   render: () => {
     const [active, setActive] = useState('new');
     const projects = ['AI Agent Builder Research', 'Travel Planner', 'AI Learning', 'New Space', 'Bookmarks'];
@@ -117,27 +144,19 @@ export const AppShell: Story = {
       <div style={{ display: 'flex', height: '100vh', margin: -16 }}>
         <Sidebar
           footer={
-            <SidebarFooterItem
-              media={<Avatar name="Alfonso" />}
-              label="Alfonso de los Ríos"
-              sublabel="Pro"
-              end={
-                <span style={{ position: 'relative', display: 'inline-flex' }}>
-                  {icons.bell}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: -1,
-                      right: -2,
-                      width: 6,
-                      height: 6,
-                      borderRadius: 999,
-                      background: 'var(--he-ok)',
-                    }}
-                  />
-                </span>
-              }
-            />
+            <SidebarFooterRow>
+              <SidebarFooterItem
+                media={<Avatar name="Alfonso" />}
+                label="Alfonso de los Ríos"
+                sublabel="Pro"
+                chevron="updown"
+              />
+              {/* The count lives in the NAME, not only in the dot: a 6px mark is not
+               * readable by a screen reader and "3" is the fact worth carrying. */}
+              <Button variant="ghost" size="icon-sm" aria-label="Notificaciones (3 sin leer)">
+                {icons.bellUnread}
+              </Button>
+            </SidebarFooterRow>
           }
         >
           <SidebarHeader>
@@ -424,7 +443,7 @@ export const AccountSwitcher: Story = {
               trigger={
                 <SidebarFooterItem
                   open={s.open}
-                  chevron
+                  chevron="updown"
                   media={<HeAvatar size="sm" tone={0} name={s.current.name} />}
                   label={s.current.name}
                   sublabel={`${s.current.slug} · ${s.current.role}`}
@@ -512,7 +531,7 @@ export const CollapsedRailSwitcher: Story = {
               trigger={
                 <SidebarFooterItem
                   open={s.open}
-                  chevron
+                  chevron="updown"
                   media={<HeAvatar size="sm" tone={0} name={s.current.name} />}
                   label={s.current.name}
                   sublabel={`${s.current.slug} · ${s.current.role}`}

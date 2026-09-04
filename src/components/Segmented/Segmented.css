@@ -130,10 +130,14 @@
   }
 }
 
-/* Collapsed toggle — the 56px-rail affordance. Same geometry and centring as
- * ThemeSwitch's toggle (ThemeSwitch.css) so the two controls sit on one line
- * down the rail; the tone dot rides along so a non-production environment is
- * still legible when the words are gone. */
+/* Collapsed toggle — the 56px-rail affordance. A 28px box centred with `margin: 0 auto`:
+ * the collapsed rail stretches its content box to 40px (Sidebar.css
+ * `.he-sidebar--collapsed .he-tooltip-anchor`), which would park the button 6px left of
+ * the centre line every other icon row sits on. Auto margins only resolve inside a
+ * flex/grid parent, so this centres in the rail and does nothing anywhere else. The tone
+ * dot rides along so a non-production environment is still legible when the words are
+ * gone. After the appearance picker moved into the account menu, the environment switch
+ * is this control's only consumer. */
 .he-segmented__toggle {
   display: inline-flex;
   align-items: center;

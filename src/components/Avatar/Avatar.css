@@ -73,7 +73,17 @@
   transform: translateY(0.02em);
 }
 
-.he-avatar__status {
+/* The marker sits OUTSIDE the disc's clip. .he-avatar is overflow:hidden — that is
+ * what sheared the status dot into a sliver — so the wrapper, not the disc, is the
+ * positioning context. It is the disc's own size, so the percentages below resolve
+ * against exactly what they always meant to. */
+.he-avatar-badged {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.he-avatar-badged .he-avatar__status {
   position: absolute;
   right: 0;
   bottom: 0;
@@ -84,15 +94,44 @@
   background: var(--he-neutral);
 }
 
-.he-avatar__status--online {
+/* Centred ON the disc's bottom edge (badge centre y == disc bottom), with the
+ * punch-out ring AvatarStack already owns, so the marker reads as sitting on the
+ * rim rather than floating beside it. */
+.he-avatar__badge {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+  display: inline-flex;
+  border-radius: var(--he-radius-full);
+  box-shadow: 0 0 0 2px var(--he-surface);
+}
+
+/* The SLOT dictates rim scale, not the caller. A Badge keeps its own metrics by
+ * default — 16px tall, 10.5px type, ~30px wide for "Pro" — which on a 28px disc
+ * reads as a lozenge stacked under the avatar rather than a marker on its rim.
+ * Two classes so this holds regardless of stylesheet import order. */
+.he-avatar__badge > .he-badge,
+.he-avatar__badge > .he-chip {
+  height: 14px;
+  min-width: 0;
+  padding-inline: var(--he-space-1);
+  font-size: var(--he-micro);
+}
+
+/* Scoped to the wrapper for the same reason the base rule is: at one class the
+ * modifiers would lose the cascade to `.he-avatar-badged .he-avatar__status` and
+ * every dot would render the neutral fallback. Measured before the fix: an
+ * `online` dot painted --he-neutral grey. */
+.he-avatar-badged .he-avatar__status--online {
   background: var(--he-ok);
 }
 
-.he-avatar__status--busy {
+.he-avatar-badged .he-avatar__status--busy {
   background: var(--he-warn);
 }
 
-.he-avatar__status--offline {
+.he-avatar-badged .he-avatar__status--offline {
   background: var(--he-neutral);
 }
 

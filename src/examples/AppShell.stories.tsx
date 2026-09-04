@@ -1,27 +1,35 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 
 import { Avatar } from '../components/Avatar/Avatar';
+import { Badge } from '../components/Badge/Badge';
 import { Button } from '../components/Button/Button';
 import { Chip } from '../components/Chip/Chip';
-import { EmptyState } from '../components/EmptyState/EmptyState';
+import { DescriptionItem, DescriptionList } from '../components/DescriptionList/DescriptionList';
 import { Container, Grid, Stack } from '../components/Layout/Layout';
 import { List, ListItem, type ListItemStatus } from '../components/List/List';
-import { Menu, MenuFilter, MenuGroup, MenuItem } from '../components/Menu/Menu';
+import { Menu, MenuGroup, MenuItem, MenuSeparator, MenuStatic, MenuSub } from '../components/Menu/Menu';
+import { Modal } from '../components/Modal/Modal';
 import { PageHeader } from '../components/PageHeader/PageHeader';
 import { Panel } from '../components/Panel/Panel';
 import { Segmented } from '../components/Segmented/Segmented';
 import {
   Sidebar,
   SidebarFooterItem,
+  SidebarFooterRow,
   SidebarHeader,
   SidebarItem,
   SidebarSection,
 } from '../components/Sidebar/Sidebar';
 import { StatusPill } from '../components/StatusPill/StatusPill';
 import { Text } from '../components/Text/Text';
-import { ThemeSwitch } from '../components/ThemeSwitch/ThemeSwitch';
-import { applyTheme, type ThemeMode } from '../lib/theme';
+import {
+  applyTheme,
+  resolveTheme,
+  watchResolvedTheme,
+  type ThemeMode,
+  type ThemePreference,
+} from '../lib/theme';
 
 /**
  * The application shell: the rail on the left, a page on the right, built end-to-end
@@ -44,14 +52,36 @@ import { applyTheme, type ThemeMode } from '../lib/theme';
  * - Avatars are the library `Avatar` — round, `tone={0}` on every switcher row,
  *   because the automatic tone hashes the name and would hand the two identically
  *   named accounts the same colour AND the same initials: colour carrying nothing.
- * - The filter really filters, "Cerrar sesión" is a pinned footer OUTSIDE the
- *   scrolling list, and the popover clips its own rounded corners.
- * - Configuración / Admin / Tema / Entorno all sit in `Sidebar`'s `utility` block,
- *   so they share the nav rows' left-aligned rhythm instead of floating centered.
- * - Every control is real: the theme switch writes `data-theme` on the document via
- *   `applyTheme`, so the whole shell inverts; the environment switch drives the
- *   ambient `StatusPill` in the page header — an environment you can misread is a
- *   production hazard, so DEV is never silent.
+ * - The identity block is a `MenuStatic` in the menu's `header` — pinned, outside the
+ *   scroll, and NOT a `<MenuItem disabled>`, which would still be in the roving set
+ *   and would render the identity at 45% opacity. "Cerrar sesión" is the matching
+ *   pinned `footer`, and the popover clips its own rounded corners.
+ * - The accounts submenu ships WITHOUT a filter. A level that owns a textbox hands
+ *   ArrowLeft to the caret, so filtering costs the back key; for seven accounts under
+ *   three headings that is the wrong trade.
+ * - Everything that used to float in the rail's `utility` block — Configuración,
+ *   Admin, the standalone theme picker — is now a ROW IN THE ACCOUNT MENU, which is
+ *   where the reference (Claude's own footer menu) puts it. `utility` keeps only the
+ *   Entorno strip, because that is ambient state you must be able to read without
+ *   opening anything. The rail lost three unlabelled icon pills and gained a
+ *   sublabel that states the theme in words.
+ * - Appearance is COMPOSED here, from generic parts: `MenuSub` + three
+ *   `MenuItem checked` + three inline SVGs. There is no ThemeSwitch component and
+ *   there must not be one — "Claro"/"Oscuro" and the three-option set are product
+ *   vocabulary, and a component named after one feature is the wrong layer. The same
+ *   `MenuSub` shape carries the account list one row above it.
+ * - Notifications stay OUT of the menu, as a bell BESIDE the trigger: unread is state
+ *   you must be able to see without opening anything, so the mark is drawn into the
+ *   glyph itself. The bell is a second, independent `Menu` — its rows are actions, not
+ *   a one-of-N, so it owns no check column — and opening it clears `unread`, which
+ *   swaps the glyph and drops the count from the accessible name.
+ * - Every control is real: the appearance rows write `data-theme` through
+ *   `applyTheme`, so the whole shell inverts; ⇧⌘, really focuses Configuración and
+ *   ⌘/ really opens the shortcut dialog; the environment switch drives the ambient
+ *   `StatusPill` in the page header — an environment you can misread is a production
+ *   hazard, so DEV is never silent. Rows from the reference that would be inert here
+ *   (Add account, Upgrade plan, Install apps) are NOT copied: a control that appears
+ *   to do nothing is a defect, and a screenshot is not a reason to ship one.
  *
  * Language is consistent per control: the rail's chrome and the page are Spanish.
  * "Live"/"Dev" stay untranslated because they are the deploy targets' names.
@@ -68,7 +98,9 @@ type Story = StoryObj<typeof meta>;
 
 /* Icons are caller-supplied inline SVGs (the library ships none and takes no icon
  * dependency). One 15-unit grid, one stroke weight — 1.4, round caps — matching the
- * Sidebar chevron and the ThemeSwitch glyphs, so the rail has a single hand. */
+ * chevrons Sidebar and Menu draw, so the rail and its menus have a single hand.
+ * The three appearance glyphs live here too, with their labels: the library has no
+ * opinion about how many theme options an app offers. */
 const stroke = {
   stroke: 'currentColor',
   strokeWidth: 1.4,
@@ -151,7 +183,84 @@ const icons = {
       <path d="M7.5 3.4v8.2M3.4 7.5h8.2" {...stroke} />
     </svg>
   ),
+  users: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <circle cx="6" cy="5.4" r="2.6" {...stroke} />
+      <path d="M1.9 12.6c0-2.1 1.8-3.5 4.1-3.5s4.1 1.4 4.1 3.5" {...stroke} />
+      <path d="M10.2 3.2a2.4 2.4 0 0 1 0 4.5M11.4 9.4c1.1.5 1.8 1.5 1.8 3" {...stroke} />
+    </svg>
+  ),
+  keyboard: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <rect x="1.4" y="3.4" width="12.2" height="8.2" rx="1.8" {...stroke} />
+      <path d="M4 6.2h.01M6.4 6.2h.01M8.8 6.2h.01M11.2 6.2h.01M4.8 8.9h5.4" {...stroke} />
+    </svg>
+  ),
+  sun: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <circle cx="7.5" cy="7.5" r="2.9" {...stroke} />
+      <path d="M7.5 1.6v1.5M7.5 11.9v1.5M1.6 7.5h1.5M11.9 7.5h1.5M3.3 3.3l1.1 1.1M10.6 10.6l1.1 1.1M11.7 3.3l-1.1 1.1M4.4 10.6l-1.1 1.1" {...stroke} />
+    </svg>
+  ),
+  moon: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <path d="M12.4 9.1A5.4 5.4 0 0 1 5.6 2.3a5.5 5.5 0 1 0 6.8 6.8Z" {...stroke} />
+    </svg>
+  ),
+  monitor: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <rect x="1.5" y="2.4" width="12" height="8.2" rx="1.6" {...stroke} />
+      <path d="M5.4 13h4.2" {...stroke} />
+    </svg>
+  ),
+  bell: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <path d="M7.5 2C5.3 2 4 3.7 4 5.7c0 2.9-1.2 3.8-1.2 3.8h9.4S11 8.6 11 5.7C11 3.7 9.7 2 7.5 2Z" {...stroke} />
+      <path d="M6.3 11.8c.2.6.7 1 1.2 1s1-.4 1.2-1" {...stroke} />
+    </svg>
+  ),
+  /* Unread is drawn INSIDE the glyph — one <svg>, so the story needs no positioned
+   * wrapper and no inline style object. The surface-coloured outer circle punches the
+   * dot out of the bell so it reads as a mark, not as part of the drawing. */
+  bellUnread: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <path d="M7.5 2C5.3 2 4 3.7 4 5.7c0 2.9-1.2 3.8-1.2 3.8h9.4S11 8.6 11 5.7C11 3.7 9.7 2 7.5 2Z" {...stroke} />
+      <path d="M6.3 11.8c.2.6.7 1 1.2 1s1-.4 1.2-1" {...stroke} />
+      <circle cx="11.6" cy="3.2" r="3.4" fill="var(--he-surface)" />
+      <circle cx="11.6" cy="3.2" r="2.4" fill="var(--he-ok)" />
+    </svg>
+  ),
 };
+
+/* ------------------------------------------------------------ appearance labels */
+
+/* The three-option set, its Spanish labels and its glyphs live HERE, in the caller.
+ * None of it crosses into src/components or src/lib: `MenuSub` is a shape, `MenuItem
+ * checked` is a shape, and neither knows what a theme is. */
+const THEME_ORDER = ['light', 'dark', 'system'] as const;
+
+const THEME_LABEL: Record<ThemePreference, string> = {
+  light: 'Claro',
+  dark: 'Oscuro',
+  system: 'Sistema',
+};
+
+const THEME_ICON: Record<ThemePreference, ReactNode> = {
+  light: icons.sun,
+  dark: icons.moon,
+  system: icons.monitor,
+};
+
+/**
+ * The rule that keeps the control honest, and the reason System can come back at all.
+ * A submenu has TWO reporting surfaces where the old Segmented strip had one: the
+ * CHECK reports the PREFERENCE, this sublabel reports the RESOLUTION. Printing only
+ * "Sistema" re-hides which theme you are actually in; printing only "Oscuro" hides
+ * that it is automatic, so an overnight flip reads as a bug.
+ */
+function appearanceSublabel(pref: ThemePreference, resolved: ThemeMode): string {
+  return pref === 'system' ? `${THEME_LABEL.system} · ${THEME_LABEL[resolved]}` : THEME_LABEL[pref];
+}
 
 /* ------------------------------------------------------------------ fixtures */
 
@@ -160,11 +269,28 @@ interface Account {
   name: string;
   slug: string;
   role: string;
+  /**
+   * The identity header's second line — the one fact that tells two same-named rows
+   * apart. It is also the widest string in the menu, so it is what SIZES the panel:
+   * the fixture keeps every address 21-24 characters so the appearance sublabel keeps
+   * its column no matter which account is current. Measured: `Sistema · Oscuro` is
+   * 110.4px in 11.5px IBM Plex Mono, and a 16-character address left a 104px column,
+   * i.e. an ellipsis in dark and none in light — a control that lies at sunset.
+   */
+  email: string;
 }
 
 interface Tenant {
   tenantId: string;
   name: string;
+  /**
+   * What the marker on the identity avatar says. It lives on the TENANT, not on the
+   * account, and deliberately not on `canAdmin`: a plan and a permission are two
+   * different facts, and a badge that silently means "you are an admin" is the kind
+   * of conflation nobody catches until it is wrong. Switch to Click Seguros and the
+   * badge really changes.
+   */
+  plan: string;
   accounts: Account[];
 }
 
@@ -179,26 +305,29 @@ const TENANTS: Tenant[] = [
   {
     tenantId: 'ten_handle',
     name: 'Handle',
+    plan: 'Pro',
     accounts: [
-      { id: 'acc_handle_owner', name: 'Alfonso de los rios', slug: 'handle.mx', role: 'Propietario' },
-      { id: 'acc_handle_billing', name: 'Alfonso de los rios', slug: 'handle.mx', role: 'Facturación' },
-      { id: 'acc_handle_mesa', name: 'Mesa de control', slug: 'handle.mx', role: 'Operaciones' },
+      { id: 'acc_handle_owner', name: 'Alfonso de los rios', slug: 'handle.mx', role: 'Propietario', email: 'alfonso@handle.com.mx' },
+      { id: 'acc_handle_billing', name: 'Alfonso de los rios', slug: 'handle.mx', role: 'Facturación', email: 'facturacion@handle.com.mx' },
+      { id: 'acc_handle_mesa', name: 'Mesa de control', slug: 'handle.mx', role: 'Operaciones', email: 'mesa.control@handle.mx' },
     ],
   },
   {
     tenantId: 'ten_handle_qa',
     name: 'Handle QA',
+    plan: 'Pro',
     accounts: [
-      { id: 'acc_qa_admin', name: 'Alfonso de los Rios', slug: 'handle-qa.mx', role: 'Admin' },
-      { id: 'acc_qa_support', name: 'Soporte QA', slug: 'handle-qa.mx', role: 'Soporte' },
+      { id: 'acc_qa_admin', name: 'Alfonso de los Rios', slug: 'handle-qa.mx', role: 'Admin', email: 'alfonso@handle-qa.com.mx' },
+      { id: 'acc_qa_support', name: 'Soporte QA', slug: 'handle-qa.mx', role: 'Soporte', email: 'soporte@handle-qa.com.mx' },
     ],
   },
   {
     tenantId: 'ten_click',
     name: 'Click Seguros',
+    plan: 'Free',
     accounts: [
-      { id: 'acc_click_owner', name: 'Poncho', slug: 'click.mx', role: 'Propietario' },
-      { id: 'acc_click_renov', name: 'Renovaciones', slug: 'click.mx', role: 'Analista' },
+      { id: 'acc_click_owner', name: 'Poncho', slug: 'click.mx', role: 'Propietario', email: 'poncho@clickseguros.mx' },
+      { id: 'acc_click_renov', name: 'Renovaciones', slug: 'click.mx', role: 'Analista', email: 'renovaciones@click.mx' },
     ],
   },
 ];
@@ -261,6 +390,40 @@ const SYNCS = [
   { id: 's4', source: 'HDI', ago: '1 mes', result: 'sin cambios' },
 ];
 
+/* The role gate. Two of the seven accounts can see the Admin row; switch to
+ * "Mesa de control" and it disappears — a menu that shows a row you cannot use is a
+ * menu that taught you nothing. */
+const ADMIN_ROLES = new Set(['Propietario', 'Admin']);
+
+/* Three menu rows, one Modal. Each row opens a panel that prints REAL current state —
+ * a row that only sets a variable nothing renders is the "appears to do nothing"
+ * defect one indirection removed, which is exactly what happened when Configuración
+ * moved out of the rail and kept setting a nav value with no row left to highlight. */
+type Dialog = 'configuracion' | 'admin' | 'atajos';
+
+const DIALOGS: Record<Dialog, { title: string; lede: string }> = {
+  configuracion: { title: 'Configuración', lede: 'La cuenta con la que estás trabajando ahora.' },
+  admin: { title: 'Admin', lede: 'Solo para propietarios y administradores.' },
+  atajos: { title: 'Atajos de teclado', lede: 'Disponibles en cualquier pantalla.' },
+};
+
+/* Every key listed here is really registered in the effect below. A shortcut sheet
+ * that documents a combination nothing handles is worse than no sheet. */
+const SHORTCUTS: { keys: string; action: string }[] = [
+  { keys: '⇧⌘,', action: 'Configuración' },
+  { keys: '⌘/', action: 'Atajos de teclado' },
+];
+
+/* The bell is a real control or it is decoration. Three alerts, and opening the menu
+ * clears the unread mark — which is why the mark is drawn in the SVG rather than
+ * hardcoded: the glyph swaps when `unread` reaches zero. Notifications stay OUT of the
+ * account menu because unread is state you must see WITHOUT opening anything. */
+const NOTIFICATIONS = [
+  { id: 'n1', title: 'Recibo vencido', meta: 'Regio Gas · póliza 628515652 · hace 2 h' },
+  { id: 'n2', title: 'Conciliación lista', meta: 'GNP · 12 movimientos nuevos · hace 3 h' },
+  { id: 'n3', title: 'Renovación en 5 días', meta: 'Minera San Rafael · hace 1 d' },
+];
+
 const ENV_OPTIONS = [
   { value: 'live' as const, label: 'Live' },
   /* The only toned segment: a 6px dot at bullet scale, no band, no wash. Dev is the
@@ -275,92 +438,186 @@ function AppShellView({ startCollapsed = false }: { startCollapsed?: boolean }) 
   const [nav, setNav] = useState('recibos');
   const [space, setSpace] = useState<string | null>(null);
   const [env, setEnv] = useState<'live' | 'dev'>('live');
-  const [mode, setMode] = useState<ThemeMode>(() =>
-    typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') === 'dark'
-      ? 'dark'
-      : 'light',
-  );
+  const [dialog, setDialog] = useState<Dialog | null>(null);
 
   /* switcher state */
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState('');
   const [currentId, setCurrentId] = useState('acc_handle_owner');
+
+  /* notifications state */
+  const [bell, setBell] = useState(false);
+  const [unread, setUnread] = useState(NOTIFICATIONS.length);
 
   const current = ALL_ACCOUNTS.find((a) => a.id === currentId) as Account;
   const currentTenant = TENANT_OF.get(currentId) as Tenant;
+  const canAdmin = ADMIN_ROLES.has(current.role);
 
-  /* The filter is a real filter: it narrows accounts and drops tenants that end up
-   * empty, so no heading survives without rows under it. */
-  const groups = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    return TENANTS.map((tenant) => ({
-      ...tenant,
-      accounts: tenant.accounts.filter(
-        (a) => !needle || `${a.name} ${a.slug} ${a.role} ${tenant.name}`.toLowerCase().includes(needle),
-      ),
-    })).filter((tenant) => tenant.accounts.length > 0);
-  }, [query]);
+  /* ---------------------------------------------------------------- theme */
 
-  const setTheme = (next: ThemeMode) => {
-    setMode(next);
+  /* Three states, and the two facts do not compete: `pref` is what you CHOSE and
+   * carries the check, `resolved` is what you are actually LOOKING AT and carries the
+   * sublabel. `resolved` has to be state rather than a render-time `resolveTheme(pref)`
+   * call, because the sunset flip must re-render the sublabel with no user action. */
+  const [pref, setPref] = useState<ThemePreference>('system');
+  const [resolved, setResolved] = useState<ThemeMode>(() => resolveTheme('system'));
+
+  useEffect(() => {
+    const next = resolveTheme(pref);
+    setResolved(next);
     applyTheme(next);
-  };
+    /* `getPreference` is a CALLBACK on purpose: read at EVENT time, one subscription
+     * set up once stays correct, and pinning simply stops the callbacks. The
+     * value-taking shape invites a `[]` dep array that captures a stale 'system' and
+     * follows the OS forever after you pinned. */
+    return watchResolvedTheme(
+      () => pref,
+      (mode) => {
+        setResolved(mode);
+        applyTheme(mode);
+      },
+    );
+  }, [pref]);
 
-  /* A real host owns `data-theme` alone, and the `useState` above is the whole
-   * recipe. Storybook is a SECOND writer of the same attribute (its theme
-   * toolbar), so the story mirrors external writes back into state — otherwise the
-   * switch would sit on "Claro" while the shell renders dark, and a control that
-   * misreports itself is worse than no control. Delete this effect when you copy
-   * the file into the app. */
+  /* Storybook's theme toolbar is a SECOND writer of `data-theme`. Mirroring its write
+   * back as a PIN is the only reading that leaves both controls truthful — a toolbar
+   * flip IS an explicit choice, which is exactly what a pin is. Without it the menu
+   * would sit on "Sistema · Oscuro" while the shell renders light, and a control that
+   * misreports itself is worse than no control. Delete this when you copy the file. */
   useEffect(() => {
     const html = document.documentElement;
-    const sync = () => setMode(html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
-    const observer = new MutationObserver(sync);
+    const observer = new MutationObserver(() => {
+      const seen: ThemeMode = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      setPref((p) => (resolveTheme(p) === seen ? p : seen));
+    });
     observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
-    sync();
     return () => observer.disconnect();
   }, []);
 
-  const switcher = (
-    <Menu
-      label="Cuentas"
-      placement="top-start"
-      matchTriggerWidth={!collapsed}
-      open={open}
-      /* Clear the query on every close. A filter that survives the popover turns
-       * the NEXT open into "Sin resultados" for a string the user typed minutes
-       * ago — an empty switcher with no explanation. */
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (!next) setQuery('');
-      }}
-      header={
-        <MenuFilter
-          value={query}
-          onValueChange={setQuery}
-          label="Filtrar organizaciones"
-          placeholder="Filtrar organizaciones…"
-        />
+  /* ------------------------------------------------------------ shortcuts */
+
+  /* Closing the menu is part of the action, not a side effect of it: the panel the
+   * row opens must not appear behind the menu that opened it. */
+  const openDialog = useCallback((next: Dialog) => {
+    setOpen(false);
+    setDialog(next);
+  }, []);
+
+  /* The two rows that print a shortcut really answer it. A menu row that displays
+   * ⇧⌘, and a key combination that does nothing are two separate lies. `event.code`
+   * is the fallback because a shifted comma reports a different `key` on several
+   * layouts. */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey)) return;
+      if (event.shiftKey && (event.key === ',' || event.code === 'Comma')) {
+        event.preventDefault();
+        openDialog('configuracion');
+      } else if (!event.shiftKey && event.key === '/') {
+        event.preventDefault();
+        openDialog('atajos');
       }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [openDialog]);
+
+  /* Each panel prints live state, so every row visibly answers. */
+  const dialogRows: { label: string; value: ReactNode }[] =
+    dialog === 'configuracion'
+      ? [
+          { label: 'Cuenta', value: current.name },
+          { label: 'Correo', value: current.email },
+          { label: 'Organización', value: currentTenant.name },
+          { label: 'Rol', value: current.role },
+          { label: 'Apariencia', value: appearanceSublabel(pref, resolved) },
+          { label: 'Entorno', value: env === 'dev' ? 'Dev' : 'Live' },
+        ]
+      : dialog === 'admin'
+        ? [
+            { label: 'Organización', value: currentTenant.name },
+            { label: 'Plan', value: currentTenant.plan },
+            {
+              label: 'Tenant',
+              value: (
+                <Chip variant="mono" size="sm">
+                  {currentTenant.tenantId}
+                </Chip>
+              ),
+            },
+            { label: 'Cuentas', value: String(currentTenant.accounts.length) },
+            { label: 'Tu rol', value: current.role },
+          ]
+        : dialog === 'atajos'
+          ? SHORTCUTS.map((sc) => ({
+              label: sc.action,
+              value: (
+                <Chip variant="mono" size="sm">
+                  {sc.keys}
+                </Chip>
+              ),
+            }))
+          : [];
+
+  /* --------------------------------------------------------- account menu */
+
+  const accountMenu = (
+    <Menu
+      label="Cuenta"
+      placement="top-start"
+      open={open}
+      onOpenChange={setOpen}
+      /* Not interactive: it states WHO YOU ARE. `MenuStatic`, never
+       * `<MenuItem disabled>` — a disabled menuitem is still in the roving set and
+       * drops to 45% opacity, so the identity would read as unavailable. */
+      header={
+        <MenuStatic
+          media={
+            <Avatar
+              size="sm"
+              tone={0}
+              name={current.name}
+              /* The library ships an overlay SLOT on the avatar's rim; what a marker
+                * MEANS is the app's business, so the word comes from the fixture. */
+              badge={<Badge size="sm">{currentTenant.plan}</Badge>}
+            />
+          }
+          sublabel={current.email}
+        >
+          {current.name}
+        </MenuStatic>
+      }
+      /* `inset` reserves the same media column every other row has, so the footer
+       * label lines up with the rest instead of hanging 27px to its left. */
       footer={
-        <MenuItem destructive onSelect={() => setOpen(false)}>
+        <MenuItem destructive inset onSelect={() => setOpen(false)}>
           Cerrar sesión
         </MenuItem>
       }
       trigger={
         <SidebarFooterItem
           open={open}
-          chevron
+          /* Stacked, not a rotating chevron: this row does not expand in place, it
+           * offers seven alternatives. */
+          chevron="updown"
           media={<Avatar size="sm" tone={0} name={current.name} />}
           label={current.name}
           sublabel={`${currentTenant.name} · ${current.role}`}
         />
       }
     >
-      {groups.length === 0 ? (
-        <EmptyState size="sm" title="Sin resultados" hint={`Nada coincide con “${query.trim()}”.`} />
-      ) : (
-        groups.map((tenant) => (
+      {/* Deliberately NO MenuFilter on this submenu. A level with a textbox hands
+        * ArrowLeft to the caret, so a filtered submenu costs you the back key — for
+        * seven accounts under three headings that is a bad trade. */}
+      {/* The sublabel carries the ROLE as well as the organisation, because that is the
+        * pair the submenu actually sets: two Handle accounts share the display name and
+        * differ only on it, so "Handle" alone would be ambiguous in exactly the place
+        * the fixture is ambiguous. */}
+      <MenuSub
+        label="Cambiar cuenta"
+        media={icons.users}
+        sublabel={`${currentTenant.name} · ${current.role}`}
+      >
+        {TENANTS.map((tenant) => (
           /* One heading per ORGANISATION, keyed by tenantId — never by display name. */
           <MenuGroup key={tenant.tenantId} label={tenant.name}>
             {tenant.accounts.map((account) => (
@@ -375,8 +632,84 @@ function AppShellView({ startCollapsed = false }: { startCollapsed?: boolean }) 
               </MenuItem>
             ))}
           </MenuGroup>
-        ))
+        ))}
+      </MenuSub>
+
+      <MenuSeparator />
+
+      <MenuItem media={icons.settings} shortcut="⇧⌘," onSelect={() => openDialog('configuracion')}>
+        Configuración
+      </MenuItem>
+      {/* Role-gated, not disabled: switch to "Mesa de control" and the row is gone.
+        * A disabled row still occupies the roving set and still teaches nothing. */}
+      {canAdmin && (
+        <MenuItem media={icons.admin} onSelect={() => openDialog('admin')}>
+          Admin
+        </MenuItem>
       )}
+
+      <MenuSeparator />
+
+      {/* The migration from ThemeSwitch, in full: a generic MenuSub, three generic
+        * checked MenuItems, and three SVGs that live in this file. */}
+      <MenuSub
+        label="Apariencia"
+        media={THEME_ICON[pref]}
+        sublabel={appearanceSublabel(pref, resolved)}
+      >
+        {THEME_ORDER.map((option) => (
+          <MenuItem
+            key={option}
+            media={THEME_ICON[option]}
+            /* The check goes on the stored PREFERENCE, never on the resolved theme —
+              * otherwise "Sistema" could never carry one. */
+            checked={pref === option}
+            onSelect={() => setPref(option)}
+          >
+            {THEME_LABEL[option]}
+          </MenuItem>
+        ))}
+      </MenuSub>
+
+      <MenuSeparator />
+
+      <MenuItem media={icons.keyboard} shortcut="⌘/" onSelect={() => openDialog('atajos')}>
+        Atajos de teclado
+      </MenuItem>
+    </Menu>
+  );
+
+  /* --------------------------------------------------- notifications menu */
+
+  /* Its own popover, not a submenu of the account menu: these are ACTIONS, not a
+   * one-of-N, so there is no check column to own, and the unread mark has to be
+   * readable with everything closed. Opening marks them read — the glyph loses its dot
+   * and the accessible name loses its count, so the control visibly answers. */
+  const notificationsMenu = (
+    <Menu
+      label="Notificaciones"
+      placement="top-start"
+      open={bell}
+      onOpenChange={(next) => {
+        setBell(next);
+        if (next) setUnread(0);
+      }}
+      footer={<MenuItem onSelect={() => setBell(false)}>Ver todas</MenuItem>}
+      trigger={
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={unread > 0 ? `Notificaciones (${unread} sin leer)` : 'Notificaciones'}
+        >
+          {unread > 0 ? icons.bellUnread : icons.bell}
+        </Button>
+      }
+    >
+      {NOTIFICATIONS.map((note) => (
+        <MenuItem key={note.id} sublabel={note.meta} onSelect={() => setBell(false)}>
+          {note.title}
+        </MenuItem>
+      ))}
     </Menu>
   );
 
@@ -388,39 +721,33 @@ function AppShellView({ startCollapsed = false }: { startCollapsed?: boolean }) 
         as="nav"
         collapsed={collapsed}
         aria-label="Navegación principal"
+        /* ONE control left in the utility block. Configuración, Admin and the theme
+         * picker all moved into the account menu, where the reference puts them and
+         * where each gets a label instead of an unlabelled icon pill. Entorno stays
+         * because it is AMBIENT: you must be able to read whether you are pointed at
+         * production without opening anything. Collapsed it becomes a single toggle
+         * whose tone dot and tooltip still carry the environment. */
         utility={
-          <>
-            {/* Settings rows first, so the theme and environment controls inherit
-             * their left edge instead of floating centered under them. */}
-            <SidebarItem
-              icon={icons.settings}
-              label="Configuración"
-              active={nav === 'configuracion'}
-              onClick={() => setNav('configuracion')}
-            />
-            <SidebarItem icon={icons.admin} label="Admin" active={nav === 'admin'} onClick={() => setNav('admin')} />
-            <ThemeSwitch
-              value={mode}
-              onChange={setTheme}
-              label="Tema"
-              labels={{ light: 'Claro', dark: 'Oscuro' }}
-              iconOnly={collapsed}
-            />
-            {/* Collapsed, this becomes the same single toggle ThemeSwitch uses —
-             * the tone dot and the tooltip carry the environment. Hiding it
-             * instead would leave no indication anywhere on a 56px rail of
-             * whether you are pointed at production. */}
-            <Segmented<'live' | 'dev'>
-              label="Entorno"
-              block
-              value={env}
-              onChange={setEnv}
-              options={ENV_OPTIONS}
-              iconOnly={collapsed}
-            />
-          </>
+          <Segmented<'live' | 'dev'>
+            label="Entorno"
+            block
+            value={env}
+            onChange={setEnv}
+            options={ENV_OPTIONS}
+            iconOnly={collapsed}
+          />
         }
-        footer={switcher}
+        /* The bell is a SIBLING of the account trigger, never its `end` slot: the
+         * trigger wrapper toggles the menu on any click inside itself, a button
+         * inside a button is invalid HTML, and the ARIA delegate probe takes the
+         * first focusable descendant. `SidebarFooterRow` is what keeps the trigger
+         * full-width beside it; on the 56px rail the two stack. */
+        footer={
+          <SidebarFooterRow>
+            {accountMenu}
+            {notificationsMenu}
+          </SidebarFooterRow>
+        }
       >
         <SidebarHeader>
           <Stack direction="row" gap={2} align="center">
@@ -552,6 +879,22 @@ function AppShellView({ startCollapsed = false }: { startCollapsed?: boolean }) 
           </Grid>
         </Stack>
       </Container>
+
+      {/* One Modal, three panels — opened by the three settings rows and by ⇧⌘, / ⌘/.
+        * Each prints live state, so no row in the menu is decoration. */}
+      <Modal
+        open={dialog !== null}
+        onClose={() => setDialog(null)}
+        size="sm"
+        title={dialog ? DIALOGS[dialog].title : undefined}
+        description={dialog ? DIALOGS[dialog].lede : undefined}
+      >
+        <DescriptionList columns={1}>
+          {dialogRows.map((row) => (
+            <DescriptionItem key={row.label} label={row.label} value={row.value} />
+          ))}
+        </DescriptionList>
+      </Modal>
     </Grid>
   );
 }
@@ -563,13 +906,19 @@ export const Shell: Story = {
     docs: {
       description: {
         story:
-          'The rail in situ. Open the account row at the bottom: the current account is marked with a check (no ' +
-          'spine, no full-bleed fill), Handle prints ONE heading even though two of its accounts share the display ' +
-          'name "Alfonso de los rios", the filter narrows live, and "Cerrar sesión" is pinned outside the scroll ' +
-          'region. Configuración, Admin, Tema and Entorno share the nav rows\' left edge in the `utility` block. ' +
-          'The theme switch writes `data-theme` on <html> through `applyTheme`, so the whole shell inverts; the ' +
-          'environment switch drives the StatusPill in the page header. The rail button in the brand header ' +
-          'collapses the rail to 56px.',
+          'The rail in situ. Open the account row at the bottom (the stacked up/down glyph, not a chevron — it ' +
+          'offers alternatives, it does not expand in place). The menu is the reference structure: a MenuStatic ' +
+          'identity header with the plan badge on the avatar rim, then bands separated by hairlines — Cambiar ' +
+          'cuenta, Configuración (⇧⌘,) and the role-gated Admin, Apariencia, Atajos de teclado (⌘/), with Cerrar ' +
+          'sesión pinned in the footer. Both submenus open on ArrowRight/hover and close on ArrowLeft/Escape, one ' +
+          'level per press. Apariencia is composed from generic parts and reports two different facts at once: the ' +
+          'CHECK is your preference, the sublabel is the theme you are actually in ("Sistema · Claro"). Selecting ' +
+          'Oscuro writes `data-theme` through `applyTheme` and closes the WHOLE tree. Both shortcuts are really ' +
+          'bound. The current account is marked with a check — no spine, no bar, no full-bleed fill — and Handle ' +
+          'prints ONE heading even though two of its accounts share the display name "Alfonso de los rios". Only ' +
+          'Entorno is left in the `utility` block, because it is ambient state. The bell beside the trigger is a ' +
+          'separate menu: it carries the unread mark inside its own glyph, and opening it clears the count and ' +
+          'swaps the glyph. The rail button in the brand header collapses the rail to 56px.',
       },
     },
   },
@@ -581,10 +930,11 @@ export const CollapsedRail: Story = {
     docs: {
       description: {
         story:
-          'The same shell on the 56px rail. Rows keep their accessible name and gain a right-placed Tooltip, the ' +
-          'ThemeSwitch becomes one ghost icon button whose name carries the action ("Tema: Claro → Oscuro"), and ' +
-          'the switcher popover opens beside the rail instead of matching its width. Use the rail button in the ' +
-          'header to expand.',
+          'The same shell on the 56px rail. Rows keep their accessible name and gain a right-placed Tooltip; the ' +
+          'Entorno strip becomes one toggle whose tone dot and tooltip still state the environment; and the ' +
+          'account trigger and the notification bell STACK rather than shrink — two controls do not fit side by ' +
+          'side at 56px, and hiding the bell would leave unread state unreadable. The account menu itself is ' +
+          'unchanged, submenus included, and opens beside the rail. Use the rail button in the header to expand.',
       },
     },
   },

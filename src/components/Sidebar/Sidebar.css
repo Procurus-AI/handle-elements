@@ -45,10 +45,47 @@
 /* Popover wraps its trigger in an inline-flex span. In a block slot that wrapper
  * shrink-wraps, so the account row's width — and with it its fill, focus ring and
  * chevron — would depend on how long the selected account's name is, and would
- * never line up with the nav rows or the theme/environment tracks. */
-.he-sidebar__footer > .he-popover__trigger,
-.he-sidebar__utility > .he-popover__trigger {
+ * never line up with the nav rows or the theme/environment tracks.
+ * DESCENDANT, not direct child: a trigger inside SidebarFooterRow is a grandchild,
+ * and under `>` it fell back to shrink-wrapping — the exact defect above. The row
+ * rules below re-narrow the siblings that are supposed to shrink-wrap. */
+.he-sidebar__footer .he-popover__trigger,
+.he-sidebar__utility .he-popover__trigger {
   display: flex;
+  width: 100%;
+}
+
+/* A second control BESIDE the account trigger, never inside it: the trigger wrapper
+ * toggles on any click within itself, and a button inside a button is invalid. */
+.he-sidebar-footer-row {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-1);
+}
+
+.he-sidebar-footer-row > * {
+  flex: 0 0 auto;
+}
+
+/* the primary control owns the leftover width — its fill, focus ring and chevron must
+ * not depend on how long the selected account's name is */
+.he-sidebar-footer-row > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.he-sidebar-footer-row > .he-popover__trigger:not(:first-child) {
+  width: auto;
+}
+
+/* 56px rail: two controls do not fit side by side, and hiding one would leave a
+ * state (unread) unreadable. Stack instead. */
+.he-sidebar--collapsed .he-sidebar-footer-row {
+  flex-direction: column;
+  gap: var(--he-space-1);
+}
+
+.he-sidebar--collapsed .he-sidebar-footer-row > :first-child {
   width: 100%;
 }
 
@@ -261,7 +298,9 @@
   transition: transform var(--he-transition-fast);
 }
 
-.he-sidebar-account--open .he-sidebar-account__chevron {
+/* The stacked up/down glyph stays put: it is symmetric, so a 180deg turn is an
+ * animation that reports nothing. */
+.he-sidebar-account--open .he-sidebar-account__chevron:not(.he-sidebar-account__chevron--static) {
   transform: rotate(180deg);
 }
 

@@ -4,7 +4,7 @@ import { Avatar } from '../Avatar/Avatar';
 import { Button } from '../Button/Button';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { Modal } from '../Modal/Modal';
-import { Menu, MenuFilter, MenuGroup, MenuItem, MenuSeparator, Popover } from './Menu';
+import { Menu, MenuFilter, MenuGroup, MenuItem, MenuSeparator, MenuStatic, MenuSub, Popover } from './Menu';
 
 const meta = {
   title: 'Elements/Menu',
@@ -243,6 +243,8 @@ const keyboardContract: [string, string][] = [
   ['Enter', 'selects the highlighted row, closes, and returns focus to the trigger'],
   ['Escape', 'closes and returns focus to the trigger — and does not close an enclosing Modal'],
   ['Tab (while open)', 'closes and returns focus to the trigger; the next Tab then moves on naturally'],
+  ['\u2192', "opens the highlighted row's submenu and lands on its checked row, or its first"],
+  ['\u2190', 'closes the innermost submenu and returns the highlight to its parent row'],
 ];
 
 export const Keyboard: Story = {
@@ -319,4 +321,154 @@ export const InsideModal: Story = {
       </>
     );
   },
+};
+
+/* --------------------------- example: submenus ------------------------------ */
+
+/* Story-local glyphs: the library ships shapes, so the icons a caller hangs on a
+ * row live with the caller. 15px to match MenuFilter's search glyph. */
+const RowsGlyph = (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+    <path d="M2.6 4.2h9.8M2.6 7.5h9.8M2.6 10.8h9.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+  </svg>
+);
+
+const SortGlyph = (
+  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+    <path
+      d="M4.4 2.8v9.4M2.4 10.2l2 2 2-2M10.6 12.2V2.8M8.6 4.8l2-2 2 2"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const densities = ['Compact', 'Comfortable', 'Spacious'] as const;
+const sortFields = ['Name', 'Created', 'Updated'] as const;
+const sortDirections = ['Ascending', 'Descending'] as const;
+
+export const Submenu: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A submenu is one primitive — `MenuSub` — and every option is a child, so the label, the icons and the ' +
+          'option set belong to the caller. Two invariants a caller must respect. (1) The TRIGGER sublabel reports ' +
+          'the CURRENT VALUE of whatever the submenu sets, so the row is readable without opening it. (2) A submenu ' +
+          'is the right shape only for a MUTUALLY EXCLUSIVE, closed set of 2–5 options whose value fits the ' +
+          'sublabel column (~146px): the check marks the choice, `role="menuitemradio"`. A list of independent ' +
+          'toggles is a Switch list, not a submenu. "Sort by" nests one level deeper to show the owner chain holds ' +
+          'at arbitrary depth — each surface names its parent and gets its own z-index.',
+      },
+    },
+  },
+  render: () => {
+    const [density, setDensity] = useState<(typeof densities)[number]>('Comfortable');
+    const [field, setField] = useState<(typeof sortFields)[number]>('Updated');
+    const [direction, setDirection] = useState<(typeof sortDirections)[number]>('Descending');
+
+    return (
+      <Menu
+        trigger={<Button variant="outline">View options</Button>}
+        label="View options"
+        header={
+          <MenuStatic media={<Avatar size="sm" tone={0} name="Sample User" />} sublabel="user@example.com">
+            Sample User
+          </MenuStatic>
+        }
+      >
+        <MenuItem shortcut="⌘R">Reload</MenuItem>
+        <MenuSeparator />
+        <MenuSub label="Density" media={RowsGlyph} sublabel={density}>
+          {densities.map((value) => (
+            <MenuItem key={value} checked={density === value} onSelect={() => setDensity(value)}>
+              {value}
+            </MenuItem>
+          ))}
+        </MenuSub>
+        <MenuSub label="Sort by" media={SortGlyph} sublabel={`${field} · ${direction}`}>
+          <MenuGroup label="Field">
+            {sortFields.map((value) => (
+              <MenuItem key={value} checked={field === value} onSelect={() => setField(value)}>
+                {value}
+              </MenuItem>
+            ))}
+          </MenuGroup>
+          <MenuSeparator />
+          <MenuSub label="Direction" sublabel={direction}>
+            {sortDirections.map((value) => (
+              <MenuItem key={value} checked={direction === value} onSelect={() => setDirection(value)}>
+                {value}
+              </MenuItem>
+            ))}
+          </MenuSub>
+        </MenuSub>
+      </Menu>
+    );
+  },
+};
+
+/* --------------------------- docs: submenu keyboard ------------------------- */
+
+const submenuContract: [string, string][] = [
+  ['\u2192', 'opens the highlighted sub-trigger and lands on its checked row, or its first'],
+  ['Enter / Space', 'on a sub-trigger: identical to \u2192 — it never selects the row and never closes'],
+  ['\u2192 (non-sub row)', 'nothing happens, and the key is still swallowed so it cannot drive an ancestor'],
+  ['\u2190', 'closes the innermost submenu; focus and the highlight return to its parent row'],
+  ['\u2190 (root level)', 'no-op, and still swallowed'],
+  ['\u2193 / \u2191 / Home / End', "move the CHILD's highlight only; the parent's aria-activedescendant does not move"],
+  ['a–z', 'type-ahead runs in the innermost surface only'],
+  ['Escape', 'peels exactly one level; the last one returns focus to the original trigger'],
+  ['Tab', 'closes the WHOLE tree and returns focus to the root trigger'],
+  ['Enter (leaf)', 'runs onSelect, then closes the whole tree — a leaf two levels down closes the root'],
+];
+
+export const SubmenuKeyboard: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Three levels, one roving mechanism per surface. Every level highlights with its own ' +
+          '`aria-activedescendant` and holds DOM focus on its own `.he-menu` root; the parent keeps the ' +
+          'sub-trigger highlighted (and filled, never spined) for as long as the child is open. ← and → always ' +
+          'stop propagating, whether or not they act — they are the only navigation keys that would otherwise ' +
+          'leak up through the portal to an ancestor menu.',
+      },
+    },
+  },
+  render: () => (
+    <div style={{ display: 'grid', gap: 24, justifyItems: 'start' }}>
+      <Menu trigger={<Button variant="outline">Probar submenús</Button>} label="Nivel 1">
+        <MenuItem>Plain row</MenuItem>
+        <MenuItem disabled>Disabled row</MenuItem>
+        <MenuSeparator />
+        <MenuSub label="Density" media={RowsGlyph} sublabel="Comfortable">
+          <MenuItem checked={false}>Compact</MenuItem>
+          <MenuItem checked>Comfortable</MenuItem>
+          <MenuItem checked={false}>Spacious</MenuItem>
+        </MenuSub>
+        <MenuSub label="Sort by" media={SortGlyph} sublabel="Updated">
+          <MenuItem checked={false}>Name</MenuItem>
+          <MenuItem checked>Updated</MenuItem>
+          <MenuSub label="Direction" sublabel="Descending">
+            <MenuItem checked={false}>Ascending</MenuItem>
+            <MenuItem checked>Descending</MenuItem>
+          </MenuSub>
+        </MenuSub>
+        <MenuItem>Last row</MenuItem>
+      </Menu>
+      <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '6px 16px', margin: 0, maxWidth: 640 }}>
+        {submenuContract.map(([keys, effect]) => (
+          <Fragment key={keys}>
+            <dt style={{ fontFamily: 'var(--he-font-mono)', fontSize: 'var(--he-caption)', whiteSpace: 'nowrap' }}>
+              {keys}
+            </dt>
+            <dd style={{ margin: 0, color: 'var(--he-text-dim)', fontSize: 'var(--he-body-sm)' }}>{effect}</dd>
+          </Fragment>
+        ))}
+      </dl>
+    </div>
+  ),
 };

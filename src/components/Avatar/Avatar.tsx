@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type HTMLAttributes } from 'react';
+import { useEffect, useMemo, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg';
@@ -12,6 +12,12 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement> {
   size?: AvatarSize;
   tone?: AvatarTone;
   status?: 'online' | 'busy' | 'offline';
+  /**
+   * Overlay marker on the disc's bottom edge — a Badge, a small square org mark.
+   * The library ships the SLOT; what a marker MEANS is the app's business. A marker
+   * that always reads "billing tier" is product vocabulary and belongs to the caller.
+   */
+  badge?: ReactNode;
 }
 
 export interface AvatarStackItem {
@@ -56,6 +62,7 @@ export function Avatar({
   size = 'md',
   tone,
   status,
+  badge,
   className,
   ...rest
 }: AvatarProps) {
@@ -64,16 +71,26 @@ export function Avatar({
   const label = alt ?? name ?? initials ?? 'Avatar';
   const fallback = getInitials(name, initials);
   const showImage = Boolean(src) && !failed;
+  const overlaid = badge != null || status != null;
 
   useEffect(() => {
     setFailed(false);
   }, [src]);
 
-  return (
+  /* The disc clips (`overflow: hidden`, so a square photo becomes round). Anything
+   * meant to sit ON the rim therefore cannot be a child of it — that is what sheared
+   * the status dot into a 2px sliver. When nothing is overlaid the disc IS the
+   * component, so existing consumers keep byte-identical DOM. */
+  const disc = (
     <span
-      className={cx('he-avatar', `he-avatar--${size}`, `he-avatar--tone-${resolvedTone}`, className)}
+      className={cx(
+        'he-avatar',
+        `he-avatar--${size}`,
+        `he-avatar--tone-${resolvedTone}`,
+        !overlaid && className,
+      )}
       aria-label={label}
-      {...rest}
+      {...(overlaid ? {} : rest)}
     >
       {showImage ? (
         <img className="he-avatar__image" src={src ?? undefined} alt={label} onError={() => setFailed(true)} />
@@ -82,7 +99,20 @@ export function Avatar({
           {fallback}
         </span>
       )}
-      {status && <span className={cx('he-avatar__status', `he-avatar__status--${status}`)} aria-hidden />}
+    </span>
+  );
+
+  if (!overlaid) return disc;
+
+  /* `className` and `...rest` go to the WRAPPER: it is the element the consumer
+   * lays out. Custom-property hooks (`--he-avatar-bg`…) still reach the disc by
+   * inheritance, and descendant selectors like Menu's
+   * `.he-menu__item--checked .he-menu__item-media .he-avatar` still match. */
+  return (
+    <span className={cx('he-avatar-badged', className)} {...rest}>
+      {disc}
+      {status != null && <span className={cx('he-avatar__status', `he-avatar__status--${status}`)} aria-hidden />}
+      {badge != null && <span className="he-avatar__badge">{badge}</span>}
     </span>
   );
 }

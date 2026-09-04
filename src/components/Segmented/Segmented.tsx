@@ -28,10 +28,11 @@ export interface SegmentedProps<T extends string = string>
   block?: boolean;
   /**
    * Collapse to a single button showing the CURRENT option, advancing to the
-   * next on click — the affordance for a 56px rail, mirroring ThemeSwitch's
-   * toggle. The full name moves into a tooltip and the accessible name, so the
-   * state stays legible where the segments would not fit. Meant for two
-   * options; with more it still cycles, but a menu is the better shape.
+   * next on click — the affordance for a 56px rail, where labelled segments
+   * truncate to a letter. The full name moves into a tooltip and the accessible
+   * name, so the state stays legible where the segments would not fit. Meant for
+   * two options; with more, a Menu with a checked item is the right shape — that
+   * is where the appearance picker went.
    */
   iconOnly?: boolean;
 }
@@ -95,8 +96,8 @@ export function Segmented<T extends string = string>({
   if (iconOnly) {
     const current = options.find((option) => option.value === value) ?? options[0];
     const next = options[(options.findIndex((o) => o.value === value) + 1) % options.length] ?? current;
-    // The glyph reports the CURRENT option; the action lives in the name, the
-    // same contract as ThemeSwitch's toggle.
+    // The glyph reports the CURRENT option; the action lives in the accessible
+    // name ("Entorno: Live → Dev"), so a one-button cycle is never a guess.
     const name = `${label}: ${textOf(current?.label)} \u2192 ${textOf(next?.label)}`;
     return (
       <Tooltip content={name} placement="right">

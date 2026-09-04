@@ -31,6 +31,12 @@
   color: var(--he-text);
   font-family: var(--he-font-sans);
   animation: he-popover-in var(--he-transition-fast);
+  /* The panel is a focus HOLDER (tabindex="-1"), not a control: on open it takes
+   * DOM focus so Escape and the arrows have somewhere to land. Without this the
+   * UA paints its own `:focus-visible` ring — a raw browser blue that exists in
+   * no --he-* token — around the whole card. The bounds are already stated by
+   * the border and the shadow; the visible focus lives on the row inside. */
+  outline: none;
 }
 
 .he-popover[data-placement^='top'] {
@@ -50,6 +56,11 @@
   gap: 0;
   padding: var(--he-space-1);
   min-width: 176px;
+  /* Same reason as `.he-popover`: this is the element that actually takes focus
+   * on every open (and on every submenu open), so the UA ring would otherwise
+   * migrate panel-to-panel as you arrow through the tree, competing with the
+   * per-row `[data-he-nav='keyboard'] .he-menu__item--active` ring below. */
+  outline: none;
 }
 
 /* The gutter reserves the bar's width, so a row fill stops short of it instead of
@@ -111,6 +122,13 @@
   padding-top: var(--he-space-1);
   border-top: 1px solid var(--he-border);
   background: var(--he-surface);
+  /* The scroll box reserves a gutter on both edges; the pinned footer is not a
+   * scroll container, so without this its row starts one gutter-width left of
+   * every scrolled row (measured 15px on classic scrollbars, 0 on macOS overlay
+   * — so the drift only appears on some platforms). `overflow: hidden` makes it
+   * a scroll container so the same reservation applies, with no scrollbar. */
+  overflow: hidden;
+  scrollbar-gutter: stable both-edges;
 }
 
 .he-menu__group + .he-menu__group {
@@ -146,6 +164,14 @@
   text-align: left;
 }
 
+/* A sub-trigger keeps its fill for as long as its submenu is open — the row loses
+ * :hover the moment the pointer crosses into the child, and the keyboard --active
+ * rule does not paint on the pointer path. Same token as :hover. A FILL, never a
+ * spine, never --he-accent. */
+.he-menu__item--open {
+  background: var(--he-surface-2);
+}
+
 /* Three states, three renderings: hover lifts, the keyboard highlight adds the
  * house focus ring, checked adds the glyph and weight. The ring is painted only
  * while the surface is being driven from the keyboard — `data-he-nav` mirrors
@@ -162,10 +188,11 @@
   outline-offset: -2px;
 }
 
-.he-menu__item--checked {
-  background: var(--he-surface-2);
-}
-
+/* NO fill. The house rule is "selection is a FILL; a CURRENT CHOICE is a CHECK",
+ * and a `menuitemradio` set is a current choice — so the glyph plus the weight
+ * carry it. A fill here would tie with :hover above (both --he-surface-2), which
+ * in a hover-driven submenu paints TWO identical rows and makes the pointer
+ * ambiguous: the reader cannot tell what they are pointing at from what is set. */
 .he-menu__item--checked .he-menu__item-label {
   font-weight: 500;
 }
@@ -175,20 +202,29 @@
   cursor: not-allowed;
 }
 
-.he-menu__item--inset {
-  padding-left: var(--he-space-5);
+/* `inset` now reserves the media column structurally (MenuItem renders an empty
+ * media span), so it needs a width for that span rather than a padding guess.
+ * The old 24px padding was unrelated to the real column and left a pinned footer
+ * row's label 30px left of every other row's. */
+.he-menu__item--inset .he-menu__item-media:empty {
+  width: 15px;
 }
 
 .he-menu__item--destructive {
   color: var(--he-error);
 }
 
-/* 41.4px: 12px padding-block + a 29.4px two-line text column. */
+/* 41.4px with a sublabel: 12px padding-block + a 29.4px two-line text column.
+ * `auto` on the last track rather than a fixed 16px — the check and the trailing
+ * span are each 16px wide, so this renders identically while a row carrying
+ * neither stops reserving a phantom track. The 32px floor is because an icon row
+ * WITHOUT a sublabel measured 27.6px, SHORTER than the 32px plain rows beside it;
+ * the reference's icon rows are 32px like its text rows. */
 .he-menu__item--rich {
-  grid-template-columns: auto minmax(0, 1fr) 16px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: var(--he-space-3);
   padding: 6px var(--he-space-3);
-  min-height: 0;
+  min-height: 32px;
   border-radius: calc(var(--he-radius-sm) - 2px);
 }
 
@@ -231,10 +267,34 @@
   color: var(--he-text);
 }
 
+.he-menu__item-trailing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: var(--he-text-dim);
+}
+
+/* Same 8/12 padding `.he-menu__filter` already uses, so the two things that can
+ * occupy `header` share one rhythm. No hover, no cursor, no radius: it must not
+ * look clickable. */
+.he-menu__static {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--he-space-3);
+  padding: var(--he-space-2) var(--he-space-3);
+  color: var(--he-text);
+  font-size: var(--he-body-sm);
+}
+
 /* --he-neutral-bg IS --he-surface-2 in both themes, so a tone-0 avatar would
- * dissolve into a checked row's fill. Reassert the disc contextually through
- * Avatar's own custom-property hook — no token changes, no Avatar edits. */
-.he-menu__item--checked .he-menu__item-media .he-avatar {
+ * dissolve into a FILLED row. Keyed on the two states that actually paint a fill
+ * (hover and the keyboard highlight) rather than on --checked, which no longer
+ * does. Reassert the disc contextually through Avatar's own custom-property
+ * hook — no token changes, no Avatar edits. */
+.he-menu__item:hover:not(:disabled) .he-menu__item-media .he-avatar,
+[data-he-nav='keyboard'] .he-menu__item--active .he-menu__item-media .he-avatar {
   --he-avatar-bg: var(--he-surface);
   --he-avatar-color: var(--he-text-dim);
   border-color: var(--he-border-strong);
@@ -246,10 +306,49 @@
   font-size: var(--he-caption);
 }
 
+/* The hairline starts at the ICON COLUMN — 12px of margin on top of the card's
+ * 1px border and .he-menu's 4px pad, i.e. a 17px inset — so a band reads as
+ * grouping the rows rather than cutting the card. (The reference insets its
+ * hairline about half as far as its icon column; aligning to the column is the
+ * deliberate difference, not a transcription of that number.) */
 .he-menu__separator {
   height: 1px;
-  margin: var(--he-space-1) var(--he-space-2);
+  margin: var(--he-space-1) var(--he-space-3);
   background: var(--he-border);
+}
+
+/* Side placements enter along their own axis. Declared AFTER the base
+ * `.he-popover` rule so `animation-name` overrides the shorthand there. */
+.he-popover[data-placement^='right'] {
+  transform-origin: left center;
+  animation-name: he-popover-in-right;
+}
+
+.he-popover[data-placement^='left'] {
+  transform-origin: right center;
+  animation-name: he-popover-in-left;
+}
+
+@keyframes he-popover-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes he-popover-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes he-popover-in {

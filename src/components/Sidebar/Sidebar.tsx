@@ -190,6 +190,28 @@ export function SidebarSection({
 
 /* ---------------------------------- footer --------------------------------- */
 
+/**
+ * A footer row whose FIRST child stretches and whose siblings shrink-wrap — the
+ * shape you need to put a second control BESIDE the account trigger.
+ *
+ * Why it exists is not aesthetic. `.he-popover__trigger` toggles its menu on ANY
+ * click inside it, so a second control nested in the account trigger would open the
+ * account menu instead of doing its own job; a `<button>` inside `SidebarFooterItem`'s
+ * `<button>` is invalid HTML; and the ARIA delegate probe takes the FIRST focusable
+ * descendant, so DOM order would decide which control claims `aria-expanded`. A
+ * sibling control therefore goes BESIDE the trigger, and this row is what keeps the
+ * trigger full-width while it does.
+ */
+export interface SidebarFooterRowProps extends HTMLAttributes<HTMLDivElement> {}
+
+export function SidebarFooterRow({ className, children, ...rest }: SidebarFooterRowProps) {
+  return (
+    <div className={cx('he-sidebar-footer-row', className)} {...rest}>
+      {children}
+    </div>
+  );
+}
+
 export interface SidebarFooterItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Leading visual (avatar…). */
   media?: ReactNode;
@@ -199,8 +221,13 @@ export interface SidebarFooterItemProps extends ButtonHTMLAttributes<HTMLButtonE
   end?: ReactNode;
   /** Popover is open — keeps the hover fill and flips the chevron. Also sets aria-expanded. */
   open?: boolean;
-  /** Render the house 12x12 chevron in the trailing slot when `end` is not supplied (default false). */
-  chevron?: boolean;
+  /**
+   * Trailing affordance when `end` is not supplied (default false).
+   * `true` = the single chevron that rotates on open ("this expands").
+   * `'updown'` = the stacked glyph, which does not rotate ("this opens a list of
+   * alternatives") — the honest glyph for a row backed by seven accounts.
+   */
+  chevron?: boolean | 'updown';
 }
 
 export function SidebarFooterItem({
@@ -219,7 +246,7 @@ export function SidebarFooterItem({
    * aria-label would REPLACE the visible text, dropping the sublabel — the org and
    * role that are the only thing telling two identically named accounts apart. */
   const labelled = collapsed && named;
-  const trailing = end ?? (chevron ? <ChevronGlyph /> : null);
+  const trailing = end ?? (chevron === 'updown' ? <UpDownGlyph /> : chevron ? <ChevronGlyph /> : null);
 
   const button = (
     <button
@@ -244,6 +271,34 @@ export function SidebarFooterItem({
     </Tooltip>
   ) : (
     button
+  );
+}
+
+/* Stacked up/down. It is deliberately EXCLUDED from the open rotation: rotating a
+ * symmetric glyph 180deg is a no-op that looks like a bug, and the row it marks does
+ * not expand in place — it opens a list of alternatives.
+ *
+ * The 3.2-unit gap between the two baselines is measured, not chosen: at 12px with a
+ * 1.4 stroke and ROUND caps, the caps add ~0.7 each, so a 2-unit gap closed the pair
+ * into a small diamond ring — screenshotted at 16x before it was widened. */
+function UpDownGlyph() {
+  return (
+    <svg
+      className="he-sidebar-account__chevron he-sidebar-account__chevron--static"
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden
+    >
+      <path
+        d="M3.9 4.4 6 2.3 8.1 4.4M3.9 7.6 6 9.7 8.1 7.6"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
