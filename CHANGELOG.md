@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- `Card` no longer fights the consumer over `display`. Its `display: block` default now lives in a
+  zero-specificity `:where(.he-card)` rule, so a consumer's single-class `display: flex` / `grid`
+  wins regardless of stylesheet load order. Before, `.he-card { display: block }` tied on specificity
+  with the consumer's module rule and Next's production bundle loaded it later, silently turning a
+  flex-column card back into a block — a scrolling list inside the card grew past `max-height` and
+  was clipped instead of scrolling (handle-v2 account switcher). No visual change for cards that do
+  not override `display`.
+
 ## 0.3.1
 
 Released as a patch deliberately: `ThemeSwitch` shipped in 0.3.0 the same day and had no
