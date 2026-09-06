@@ -27,6 +27,10 @@ Brand Book (Sentient / Neue Haas Unica / IBM Plex Mono; Midnight, Borealis Green
   `className` last.
 - No runtime dependencies. Icons are small inline SVGs, not lucide-react.
 - Components extend the native element's props (`ButtonHTMLAttributes`, etc.) and spread rest.
+- A surface whose children belong to the consumer (`Card`) declares its own `display` inside
+  `:where()` so it has zero specificity: the consumer's `className` rule then wins regardless of
+  stylesheet load order. Components that own their internal layout (`Button`, `Stack`, `Menu`, …)
+  keep a normal `.he-*` selector — their `display` is structure, not a default.
 
 ## Build
 

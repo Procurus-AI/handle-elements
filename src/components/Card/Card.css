@@ -1,5 +1,16 @@
-.he-card {
+/* `display` is the one declaration a consumer legitimately overrides — a Card
+ * is a surface whose children belong to the caller, who will often want it to
+ * be the flex column or grid its content lays out in. A bare `.he-card` rule
+ * has the same specificity as the consumer's single-class module rule, so the
+ * winner would depend on stylesheet load order (and Next's production bundle
+ * orders it differently from `next dev`). `:where()` gives this rule zero
+ * specificity, so any consumer `display` wins deterministically. It is still
+ * needed here because `as="a"`/`as="button"` render inline by default. */
+:where(.he-card) {
   display: block;
+}
+
+.he-card {
   background: var(--he-surface);
   border: 1px solid var(--he-border);
   border-radius: var(--he-radius-md);
