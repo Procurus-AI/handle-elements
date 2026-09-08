@@ -80,8 +80,10 @@ to GitHub Packages.
 
 Button · Chip · StatusPill · Card · StatCard · PageHeader · Tabs (underline/pills) ·
 Input · Textarea · Select · Composer · DataTable · Drawer ·
-Sidebar (SidebarHeader / SidebarItem / SidebarSection / SidebarFooterItem, collapsible rail)
+Sidebar (SidebarHeader / SidebarItem / SidebarSection / SidebarFooterItem, collapsible rail) ·
+AgentWorkspace · AgentResponse (FindingList / FindingItem / ActivityTrail / AgentEvidenceDisclosure) ·
+InboxList · ReviewWorkspace · ReviewField · EvidencePreview
 
 See Storybook for props, variants, and composed examples (Examples/Directory,
-Sidebar/AppShell, Sidebar/OpsConsole). Next up: FilterToolbar, Loader/ErrorView,
+Examples/KYC Agent, Sidebar/AppShell, Sidebar/OpsConsole). Next up: FilterToolbar, Loader/ErrorView,
 then publish workflow + v0.1.0.

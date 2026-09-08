@@ -1,7 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 
-export type PageHeaderSize = 'hero' | 'page' | 'section';
+export type PageHeaderSize = 'hero' | 'page' | 'compact' | 'section';
 export type PageHeaderAlign = 'start' | 'center';
 
 export interface PageHeaderProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
@@ -16,15 +16,15 @@ export interface PageHeaderProps extends Omit<HTMLAttributes<HTMLElement>, 'titl
   /** Right-aligned slot for actions/controls; centered under the title when `align="center"`. */
   aside?: ReactNode;
   /**
-   * `page` (default) is the full page-scale header. `section` is the lighter
-   * variant for titling a panel, card, or chart within a page: smaller title,
-   * no divider, tighter spacing, and an `h2` heading level. `hero` is the
+   * `page` (default) is the full page-scale header. `compact` is a page-level
+   * heading at record/workspace density: tighter, divider-free, and still an
+   * `h1`. `section` titles a panel, card, or chart with an `h2`. `hero` is the
    * centered greeting: display-scale title, centered by default, no divider.
    */
   size?: PageHeaderSize;
   /** Defaults to `center` for `hero`, `start` otherwise. */
   align?: PageHeaderAlign;
-  /** Bottom rule. Defaults to `true` for `page`, `false` for `hero`/`section`. */
+  /** Bottom rule. Defaults to `true` for `page`, `false` for every other size. */
   divider?: boolean;
   /** Caps the text column — a number (px) or any CSS length. */
   measure?: number | string;

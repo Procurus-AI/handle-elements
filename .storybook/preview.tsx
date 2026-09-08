@@ -23,12 +23,20 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const theme = (context.globals.theme as string) ?? 'light';
+      const fullscreen = context.parameters.layout === 'fullscreen';
       // Consumer-real mechanism: the attribute lives on <html>.
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
       }, [theme]);
       return (
-        <div className="he-root" style={{ minHeight: '100vh', margin: -16, padding: 24 }}>
+        <div
+          className="he-root"
+          style={
+            fullscreen
+              ? { minHeight: '100vh' }
+              : { minHeight: '100vh', margin: -16, padding: 24 }
+          }
+        >
           <Story />
         </div>
       );

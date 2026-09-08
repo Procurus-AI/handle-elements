@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.3
+
+### Added
+
+- AI-native workspace primitives: `AgentWorkspace`, `AgentResponse`, `FindingList`,
+  `ActivityTrail`, `AgentEvidenceDisclosure`, `InboxList`, `ReviewWorkspace`,
+  `ReviewConclusion`, `ReviewField` and `EvidencePreview`.
+- A reusable KYC agent example covering an intelligent inbox, an agent answer and a
+  three-pane document review flow.
+
+### Changed
+
+- `Composer` gains an input-first agent dock with integrated activity and contextual suggestions.
+- `DataTable` gains an accessible caption, minimum table width and reusable sorting support for
+  compact operational views.
+- `PageHeader`, `Sidebar`, `StatusPill` and `Card` gain compact variants and slots used by agent
+  workspaces, including responsive actions and quiet semantic states.
+- The default canvas and supporting surfaces use Handle's warmer, lower-chrome visual treatment.
+
 ## 0.3.2
 
 ### Fixed

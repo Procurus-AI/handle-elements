@@ -1,5 +1,5 @@
-/* Status is carried by the dot, not a tinted background — the pill itself is a
- * quiet bordered surface. `accent` is the one filled (Borealis) variant. */
+/* Outline carries status in the dot on a quiet bordered surface. Soft adds the
+ * corresponding tint. `accent` is the one filled (Borealis) variant. */
 .he-pill {
   display: inline-flex;
   align-items: center;
@@ -36,6 +36,30 @@
   background: var(--he-text-faint);
 }
 
+/* Soft keeps the outline pill's outer dimensions while replacing its border
+ * with a quiet status tint. The dot keeps the hue and text stays accessible. */
+.he-pill--soft {
+  border: 0;
+  padding: 4px 11px;
+  color: var(--he-text);
+}
+
+.he-pill--soft.he-pill--ok {
+  background: var(--he-ok-bg);
+}
+
+.he-pill--soft.he-pill--warn {
+  background: var(--he-warn-bg);
+}
+
+.he-pill--soft.he-pill--error {
+  background: var(--he-error-bg);
+}
+
+.he-pill--soft.he-pill--neutral {
+  background: var(--he-neutral-bg);
+}
+
 /* dotless pills color the label instead, so status stays legible */
 .he-pill--nodot.he-pill--ok {
   color: var(--he-ok);
@@ -47,7 +71,13 @@
   color: var(--he-error);
 }
 
-/* accent — filled Borealis, the single brand-colored pill */
+/* On a tint, status-colored 11.5px text can lose AA contrast (notably warn).
+ * Without a dot, the background still carries state and the label stays ink. */
+.he-pill--soft.he-pill--nodot:is(.he-pill--ok, .he-pill--warn, .he-pill--error, .he-pill--neutral) {
+  color: var(--he-text);
+}
+
+/* accent — filled Borealis in both appearances, the single brand-colored pill */
 .he-pill--accent {
   background: var(--he-accent);
   border-color: transparent;

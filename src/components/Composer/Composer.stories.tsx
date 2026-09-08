@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { ActivityTrail } from '../AgentResponse/AgentResponse';
 import { Button } from '../Button/Button';
 import { Select } from '../Input/Select';
 import { Tabs } from '../Tabs/Tabs';
@@ -9,6 +10,11 @@ const meta = {
   title: 'Elements/Composer',
   component: Composer,
   args: { placeholder: 'Ask anything about your book of business' },
+  argTypes: {
+    suggestionPlacement: { control: 'select', options: ['before', 'after'] },
+    layout: { control: 'select', options: ['stacked', 'inline'] },
+    variant: { control: 'select', options: ['default', 'dock'] },
+  },
 } satisfies Meta<typeof Composer>;
 
 export default meta;
@@ -95,6 +101,87 @@ export const Suggestions: Story = {
         { id: 'draft', label: 'Draft a renewal email', disabled: true },
       ]}
       onSuggestionSelect={(s, i) => console.log(s.id, i)}
+    />
+  ),
+};
+
+/** Contextual agent shortcuts can lead into the composer without bespoke markup. */
+export const ShortcutsAbove: Story = {
+  render: (args) => (
+    <Composer
+      {...args}
+      size="lg"
+      maxWidth={720}
+      placeholder="Pregúntale a Handle o indica qué hacer…"
+      suggestionPlacement="before"
+      onSubmit={() => {}}
+      suggestions={[
+        { id: 'review', label: 'Revisa los documentos' },
+        { id: 'blocked', label: '¿Por qué está bloqueado?' },
+        { id: 'request', label: 'Pide el documento faltante' },
+        { id: 'package', label: 'Prepara el paquete' },
+      ]}
+      onSuggestionSelect={(s) => console.log(s.id)}
+    />
+  ),
+};
+
+/** A single-row command surface for a persistent agent dock. */
+export const InlineDock: Story = {
+  render: (args) => (
+    <Composer
+      {...args}
+      layout="inline"
+      size="sm"
+      maxWidth={720}
+      placeholder="Ask Handle or tell it what to do…"
+      submitLabel="Send to Handle"
+      onMic={() => {}}
+      onSubmit={() => {}}
+    />
+  ),
+};
+
+/** Input-led dock with one compact activity/action band beneath it. */
+export const UnifiedAgentDock: Story = {
+  render: (args) => (
+    <Composer
+      {...args}
+      variant="dock"
+      size="sm"
+      align="center"
+      maxWidth={760}
+      aria-label="Message Handle"
+      placeholder="Ask Handle or tell it what to do…"
+      activity={
+        <ActivityTrail
+          variant="status"
+          icon={
+            <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+              <path
+                d="M7.5 1.7c.3 3.5 2.1 5.3 5.5 5.8-3.4.4-5.2 2.3-5.5 5.8-.4-3.5-2.2-5.4-5.5-5.8 3.3-.5 5.1-2.3 5.5-5.8Z"
+                stroke="currentColor"
+                strokeWidth="1.25"
+                strokeLinejoin="round"
+              />
+            </svg>
+          }
+          label="Handle"
+          steps={[
+            { id: 'review', label: 'Reviewed 4 documents' },
+            { id: 'alert', label: 'Found 1 exception' },
+          ]}
+        />
+      }
+      suggestions={[
+        { id: 'why', label: 'Why is it blocked?' },
+        { id: 'request', label: 'Request the missing document' },
+        { id: 'package', label: 'Prepare package' },
+      ]}
+      suggestionsLabel="Suggested actions"
+      onSuggestionSelect={(suggestion) => console.log(suggestion.id)}
+      submitLabel="Send to Handle"
+      onSubmit={() => {}}
     />
   ),
 };

@@ -15,7 +15,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: var(--he-space-2) var(--he-space-3) var(--he-space-4);
+  padding: var(--he-space-2) var(--he-space-4) var(--he-space-4);
 }
 
 .he-sidebar__header {
@@ -32,14 +32,14 @@
 .he-sidebar__utility {
   flex: 0 0 auto;
   border-top: 1px solid var(--he-border);
-  padding: var(--he-space-2) var(--he-space-3);
+  padding: var(--he-space-2) var(--he-space-4);
   display: grid;
   gap: 2px;
 }
 
 .he-sidebar__footer {
   border-top: 1px solid var(--he-border);
-  padding: var(--he-space-2) var(--he-space-3);
+  padding: var(--he-space-2) var(--he-space-4);
 }
 
 /* Popover wraps its trigger in an inline-flex span. In a block slot that wrapper
@@ -114,6 +114,15 @@
   background: var(--he-surface-2);
 }
 
+.he-sidebar-item:disabled {
+  opacity: 0.58;
+  cursor: default;
+}
+
+.he-sidebar-item:disabled:hover {
+  background: transparent;
+}
+
 .he-sidebar-item:focus-visible {
   outline: 2px solid var(--he-focus);
   outline-offset: -2px;
@@ -155,6 +164,17 @@
   font-size: var(--he-caption);
 }
 
+.he-sidebar-item--reveal-end .he-sidebar-item__end {
+  opacity: 0;
+  transition: opacity var(--he-transition-fast);
+}
+
+.he-sidebar-item--reveal-end:hover .he-sidebar-item__end,
+.he-sidebar-item--reveal-end:focus-visible .he-sidebar-item__end,
+.he-sidebar-item--reveal-end.he-sidebar-item--active .he-sidebar-item__end {
+  opacity: 1;
+}
+
 /* sections */
 .he-sidebar-section {
   margin-top: var(--he-space-5);
@@ -176,6 +196,16 @@
   align-items: center;
   flex-shrink: 0;
   color: var(--he-text-faint);
+  transition: opacity var(--he-transition-fast);
+}
+
+.he-sidebar-section__action--hover {
+  opacity: 0;
+}
+
+.he-sidebar-section__row:hover .he-sidebar-section__action--hover,
+.he-sidebar-section__row:focus-within .he-sidebar-section__action--hover {
+  opacity: 1;
 }
 
 .he-sidebar-section__head {
@@ -224,6 +254,13 @@
 
 .he-sidebar-section__items {
   margin-top: 2px;
+}
+
+/* Touch users cannot reveal a hover-only control before acting on it. */
+@media (hover: none) {
+  .he-sidebar-section__action--hover {
+    opacity: 1;
+  }
 }
 
 /* account footer row */

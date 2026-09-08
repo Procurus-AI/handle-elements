@@ -237,6 +237,63 @@ export const CollapsibleRail: Story = {
   },
 };
 
+/* ------------------------ example: section actions ------------------------- */
+
+export const SectionActions: Story = {
+  name: 'Section actions (quiet + persistent)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A section action is a sibling of the collapse trigger, never nested inside it. Projects uses the ' +
+          'quiet default and reveals its action on hover or keyboard focus; Expedientes opts into ' +
+          '`actionVisibility="always"` for a primary creation affordance that must remain discoverable.',
+      },
+    },
+  },
+  render: () => {
+    const [drafts, setDrafts] = useState(1);
+    const addAction = (label: string, onClick: () => void) => (
+      <Button variant="ghost" size="icon-xs" aria-label={label} onClick={onClick}>
+        {icons.plus}
+      </Button>
+    );
+
+    return (
+      <div style={{ display: 'flex', minHeight: 420, margin: -16 }}>
+        <Sidebar width="240px">
+          <SidebarHeader>
+            <span style={{ fontFamily: 'var(--he-font-display)', fontSize: 17 }}>handle</span>
+          </SidebarHeader>
+
+          <SidebarSection
+            label="Projects"
+            action={addAction('Add project', () => setDrafts((count) => count + 1))}
+          >
+            <SidebarItem icon={icons.folder} label="Travel Planner" />
+            <SidebarItem icon={icons.folder} label="AI Learning" />
+          </SidebarSection>
+
+          <SidebarSection
+            label="Expedientes"
+            actionVisibility="always"
+            action={addAction('Crear expediente', () => setDrafts((count) => count + 1))}
+          >
+            <SidebarItem icon={icons.folder} label={`Borradores · ${drafts}`} />
+            <SidebarItem icon={icons.folder} label="Rafael Alvarez" />
+          </SidebarSection>
+        </Sidebar>
+        <main style={{ flex: 1, background: 'var(--he-surface)', padding: 40 }}>
+          <p style={{ color: 'var(--he-text-dim)' }}>
+            Hover Projects or move focus through the sidebar. Each plus increments Borradores without
+            collapsing its section.
+          </p>
+        </main>
+      </div>
+    );
+  },
+};
+
 /* --------------------- example: ops console (data-heavy) -------------------- */
 
 export const OpsConsole: Story = {

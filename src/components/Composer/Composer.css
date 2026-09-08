@@ -121,6 +121,38 @@
   box-shadow: var(--he-shadow-card);
 }
 
+/* Inline turns the shell into one quiet command row for a persistent agent
+ * dock. It composes with every size; size still controls typography and control
+ * scale, while layout only controls placement. */
+.he-composer--inline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--he-space-2);
+  padding: var(--he-space-2) var(--he-space-2) var(--he-space-2) var(--he-space-3);
+}
+
+.he-composer--inline .he-composer__input {
+  min-width: 0;
+  padding-block: 0;
+}
+
+.he-composer--inline .he-composer__bar {
+  grid-column: 2;
+  align-self: center;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.he-composer--inline .he-composer__start:empty,
+.he-composer--inline .he-composer__end:empty {
+  display: none;
+}
+
+.he-composer--inline.he-composer--lg {
+  padding: var(--he-space-3);
+}
+
 /* Field = shell + the suggestions the component now owns. The field claims the
  * full inline size so the shell is never sized by the suggestion row beside it
  * (in a centered PageHeader aside the field is a flex item, not a block). */
@@ -129,6 +161,87 @@
   flex-direction: column;
   min-width: 0;
   width: 100%;
+}
+
+.he-composer-field__activity {
+  min-width: 0;
+  margin-bottom: var(--he-space-3);
+}
+
+/* Dock is the single persistent agent surface: the support band narrates work
+ * and offers shortcuts, while the input remains the sole high-emphasis row. */
+.he-composer-field--dock {
+  container-type: inline-size;
+  max-width: var(--he-composer-max, none);
+  overflow: hidden;
+  border: 1px solid var(--he-border);
+  border-radius: var(--he-radius-lg);
+  background: var(--he-surface);
+  box-shadow: var(--he-shadow-card);
+  transition:
+    border-color var(--he-transition-fast),
+    box-shadow var(--he-transition-fast);
+}
+
+.he-composer-field--dock.he-composer-field--center {
+  margin-inline: auto;
+}
+
+.he-composer-field--dock:focus-within {
+  border-color: var(--he-border-strong);
+  box-shadow: var(--he-shadow-card);
+}
+
+.he-composer-field__support {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--he-space-3);
+  min-width: 0;
+  padding: var(--he-space-2) var(--he-space-3);
+  background: var(--he-surface-2);
+}
+
+.he-composer-field__support--after {
+  order: 2;
+}
+
+.he-composer-field--dock .he-composer-field__activity {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.he-composer-field--dock .he-composer-field__suggestions {
+  width: auto;
+  justify-content: flex-end;
+  gap: 0;
+  margin: 0;
+}
+
+.he-composer-field--dock .he-composer-field__suggestions .he-btn--ghost {
+  padding-inline: var(--he-space-2);
+  color: var(--he-text-dim);
+}
+
+.he-composer-field--dock .he-composer-field__suggestions .he-btn--ghost:hover:not(:disabled) {
+  background: var(--he-surface);
+  color: var(--he-text);
+  box-shadow: var(--he-shadow-card);
+}
+
+.he-composer-field--dock > .he-composer {
+  min-height: calc(var(--he-space-7) + var(--he-space-2));
+  width: 100%;
+  max-width: none;
+  border: 0;
+  border-radius: 0;
+  background: var(--he-surface);
+  box-shadow: none;
+}
+
+.he-composer-field--dock > .he-composer:focus-within {
+  border-color: transparent;
+  box-shadow: none;
 }
 
 /* Auto margins on the CROSS axis cancel `align-self: stretch`, which would size
@@ -147,8 +260,39 @@
   margin-top: var(--he-space-3);
 }
 
+.he-composer-field__suggestions--before {
+  margin-top: 0;
+  margin-bottom: var(--he-space-3);
+}
+
+.he-composer-field__suggestions--after {
+  order: 2;
+}
+
 .he-composer-field--center .he-composer-field__suggestions {
   justify-content: center;
+}
+
+.he-composer-field--dock.he-composer-field--center .he-composer-field__suggestions {
+  justify-content: flex-end;
+}
+
+@container (max-width: 36rem) {
+  .he-composer-field--dock .he-composer-field__support {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--he-space-1);
+  }
+
+  .he-composer-field--dock .he-composer-field__activity,
+  .he-composer-field--dock .he-composer-field__suggestions {
+    width: 100%;
+  }
+
+  .he-composer-field--dock .he-composer-field__suggestions,
+  .he-composer-field--dock.he-composer-field--center .he-composer-field__suggestions {
+    justify-content: flex-start;
+  }
 }
 
 /* Mic — ghost icon control, same 32px box as the submit so the two align. */
@@ -204,7 +348,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .he-composer__mic {
+  .he-composer__mic,
+  .he-composer-field--dock {
     transition: none;
   }
 }

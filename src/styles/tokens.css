@@ -24,18 +24,21 @@
 
   /* ---- surfaces & text (light, default) ---- */
   color-scheme: light;
-  --he-bg: var(--he-white);
+  /* A lightly warm canvas keeps long agent responses closer to a reading
+   * surface than a traditional blue-white SaaS dashboard. */
+  --he-bg: #f7f6f2;
   --he-surface: #ffffff;
-  --he-surface-2: var(--he-gray-light);
+  --he-surface-2: #f0efe9;
   --he-text: var(--he-midnight);
   --he-text-dim: #5c6068;
   /* Faint is a TEXT token, so it must clear WCAG AA (4.5:1). The old #9b9a98
    * measured 2.81:1 on --he-surface, which is why individual components had
    * begun opting out of it one at a time (chart axis labels, table trailing
-   * text). Measured now: 4.86:1 on --he-surface, 4.65:1 on --he-bg. The tier
+   * text). Measured now: 5.23:1 on --he-surface, 4.84:1 on --he-bg and 4.54:1
+   * on --he-surface-2. The tier
    * below --he-text-dim is carried by size/case/family (10.5px uppercase mono),
    * not by a lightness that costs legibility. */
-  --he-text-faint: #737170;
+  --he-text-faint: #6e6c6a;
   --he-border: #e4e3e0;
   --he-border-strong: var(--he-sandstone);
 
@@ -148,8 +151,9 @@
   --he-surface-2: #212633;
   --he-text: var(--he-white);
   --he-text-dim: #a8abb3;
-  /* AA counterpart of the light value: 4.70:1 on --he-surface (was 3.34:1). */
-  --he-text-faint: #838894;
+  /* AA counterpart of the light value: 5.07:1 on --he-surface and 4.55:1
+   * on --he-surface-2 (the lowest-contrast dark surface). */
+  --he-text-faint: #888d99;
   --he-border: #2a2f3d;
   --he-border-strong: #3a4050;
 

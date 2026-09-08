@@ -76,6 +76,8 @@ type ItemBaseProps = {
   label: ReactNode;
   /** Trailing slot (count, shortcut, chevron…). */
   end?: ReactNode;
+  /** Keep secondary metadata silent until hover, focus or active state. */
+  revealEndOnHover?: boolean;
   active?: boolean;
   /** Nesting level — each step indents the row (default 0). */
   depth?: number;
@@ -87,7 +89,17 @@ export type SidebarItemProps = ItemBaseProps &
     | ({ href?: undefined } & ButtonHTMLAttributes<HTMLButtonElement>)
   );
 
-export function SidebarItem({ icon, label, end, active = false, depth = 0, className, style, ...rest }: SidebarItemProps) {
+export function SidebarItem({
+  icon,
+  label,
+  end,
+  revealEndOnHover = false,
+  active = false,
+  depth = 0,
+  className,
+  style,
+  ...rest
+}: SidebarItemProps) {
   const { collapsed } = useContext(SidebarContext);
   const isLink = typeof (rest as { href?: string }).href === 'string';
   const named = collapsed && typeof label === 'string';
@@ -95,7 +107,12 @@ export function SidebarItem({ icon, label, end, active = false, depth = 0, class
     isLink ? 'a' : 'button',
     {
       ...(isLink ? {} : { type: 'button' }),
-      className: cx('he-sidebar-item', active && 'he-sidebar-item--active', className),
+      className: cx(
+        'he-sidebar-item',
+        active && 'he-sidebar-item--active',
+        revealEndOnHover && 'he-sidebar-item--reveal-end',
+        className,
+      ),
       'aria-current': active ? 'page' : undefined,
       'aria-label': named ? (label as string) : undefined,
       style: depth > 0 ? { paddingLeft: `calc(var(--he-space-2) + ${depth} * 18px)`, ...style } : style,
@@ -127,6 +144,8 @@ export function SidebarItem({ icon, label, end, active = false, depth = 0, class
 
 /* --------------------------------- section --------------------------------- */
 
+export type SidebarSectionActionVisibility = 'hover' | 'always';
+
 export interface SidebarSectionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onToggle'> {
   label: ReactNode;
   /** Collapsible via the header chevron (default true). */
@@ -135,8 +154,14 @@ export interface SidebarSectionProps extends Omit<HTMLAttributes<HTMLDivElement>
   /** Controlled open state. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Action slot on the header row (e.g. a ghost "+" button); clicks don't toggle. */
+  /**
+   * Compact action beside the section label (e.g. an icon-only "+" button).
+   * Supply an interactive element with its own accessible name; it remains a
+   * sibling of the collapse trigger, so activating it never toggles the section.
+   */
   action?: ReactNode;
+  /** Reveal the action on section hover/focus, or keep it visible (default `hover`). */
+  actionVisibility?: SidebarSectionActionVisibility;
 }
 
 export function SidebarSection({
@@ -146,6 +171,7 @@ export function SidebarSection({
   open: controlledOpen,
   onOpenChange,
   action,
+  actionVisibility = 'hover',
   className,
   children,
   ...rest
@@ -181,7 +207,16 @@ export function SidebarSection({
             <span className="he-sidebar-section__label">{label}</span>
           </div>
         )}
-        {action != null && <span className="he-sidebar-section__action">{action}</span>}
+        {action != null && (
+          <span
+            className={cx(
+              'he-sidebar-section__action',
+              `he-sidebar-section__action--${actionVisibility}`,
+            )}
+          >
+            {action}
+          </span>
+        )}
       </div>
       {open && <div className="he-sidebar-section__items">{children}</div>}
     </div>

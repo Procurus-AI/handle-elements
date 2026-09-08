@@ -32,6 +32,48 @@
   font-size: var(--he-body-sm);
 }
 
+/* Compact is still the page's h1, but at dense record-header rhythm. It keeps
+ * identity and actions readable without spending a full dashboard header. */
+.he-pagehead--compact {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--he-space-3);
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+/* Compact headers are also used inside drawers and narrow workspace grids.
+ * Preserve a readable title measure and let the aside move beneath it instead
+ * of squeezing or overlapping the heading. */
+.he-pagehead--compact .he-pagehead__main {
+  flex-basis: calc(var(--he-space-7) * 5);
+  min-width: min(100%, calc(var(--he-space-7) * 5));
+}
+
+.he-pagehead--compact .he-pagehead__title {
+  font-size: var(--he-heading);
+  line-height: 1.15;
+}
+
+.he-pagehead--compact .he-pagehead__eyebrow {
+  margin-bottom: var(--he-space-1);
+}
+
+.he-pagehead--compact .he-pagehead__subtitle {
+  margin-top: var(--he-space-1);
+  font-size: var(--he-caption);
+}
+
+.he-pagehead--compact .he-pagehead__lede {
+  margin-top: var(--he-space-2);
+  font-size: var(--he-body-sm);
+}
+
+.he-pagehead--compact .he-pagehead__aside {
+  align-self: center;
+}
+
 /* Hero — the centered greeting. Gives --he-display-1 its first component home;
  * clamps down to --he-display-2 on narrow viewports. */
 .he-pagehead--hero {

@@ -1,0 +1,185 @@
+/* AgentWorkspace — a quiet application shell. It deliberately owns only the
+ * viewport and its scroll boundaries; page composition remains in the caller. */
+.he-agent-workspace {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--he-agent-workspace-nav, 224px) minmax(0, 1fr);
+  width: 100%;
+  min-width: 0;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+  background: var(--he-bg);
+  color: var(--he-text);
+}
+
+.he-agent-workspace__navigation {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.he-agent-workspace__navigation > :last-child {
+  height: 100%;
+}
+
+.he-agent-workspace__stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+.he-agent-workspace__mobile-trigger,
+.he-agent-workspace__mobile-close,
+.he-agent-workspace__mobile-backdrop {
+  display: none;
+}
+
+.he-agent-workspace__header {
+  position: relative;
+  z-index: 2;
+  padding: var(--he-space-4) var(--he-space-6) 0;
+  background: var(--he-bg);
+}
+
+.he-agent-workspace__main {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.he-agent-workspace__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(calc(var(--he-space-7) * 5.5), calc(var(--he-space-7) * 6.35));
+  align-items: start;
+  gap: var(--he-space-7);
+  width: 100%;
+  max-width: calc(var(--he-space-7) * 24.6);
+  margin-inline: auto;
+  padding: var(--he-space-6) var(--he-space-7);
+}
+
+.he-agent-workspace__primary,
+.he-agent-workspace__context {
+  min-width: 0;
+}
+
+.he-agent-workspace__composer {
+  position: relative;
+  z-index: 3;
+  padding: var(--he-space-3) var(--he-space-6) var(--he-space-5);
+  background: linear-gradient(to top, var(--he-bg) 78%, transparent);
+}
+
+@media (max-width: 860px) {
+  .he-agent-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 560px;
+  }
+
+  .he-agent-workspace__navigation:not(.he-agent-workspace__navigation--mobile-open) {
+    display: none;
+  }
+
+  .he-agent-workspace__navigation--mobile-open {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 11;
+    display: block;
+    width: min(86vw, var(--he-agent-workspace-nav, 224px));
+    height: 100%;
+    overflow: visible;
+    background: var(--he-bg);
+    box-shadow: var(--he-shadow-lift);
+  }
+
+  .he-agent-workspace__mobile-trigger {
+    position: absolute;
+    top: var(--he-space-3);
+    left: var(--he-space-3);
+    z-index: 4;
+    display: grid;
+    place-content: center;
+    gap: 3px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--he-border);
+    border-radius: var(--he-radius-full);
+    background: var(--he-surface);
+    color: var(--he-text);
+    box-shadow: var(--he-shadow-card);
+    cursor: pointer;
+  }
+
+  .he-agent-workspace__mobile-trigger > span {
+    display: block;
+    width: 13px;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .he-agent-workspace__mobile-trigger:focus-visible,
+  .he-agent-workspace__mobile-close:focus-visible {
+    outline: 2px solid var(--he-focus);
+    outline-offset: 2px;
+  }
+
+  .he-agent-workspace__mobile-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: var(--he-scrim-soft);
+    cursor: pointer;
+  }
+
+  .he-agent-workspace__mobile-close {
+    position: absolute;
+    top: var(--he-space-3);
+    right: calc(var(--he-space-7) * -1);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 29px;
+    height: 29px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--he-radius-full);
+    background: var(--he-surface-2);
+    color: var(--he-text);
+    cursor: pointer;
+  }
+
+  .he-agent-workspace__header {
+    padding-left: var(--he-space-7);
+    padding-right: var(--he-space-4);
+  }
+
+  .he-agent-workspace__composer {
+    padding-inline: var(--he-space-4);
+    padding-bottom: var(--he-space-4);
+  }
+}
+
+@container (max-width: 58rem) {
+  .he-agent-workspace__split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--he-space-6);
+    padding: var(--he-space-6);
+  }
+}
+
+@container (max-width: 40rem) {
+  .he-agent-workspace__split {
+    padding: var(--he-space-4);
+  }
+}

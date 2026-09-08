@@ -71,7 +71,17 @@ const columns: DataTableColumn<Account>[] = [
 ];
 
 export const Playground: Story = {
-  render: () => <DataTable columns={columns} data={ACCOUNTS} rowKey={(r) => r.name} defaultSort={{ key: 'arr', direction: 'desc' }} />,
+  render: () => (
+    <DataTable
+      caption="Account pipeline"
+      captionHidden
+      columns={columns}
+      data={ACCOUNTS}
+      minTableWidth={680}
+      rowKey={(r) => r.name}
+      defaultSort={{ key: 'arr', direction: 'desc' }}
+    />
+  ),
 };
 
 export const WithToolbar: Story = {

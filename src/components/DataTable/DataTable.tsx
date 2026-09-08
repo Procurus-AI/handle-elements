@@ -3,6 +3,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type HTMLAttributes,
   type KeyboardEvent,
   type ReactNode,
@@ -61,6 +62,10 @@ export interface DataTableColumn<T> {
 export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   columns: DataTableColumn<T>[];
   data: T[];
+  /** Accessible table name. Rendered visually above the header unless `captionHidden` is true. */
+  caption?: ReactNode;
+  /** Keeps `caption` available to assistive technology without adding a visible table title. */
+  captionHidden?: boolean;
   /** Stable React key per row. Defaults to the row index. */
   rowKey?: (row: T, index: number) => string | number;
   onRowClick?: (row: T, index: number) => void;
@@ -106,6 +111,8 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   footer?: ReactNode;
   /** `fixed` makes every `column.width` binding; slack goes to the unset columns. */
   layout?: DataTableLayout;
+  /** Optional minimum width for the table canvas; narrower containers scroll instead of crushing cells. */
+  minTableWidth?: number | string;
   /** 1-based page, applied AFTER filter and sort. Ignored unless `pageSize` is set. */
   page?: number;
   /**
@@ -129,6 +136,8 @@ function defaultCompare(a: unknown, b: unknown): number {
 export function DataTable<T>({
   columns,
   data,
+  caption,
+  captionHidden = false,
   rowKey,
   onRowClick,
   isRowSelected,
@@ -147,6 +156,7 @@ export function DataTable<T>({
   maxHeight,
   footer,
   layout = 'auto',
+  minTableWidth,
   page = 1,
   pageSize,
   className,
@@ -240,7 +250,27 @@ export function DataTable<T>({
         className="he-table__scroll"
         style={maxHeight != null ? { maxHeight, overflowY: 'auto' } : undefined}
       >
-        <table className="he-table__el">
+        <table
+          className="he-table__el"
+          style={
+            minTableWidth == null
+              ? undefined
+              : ({
+                  minWidth:
+                    typeof minTableWidth === 'number' ? `${minTableWidth}px` : minTableWidth,
+                } as CSSProperties)
+          }
+        >
+          {caption != null && (
+            <caption
+              className={cx(
+                'he-table__caption',
+                captionHidden && 'he-table__caption--hidden',
+              )}
+            >
+              {caption}
+            </caption>
+          )}
           <thead className="he-table__head">
             <tr>
               {columns.map((col) => {

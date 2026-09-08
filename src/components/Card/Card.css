@@ -18,6 +18,18 @@
   text-decoration: none;
 }
 
+/* Surface hierarchy. Most pages should use one outlined boundary at most;
+ * `soft` groups supporting context and `plain` contributes spacing only. */
+.he-card--soft {
+  background: var(--he-surface-2);
+  border-color: transparent;
+}
+
+.he-card--plain {
+  background: transparent;
+  border-color: transparent;
+}
+
 .he-card--pad-none {
   padding: 0;
 }
@@ -41,6 +53,17 @@
 .he-card--clickable:hover {
   border-color: var(--he-border-strong);
   box-shadow: var(--he-shadow-card);
+}
+
+.he-card--soft.he-card--clickable:hover {
+  background: var(--he-surface-2);
+  border-color: transparent;
+  box-shadow: var(--he-shadow-card);
+}
+
+.he-card--plain.he-card--clickable:hover {
+  background: var(--he-surface);
+  border-color: transparent;
 }
 
 .he-card--clickable:focus-visible {

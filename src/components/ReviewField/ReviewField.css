@@ -1,0 +1,194 @@
+/* ReviewField — progressive disclosure for extracted data. A quiet dot and text
+ * carry state on the row; only revealed evidence receives a tinted surface. */
+.he-review-fields {
+  display: block;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.he-review-field {
+  --he-review-field-tone: var(--he-neutral);
+  --he-review-field-tone-bg: var(--he-neutral-bg);
+  display: grid;
+  grid-template-columns: minmax(calc(var(--he-space-7) * 3), 0.45fr) minmax(0, 1fr);
+  column-gap: var(--he-space-5);
+  align-items: start;
+  margin: 0;
+  padding-block: var(--he-space-3);
+  min-width: 0;
+}
+
+.he-review-field + .he-review-field {
+  border-top: 1px solid var(--he-border);
+}
+
+.he-review-field--ok {
+  --he-review-field-tone: var(--he-ok);
+  --he-review-field-tone-bg: var(--he-ok-bg);
+  padding-block: var(--he-space-2);
+}
+
+.he-review-field--warn {
+  --he-review-field-tone: var(--he-warn);
+  --he-review-field-tone-bg: var(--he-warn-bg);
+}
+
+.he-review-field--error {
+  --he-review-field-tone: var(--he-error);
+  --he-review-field-tone-bg: var(--he-error-bg);
+}
+
+.he-review-field__term {
+  display: flex;
+  align-items: baseline;
+  gap: var(--he-space-2);
+  min-width: 0;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--he-text-dim);
+}
+
+.he-review-field__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-radius-full);
+  flex: 0 0 auto;
+  background: var(--he-review-field-tone);
+  transform: translateY(-1px);
+}
+
+.he-review-field__definition {
+  min-width: 0;
+  margin: 0;
+}
+
+.he-review-field__line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: flex-start;
+  gap: var(--he-space-3);
+  min-width: 0;
+}
+
+.he-review-field__value {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body);
+  line-height: 1.4;
+  color: var(--he-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.he-review-field__status {
+  flex: 0 0 auto;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-caption);
+  font-weight: 500;
+  color: var(--he-review-field-tone);
+  white-space: nowrap;
+}
+
+.he-review-field__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  flex: 0 0 auto;
+}
+
+.he-review-field__summary {
+  margin: var(--he-space-1) 0 0;
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  line-height: 1.45;
+  color: var(--he-text-dim);
+}
+
+.he-review-field__meta {
+  display: block;
+  margin-top: var(--he-space-1);
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  line-height: 1.4;
+  color: var(--he-text-faint);
+  overflow-wrap: anywhere;
+}
+
+.he-review-field__evidence {
+  margin-top: var(--he-space-2);
+  min-width: 0;
+}
+
+.he-review-field__evidence-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-1);
+  border-radius: var(--he-radius-xs);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  color: var(--he-review-field-tone);
+  cursor: pointer;
+  list-style: none;
+}
+
+.he-review-field__evidence-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.he-review-field__evidence-toggle:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: var(--he-space-1);
+}
+
+.he-review-field__chevron {
+  flex: 0 0 auto;
+  transition: transform var(--he-transition-fast);
+}
+
+.he-review-field__evidence[open] .he-review-field__chevron {
+  transform: rotate(90deg);
+}
+
+.he-review-field__evidence-body {
+  margin-top: var(--he-space-2);
+  padding: var(--he-space-3) var(--he-space-4);
+  border-radius: var(--he-radius-sm);
+  background: var(--he-review-field-tone-bg);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  line-height: 1.5;
+  color: var(--he-text);
+  overflow-wrap: anywhere;
+}
+
+@container (max-width: 32rem) {
+  .he-review-field {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--he-space-1);
+  }
+
+  .he-review-field__definition {
+    padding-left: calc(6px + var(--he-space-2));
+  }
+
+  .he-review-field__line {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .he-review-field__actions {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-review-field__chevron {
+    transition: none;
+  }
+}

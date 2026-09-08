@@ -13,9 +13,14 @@
 @import '../components/Badge/Badge.css';
 @import '../components/StatCard/StatCard.css';
 @import '../components/DescriptionList/DescriptionList.css';
+@import '../components/AgentWorkspace/AgentWorkspace.css';
+@import '../components/ReviewWorkspace/ReviewWorkspace.css';
+@import '../components/ReviewField/ReviewField.css';
 @import '../components/StatToggle/StatToggle.css';
 @import '../components/List/List.css';
+@import '../components/InboxList/InboxList.css';
 @import '../components/Feed/Feed.css';
+@import '../components/AgentResponse/AgentResponse.css';
 @import '../components/PageHeader/PageHeader.css';
 @import '../components/Panel/Panel.css';
 @import '../components/Section/Section.css';
@@ -29,6 +34,7 @@
 @import '../components/Toolbar/Toolbar.css';
 @import '../components/Pagination/Pagination.css';
 @import '../components/DataTable/DataTable.css';
+@import '../components/EvidencePreview/EvidencePreview.css';
 @import '../components/Drawer/Drawer.css';
 @import '../components/Sidebar/Sidebar.css';
 @import '../components/Calendar/Calendar.css';

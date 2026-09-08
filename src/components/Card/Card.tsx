@@ -5,11 +5,15 @@ export type CardStatus = 'ok' | 'warn' | 'error' | 'accent' | 'neutral';
 
 export type CardStatusVariant = 'edge' | 'none';
 
+export type CardVariant = 'outline' | 'soft' | 'plain';
+
 export interface CardProps extends HTMLAttributes<HTMLElement> {
   /** Rendered element — use 'a' (with href via rest props) for link cards. */
   as?: 'div' | 'article' | 'section' | 'a';
   /** Hover lift + pointer cursor. */
   clickable?: boolean;
+  /** Surface treatment. `outline` preserves the original bordered card. */
+  variant?: CardVariant;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   href?: string;
   /** Status of the thing the card represents (health/attention states). */
@@ -33,6 +37,7 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
 export function Card({
   as = 'div',
   clickable = false,
+  variant = 'outline',
   padding = 'md',
   status,
   statusVariant = 'edge',
@@ -43,6 +48,7 @@ export function Card({
   return createElement(as, {
     className: cx(
       'he-card',
+      `he-card--${variant}`,
       clickable && 'he-card--clickable',
       `he-card--pad-${padding}`,
       status && `he-card--status-${status}`,

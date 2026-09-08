@@ -1,0 +1,482 @@
+/* AgentResponse — a borderless answer. The agent, not a surrounding card, owns
+ * the hierarchy; findings get the single quiet surface within the response. */
+.he-agent-response {
+  width: 100%;
+  min-width: 0;
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+  container-type: inline-size;
+}
+
+.he-agent-response__header {
+  display: flex;
+  align-items: center;
+  gap: var(--he-space-3);
+  min-width: 0;
+}
+
+.he-agent-response__avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.he-agent-response__byline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--he-space-1);
+  min-width: 0;
+  font-size: var(--he-body-sm);
+  line-height: 1.4;
+}
+
+.he-agent-response__agent {
+  font-weight: 500;
+  color: var(--he-text);
+}
+
+.he-agent-response__separator,
+.he-agent-response__meta {
+  color: var(--he-text-faint);
+}
+
+.he-agent-response__title {
+  margin: var(--he-space-4) 0 0;
+  font-family: var(--he-font-display);
+  font-size: var(--he-display-2);
+  font-weight: 300;
+  line-height: 1.08;
+  color: var(--he-text);
+  text-wrap: balance;
+}
+
+.he-agent-response__summary {
+  margin: var(--he-space-4) 0 0;
+  max-width: 62ch;
+  font-size: var(--he-body);
+  line-height: 1.6;
+  color: var(--he-text-dim);
+  text-wrap: pretty;
+}
+
+.he-agent-response__note {
+  margin: var(--he-space-2) 0 0;
+  max-width: 68ch;
+  font-size: var(--he-body-sm);
+  line-height: 1.55;
+  color: var(--he-text-faint);
+  text-wrap: pretty;
+}
+
+.he-agent-response__body,
+.he-agent-response__footer {
+  margin-top: var(--he-space-5);
+}
+
+.he-agent-response__body > * + * {
+  margin-top: var(--he-space-4);
+}
+
+.he-agent-response__footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--he-space-2);
+}
+
+/* Compact answers preserve the narrative hierarchy while fitting beside a
+ * context rail. The footer becomes one stretching row so a recommendation is
+ * not reduced to an intrinsic-width widget. */
+.he-agent-response--compact .he-agent-response__title {
+  margin-top: var(--he-space-3);
+  font-size: var(--he-title);
+  line-height: 1.1;
+}
+
+.he-agent-response--compact .he-agent-response__summary {
+  margin-top: var(--he-space-2);
+  line-height: 1.5;
+}
+
+.he-agent-response--compact .he-agent-response__note {
+  margin-top: var(--he-space-1);
+  line-height: 1.45;
+}
+
+.he-agent-response--compact .he-agent-response__body {
+  margin-top: var(--he-space-4);
+}
+
+.he-agent-response--compact .he-agent-response__body > * + * {
+  margin-top: var(--he-space-3);
+}
+
+.he-agent-response--compact .he-agent-response__footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  margin-top: var(--he-space-3);
+}
+
+.he-agent-response--compact .he-agent-response__footer > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* FindingList is the response's one surface: no border and no internal rules. */
+.he-finding-list {
+  min-width: 0;
+  padding: var(--he-space-5);
+  border-radius: var(--he-radius-md);
+  background: var(--he-surface);
+  box-shadow: var(--he-shadow-card);
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+}
+
+.he-finding-list__label {
+  margin: 0 0 var(--he-space-4);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--he-text);
+}
+
+.he-finding-list__items {
+  display: grid;
+  gap: var(--he-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.he-finding-list--compact {
+  padding: var(--he-space-4);
+}
+
+.he-finding-list--compact .he-finding-list__label {
+  margin-bottom: var(--he-space-3);
+}
+
+.he-finding-list--compact .he-finding-list__items {
+  gap: var(--he-space-3);
+}
+
+.he-finding-list--compact .he-finding {
+  gap: var(--he-space-2);
+}
+
+.he-finding-list--compact .he-finding__detail {
+  line-height: 1.45;
+}
+
+.he-finding {
+  --he-finding-tone: var(--he-neutral);
+  display: grid;
+  grid-template-columns: 6px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--he-space-3);
+  min-width: 0;
+}
+
+.he-finding--ok {
+  --he-finding-tone: var(--he-ok);
+}
+
+.he-finding--warn {
+  --he-finding-tone: var(--he-warn);
+}
+
+.he-finding--error {
+  --he-finding-tone: var(--he-error);
+}
+
+.he-finding--neutral {
+  --he-finding-tone: var(--he-neutral);
+}
+
+.he-finding__dot {
+  width: 6px;
+  height: 6px;
+  margin-top: 0.45em;
+  border-radius: var(--he-radius-full);
+  background: var(--he-finding-tone);
+}
+
+.he-finding__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-space-1);
+  min-width: 0;
+}
+
+.he-finding__title {
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--he-text);
+  overflow-wrap: anywhere;
+}
+
+.he-finding__detail {
+  font-size: var(--he-body-sm);
+  line-height: 1.5;
+  color: var(--he-text-dim);
+  overflow-wrap: anywhere;
+}
+
+.he-finding__trailing {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  min-width: 0;
+  color: var(--he-text-dim);
+}
+
+/* Shared visually-hidden utility stays scoped to Handle Elements. */
+.he-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ActivityTrail — an ordered list in the DOM, a compact sentence on screen. */
+.he-activity-trail {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--he-space-2) var(--he-space-3);
+  min-width: 0;
+  font-family: var(--he-font-sans);
+}
+
+.he-activity-trail__label {
+  flex: 0 0 auto;
+  font-family: var(--he-font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--he-tracking-caps);
+  color: var(--he-text-faint);
+}
+
+.he-activity-trail__icon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  color: var(--he-text-dim);
+}
+
+.he-activity-trail__steps {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--he-space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.he-activity-trail__step {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--he-space-2);
+  min-width: 0;
+  font-size: var(--he-body-sm);
+  line-height: 1.45;
+  color: var(--he-text-dim);
+}
+
+.he-activity-trail__step-label {
+  overflow-wrap: anywhere;
+}
+
+.he-activity-trail__arrow,
+.he-activity-trail__separator {
+  flex: 0 0 auto;
+  color: var(--he-text-faint);
+}
+
+/* Status is the dock-scale narration: it reads as one natural sentence rather
+ * than a process diagram, while the ordered list remains intact in the DOM. */
+.he-activity-trail--status {
+  align-items: center;
+  gap: var(--he-space-1) var(--he-space-2);
+}
+
+.he-activity-trail--status .he-activity-trail__label {
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--he-text);
+}
+
+.he-activity-trail--status .he-activity-trail__steps,
+.he-activity-trail--status .he-activity-trail__step {
+  gap: var(--he-space-1);
+}
+
+.he-activity-trail--status .he-activity-trail__step {
+  font-size: var(--he-caption);
+  color: var(--he-text-dim);
+}
+
+/* AgentEvidenceDisclosure — a quiet, native disclosure of facts and sources.
+ * This deliberately says nothing about model internals: consumers provide only
+ * concise verification facts and citation actions. */
+.he-agent-evidence {
+  min-width: 0;
+  container-type: inline-size;
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+}
+
+.he-agent-evidence__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--he-space-2);
+  margin: 0;
+  padding: var(--he-space-1) var(--he-space-2);
+  border-radius: var(--he-radius-sm);
+  font-size: var(--he-body-sm);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--he-text);
+  cursor: pointer;
+  list-style: none;
+  transition: background var(--he-transition-fast);
+}
+
+.he-agent-evidence__summary::-webkit-details-marker {
+  display: none;
+}
+
+.he-agent-evidence__summary:hover {
+  background: var(--he-surface-2);
+}
+
+.he-agent-evidence__summary:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 2px;
+}
+
+.he-agent-evidence__chevron {
+  flex: 0 0 auto;
+  color: var(--he-text-faint);
+  transition: transform var(--he-transition-fast);
+}
+
+.he-agent-evidence[open] .he-agent-evidence__chevron {
+  transform: rotate(90deg);
+}
+
+.he-agent-evidence__body {
+  margin-top: var(--he-space-2);
+  padding: var(--he-space-4);
+  border-radius: var(--he-radius-sm);
+  background: var(--he-surface-2);
+}
+
+.he-agent-evidence__description {
+  margin: 0 0 var(--he-space-3);
+  font-size: var(--he-body-sm);
+  line-height: 1.5;
+  color: var(--he-text-dim);
+}
+
+.he-agent-evidence__list {
+  display: grid;
+  gap: var(--he-space-3);
+  margin: 0;
+  padding-left: var(--he-space-5);
+}
+
+.he-agent-evidence__item {
+  padding-left: var(--he-space-1);
+  font-size: var(--he-body-sm);
+  line-height: 1.5;
+  color: var(--he-text-dim);
+}
+
+.he-agent-evidence__item::marker {
+  font-family: var(--he-font-mono);
+  font-size: var(--he-caption);
+  color: var(--he-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.he-agent-evidence__item-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--he-space-2);
+}
+
+.he-agent-evidence__fact {
+  overflow-wrap: anywhere;
+}
+
+.he-agent-evidence__citation {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--he-text);
+  white-space: nowrap;
+}
+
+@container (max-width: 32rem) {
+  .he-agent-evidence__item-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .he-agent-evidence__citation {
+    display: flex;
+    width: fit-content;
+    margin-top: var(--he-space-1);
+  }
+}
+
+@container (max-width: 40rem) {
+  .he-agent-response__title {
+    font-size: var(--he-title);
+  }
+
+  .he-finding-list {
+    padding: var(--he-space-4);
+  }
+
+  .he-finding {
+    grid-template-columns: 6px minmax(0, 1fr);
+  }
+
+  .he-finding__trailing {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .he-activity-trail {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .he-activity-trail--status {
+    align-items: center;
+    flex-direction: row;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-agent-evidence__summary,
+  .he-agent-evidence__chevron {
+    transition: none;
+  }
+}

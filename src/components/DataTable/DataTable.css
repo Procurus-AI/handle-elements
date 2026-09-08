@@ -33,6 +33,26 @@
   font-size: var(--he-body-sm);
 }
 
+.he-table__caption {
+  padding: var(--he-space-3) var(--he-space-4);
+  text-align: left;
+  font-size: var(--he-body-sm);
+  font-weight: 600;
+  color: var(--he-text);
+}
+
+.he-table__caption--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---- head ---- */
 /* Quiet sentence-case sans headers (Perplexity/Handle app convention) — not the
  * mono all-caps caption motif, which reads too heavy in a dense table. */

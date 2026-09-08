@@ -17,10 +17,14 @@ export interface ComposerSuggestion {
 export type ComposerAlign = 'start' | 'center';
 export type ComposerSize = 'sm' | 'md' | 'lg';
 export type ComposerSubmitVariant = 'solid' | 'ghost';
+export type ComposerSuggestionPlacement = 'before' | 'after';
+export type ComposerLayout = 'stacked' | 'inline';
+export type ComposerVariant = 'default' | 'dock';
 
 /**
- * `...rest` (including `style`) targets the <textarea>; `className`, `maxWidth`,
- * `align` and `size` target the shell.
+ * `...rest` (including `style`) targets the <textarea>; `className` and `size`
+ * target the input shell. `align` and `maxWidth` target the composed field when
+ * one is present.
  */
 export interface ComposerProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** Left side of the toolbar row (attach button, mode toggles…). */
@@ -38,14 +42,37 @@ export interface ComposerProps extends TextareaHTMLAttributes<HTMLTextAreaElemen
   onMic?: () => void;
   micActive?: boolean;
   micLabel?: string;
-  /** Prompt chips rendered under the shell — pass data, not markup. */
+  /** Prompt chips rendered around the shell — pass data, not markup. */
   suggestions?: ComposerSuggestion[];
   onSuggestionSelect?: (suggestion: ComposerSuggestion, index: number) => void;
   /** aria-label on the suggestions group. Default `Suggestions`. */
   suggestionsLabel?: string;
+  /**
+   * Places prompt chips around the shell. In `dock`, this positions the unified
+   * activity + suggestions band. Default `after`.
+   */
+  suggestionPlacement?: ComposerSuggestionPlacement;
+  /**
+   * Optional agent activity or execution context. `ActivityTrail` is the
+   * recommended value; the slot stays generic so products can provide their
+   * own status semantics.
+   */
+  activity?: ReactNode;
+  /**
+   * Toolbar placement. `inline` keeps the input and actions in one compact row,
+   * intended for a persistent agent dock. Default `stacked` (`inline` in `dock`).
+   */
+  layout?: ComposerLayout;
+  /**
+   * `dock` groups activity, shortcuts and input into one compact surface. It
+   * leads with the input and follows with one support band by default; its
+   * toolbar defaults to `inline`. Explicit placement/layout props still win.
+   * Default `default`.
+   */
+  variant?: ComposerVariant;
   /** Centers the shell and its suggestions — the hero greeting layout. */
   align?: ComposerAlign;
-  /** Caps the shell (not the textarea) — a number (px) or any CSS length. */
+  /** Caps the composed surface (not the textarea) — a number (px) or any CSS length. */
   maxWidth?: number | string;
   /** `sm` is the inline comment box — square corners, no shadow, 13px input.
    *  `lg` is the airier hero box. Default `md`. */
@@ -74,6 +101,10 @@ export function Composer({
   suggestions,
   onSuggestionSelect,
   suggestionsLabel,
+  suggestionPlacement,
+  activity,
+  layout,
+  variant = 'default',
   align = 'start',
   maxWidth,
   size = 'md',
@@ -84,9 +115,19 @@ export function Composer({
   rows = 1,
   ...rest
 }: ComposerProps) {
+  const resolvedSuggestionPlacement = suggestionPlacement ?? 'after';
+  const resolvedLayout = layout ?? (variant === 'dock' ? 'inline' : 'stacked');
+
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     onKeyDown?.(event);
-    if (onSubmit && event.key === 'Enter' && !event.shiftKey && !event.defaultPrevented) {
+    if (
+      onSubmit &&
+      event.key === 'Enter' &&
+      !event.shiftKey &&
+      !event.defaultPrevented &&
+      !event.nativeEvent.isComposing &&
+      event.nativeEvent.keyCode !== 229
+    ) {
       event.preventDefault();
       if (!submitDisabled) onSubmit();
     }
@@ -101,6 +142,7 @@ export function Composer({
         'he-composer',
         size === 'sm' && 'he-composer--sm',
         size === 'lg' && 'he-composer--lg',
+        resolvedLayout === 'inline' && 'he-composer--inline',
         className,
       )}
     >
@@ -172,41 +214,87 @@ export function Composer({
   );
 
   // Only wrap when a field-level concern is in play, so existing renders stay identical.
-  const needsField = (suggestions?.length ?? 0) > 0 || align === 'center' || maxWidth != null;
+  const needsField =
+    variant === 'dock' ||
+    activity != null ||
+    (suggestions?.length ?? 0) > 0 ||
+    align === 'center' ||
+    maxWidth != null;
   if (!needsField) return shell;
+
+  const suggestionList = suggestions?.length ? (
+    <div
+      className={cx(
+        'he-composer-field__suggestions',
+        resolvedSuggestionPlacement === 'before' && 'he-composer-field__suggestions--before',
+        resolvedSuggestionPlacement === 'after' && 'he-composer-field__suggestions--after',
+      )}
+      role="group"
+      aria-label={suggestionsLabel ?? 'Suggestions'}
+    >
+      {suggestions.map((s, i) => (
+        <Button
+          key={s.id}
+          type="button"
+          variant={variant === 'dock' ? 'ghost' : 'outline'}
+          size={variant === 'dock' ? 'xs' : resolvedSuggestionPlacement === 'before' ? 'sm' : 'xs'}
+          disabled={s.disabled}
+          onClick={() => onSuggestionSelect?.(s, i)}
+        >
+          {s.label}
+          {s.count != null && <Badge tone={s.countTone ?? 'accent'}>{s.count}</Badge>}
+        </Button>
+      ))}
+    </div>
+  ) : null;
+
+  const activityNode =
+    activity != null ? <div className="he-composer-field__activity">{activity}</div> : null;
+
+  const fieldStyle = {
+    '--he-composer-max':
+      maxWidth == null ? undefined : typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth,
+  } as CSSProperties;
+
+  if (variant === 'dock') {
+    const hasSupport = activityNode != null || suggestionList != null;
+    const support = hasSupport ? (
+      <div
+        className={cx(
+          'he-composer-field__support',
+          resolvedSuggestionPlacement === 'after' && 'he-composer-field__support--after',
+        )}
+      >
+        {activityNode}
+        {suggestionList}
+      </div>
+    ) : null;
+
+    return (
+      <div
+        className={cx(
+          'he-composer-field',
+          'he-composer-field--dock',
+          align === 'center' && 'he-composer-field--center',
+        )}
+        style={fieldStyle}
+      >
+        {resolvedSuggestionPlacement === 'before' && support}
+        {shell}
+        {resolvedSuggestionPlacement === 'after' && support}
+      </div>
+    );
+  }
 
   return (
     <div
       className={cx('he-composer-field', align === 'center' && 'he-composer-field--center')}
-      style={
-        {
-          '--he-composer-max':
-            maxWidth == null ? undefined : typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth,
-        } as CSSProperties
-      }
+      style={fieldStyle}
     >
+      {activityNode}
+      {resolvedSuggestionPlacement === 'before' && suggestionList}
       {shell}
-      {suggestions?.length ? (
-        <div
-          className="he-composer-field__suggestions"
-          role="group"
-          aria-label={suggestionsLabel ?? 'Suggestions'}
-        >
-          {suggestions.map((s, i) => (
-            <Button
-              key={s.id}
-              type="button"
-              variant="outline"
-              size="xs"
-              disabled={s.disabled}
-              onClick={() => onSuggestionSelect?.(s, i)}
-            >
-              {s.label}
-              {s.count != null && <Badge tone={s.countTone ?? 'accent'}>{s.count}</Badge>}
-            </Button>
-          ))}
-        </div>
-      ) : null}
+      {resolvedSuggestionPlacement === 'after' && suggestionList}
     </div>
   );
 }

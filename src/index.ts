@@ -6,12 +6,18 @@ export {
   type ChipDotPattern,
   type ChipTone,
 } from './components/Chip/Chip';
-export { StatusPill, type StatusPillProps, type StatusPillStatus } from './components/StatusPill/StatusPill';
+export {
+  StatusPill,
+  type StatusPillProps,
+  type StatusPillStatus,
+  type StatusPillAppearance,
+} from './components/StatusPill/StatusPill';
 export {
   Card,
   type CardProps,
   type CardStatus,
   type CardStatusVariant,
+  type CardVariant,
 } from './components/Card/Card';
 export { Badge, type BadgeProps, type BadgeTone } from './components/Badge/Badge';
 export {
@@ -32,6 +38,49 @@ export {
   type DescriptionItemProps,
 } from './components/DescriptionList/DescriptionList';
 export {
+  AgentWorkspace,
+  type AgentWorkspaceProps,
+} from './components/AgentWorkspace/AgentWorkspace';
+export {
+  AgentResponse,
+  FindingList,
+  FindingItem,
+  ActivityTrail,
+  AgentEvidenceDisclosure,
+  AgentEvidenceItem,
+  type AgentResponseProps,
+  type AgentResponseDensity,
+  type FindingListProps,
+  type FindingListDensity,
+  type FindingItemProps,
+  type FindingTone,
+  type ActivityTrailProps,
+  type ActivityTrailStep,
+  type ActivityTrailVariant,
+  type AgentEvidenceDisclosureProps,
+  type AgentEvidenceItemProps,
+} from './components/AgentResponse/AgentResponse';
+export {
+  EvidencePreview,
+  type EvidencePreviewProps,
+  type EvidencePreviewPadding,
+} from './components/EvidencePreview/EvidencePreview';
+export {
+  ReviewWorkspace,
+  ReviewConclusion,
+  type ReviewWorkspaceProps,
+  type ReviewWorkspaceVariant,
+  type ReviewConclusionProps,
+  type ReviewConclusionFact,
+} from './components/ReviewWorkspace/ReviewWorkspace';
+export {
+  ReviewField,
+  ReviewFieldList,
+  type ReviewFieldProps,
+  type ReviewFieldListProps,
+  type ReviewFieldTone,
+} from './components/ReviewField/ReviewField';
+export {
   StatToggle,
   StatToggleGroup,
   type StatToggleProps,
@@ -47,6 +96,14 @@ export {
   type ListSize,
   type ListItemStatus,
 } from './components/List/List';
+export {
+  InboxList,
+  InboxItem,
+  type InboxListProps,
+  type InboxListDensity,
+  type InboxItemProps,
+  type InboxItemTone,
+} from './components/InboxList/InboxList';
 export { Panel, type PanelProps } from './components/Panel/Panel';
 export {
   Stack,
@@ -106,6 +163,9 @@ export {
   type ComposerAlign,
   type ComposerSize,
   type ComposerSubmitVariant,
+  type ComposerSuggestionPlacement,
+  type ComposerLayout,
+  type ComposerVariant,
 } from './components/Composer/Composer';
 export {
   DataTable,
@@ -131,6 +191,7 @@ export {
   type SidebarHeaderProps,
   type SidebarItemProps,
   type SidebarSectionProps,
+  type SidebarSectionActionVisibility,
   type SidebarFooterItemProps,
   type SidebarFooterRowProps,
 } from './components/Sidebar/Sidebar';

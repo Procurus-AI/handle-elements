@@ -14,6 +14,7 @@ const meta = {
   title: 'Elements/Card',
   component: Card,
   argTypes: {
+    variant: { control: 'inline-radio', options: ['outline', 'soft', 'plain'] },
     padding: { control: 'select', options: ['none', 'sm', 'md', 'lg'] },
     as: { control: 'select', options: ['div', 'article', 'section', 'a'] },
     status: { control: 'select', options: [undefined, 'ok', 'warn', 'error', 'accent', 'neutral'] },
@@ -112,5 +113,14 @@ export const Clickable: Story = {
         </p>
       </Card>
     </div>
+  ),
+};
+
+export const QuietSurfaces: Story = {
+  render: () => (
+    <Grid columns={2} gap={4}>
+      <Card variant="soft">Supporting context on a soft surface.</Card>
+      <Card variant="plain">Borderless grouping when the page already provides structure.</Card>
+    </Grid>
   ),
 };

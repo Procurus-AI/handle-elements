@@ -89,3 +89,33 @@ export const PageNoDivider: Story = {
     </Container>
   ),
 };
+
+/** A record-level h1 with enough room for identity, metadata and one action. */
+export const CompactRecord: Story = {
+  render: () => (
+    <Container max={920}>
+      <PageHeader
+        size="compact"
+        eyebrow="KYC case · Article 492"
+        title="Rafael Alvarez Ballesteros"
+        subtitle="rafael@example.com · Updated 2 min ago"
+        aside={<Button size="sm">Review validity</Button>}
+      />
+    </Container>
+  ),
+};
+
+/** The action drops below the identity when a compact header lives in a narrow rail. */
+export const CompactRecordNarrow: Story = {
+  render: () => (
+    <div style={{ width: 280, maxWidth: '100%' }}>
+      <PageHeader
+        size="compact"
+        eyebrow="KYC case · Article 492"
+        title="Rafael Alvarez Ballesteros"
+        subtitle="Reviewed by Perlita · perlita@kyc.run"
+        aside={<Button size="sm">Review validity</Button>}
+      />
+    </div>
+  ),
+};
