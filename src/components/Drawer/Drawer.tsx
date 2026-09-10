@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom';
 import { cx } from '../../lib/cx';
 
 export type DrawerSide = 'right' | 'left';
+export type DrawerCompanionVariant = 'panel' | 'floating';
 
 /** Everything a keyboard can land on — the trap cycles this set inside the panel. */
 const FOCUSABLE =
@@ -49,6 +50,26 @@ export interface DrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   aside?: ReactNode;
   /** Sticky footer (actions) pinned to the bottom of the panel. */
   footer?: ReactNode;
+  /**
+   * A connected workspace rendered immediately beside the drawer. Use this for
+   * a composer, notes editor, call controls, or any other temporary tool that
+   * needs the record to remain visible while it is being used.
+   */
+  companion?: ReactNode;
+  /** Width of the connected workspace. Default `min(600px, calc(100vw - 420px))`. */
+  companionWidth?: string;
+  /** Accessible name for the connected workspace region. */
+  companionLabel?: string;
+  /**
+   * `panel` joins the drawer at full height. `floating` presents a smaller
+   * window at the bottom edge, similar to a messaging popover.
+   */
+  companionVariant?: DrawerCompanionVariant;
+  /**
+   * Closes only the connected workspace. When supplied, Escape dismisses the
+   * companion before it dismisses the full drawer.
+   */
+  onCompanionClose?: () => void;
   /** Accessible name for the close control. Default `Close` — pass the screen's
    *  own language, the library will not mix one in for you. */
   closeLabel?: string;
@@ -82,6 +103,11 @@ export function Drawer({
   tabs,
   aside,
   footer,
+  companion,
+  companionWidth = 'min(600px, calc(100vw - 420px))',
+  companionLabel = 'Connected workspace',
+  companionVariant = 'panel',
+  onCompanionClose,
   closeLabel = 'Close',
   expandLabel = 'Expand panel',
   collapseLabel = 'Collapse panel',
@@ -96,19 +122,26 @@ export function Drawer({
   ...rest
 }: DrawerProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const companionRef = useRef<HTMLElement>(null);
+  const companionWasOpen = useRef(false);
   const titleId = useId();
   const split = expanded && aside != null;
+  const hasCompanion = companion != null;
+  const joinedCompanion = hasCompanion && companionVariant === 'panel';
 
   // Esc to close. No stopPropagation: it cannot stop a sibling document-level
   // handler anyway, and it does kill an app's own window-level Esc listener.
   useEffect(() => {
     if (!open || !closeOnEsc) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key !== 'Escape') return;
+      if (hasCompanion && onCompanionClose != null) onCompanionClose();
+      else onClose();
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, closeOnEsc, onClose]);
+  }, [open, closeOnEsc, hasCompanion, onCompanionClose, onClose]);
 
   // Lock body scroll while open, and move focus into the panel.
   useEffect(() => {
@@ -125,20 +158,36 @@ export function Drawer({
     };
   }, [open]);
 
+  // Opening a companion moves focus into the new tool; dismissing it restores
+  // focus to the record panel instead of dropping it on <body>.
+  useEffect(() => {
+    if (!open) {
+      companionWasOpen.current = false;
+      return;
+    }
+    if (hasCompanion && !companionWasOpen.current) {
+      const first = companionRef.current?.querySelector<HTMLElement>(FOCUSABLE);
+      first?.focus();
+    } else if (!hasCompanion && companionWasOpen.current) {
+      panelRef.current?.focus();
+    }
+    companionWasOpen.current = hasCompanion;
+  }, [open, hasCompanion]);
+
   // Focus trap — `aria-modal="true"` promises the rest of the page is inert,
   // so Tab has to cycle inside the panel. The consumer's own onKeyDown runs
   // first and can preventDefault() to opt out.
   const handleKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     onKeyDown?.(e);
     if (e.key !== 'Tab' || e.defaultPrevented) return;
-    const panel = panelRef.current;
-    if (!panel) return;
-    const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+    const workspace = workspaceRef.current;
+    if (!workspace) return;
+    const nodes = Array.from(workspace.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
       (n) => n.offsetParent !== null,
     );
     if (nodes.length === 0) {
       e.preventDefault();
-      panel.focus();
+      panelRef.current?.focus();
       return;
     }
     const first = nodes[0];
@@ -147,7 +196,7 @@ export function Drawer({
     if (!e.shiftKey && active === last) {
       e.preventDefault();
       first.focus();
-    } else if (e.shiftKey && (active === first || active === panel)) {
+    } else if (e.shiftKey && (active === first || active === panelRef.current)) {
       e.preventDefault();
       last.focus();
     }
@@ -161,71 +210,97 @@ export function Drawer({
       onMouseDown={closeOnScrim ? (e) => e.target === e.currentTarget && onClose() : undefined}
     >
       <div
-        ref={panelRef}
+        ref={workspaceRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title != null ? titleId : undefined}
         aria-label={title != null ? undefined : ariaLabel}
-        tabIndex={-1}
-        className={cx('he-drawer__panel', split && 'he-drawer__panel--split', className)}
-        style={{ width: expanded ? expandedWidth : width }}
+        className={cx(
+          'he-drawer__workspace',
+          joinedCompanion && 'he-drawer__workspace--with-companion',
+        )}
         onKeyDown={handleKeyDown}
-        {...rest}
       >
-        <div className="he-drawer__header">
-          <div className="he-drawer__heading">
-            {eyebrow != null && <span className="he-drawer__eyebrow">{eyebrow}</span>}
-            {title != null && (
-              <div className="he-drawer__title" id={titleId}>
-                {title}
-              </div>
+        {hasCompanion && (
+          <aside
+            ref={companionRef}
+            className={cx(
+              'he-drawer__companion',
+              companionVariant === 'floating' && 'he-drawer__companion--floating',
             )}
-            {meta != null && <div className="he-drawer__meta">{meta}</div>}
-          </div>
-          <div className="he-drawer__actions">
-            {onToggleExpand != null && (
-              <button
-                type="button"
-                className="he-drawer__action"
-                onClick={onToggleExpand}
-                aria-expanded={expanded}
-                aria-label={expanded ? collapseLabel : expandLabel}
-              >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path
-                    d={
-                      expanded
-                        ? 'M13 3L9.5 6.5M9.5 6.5V3M9.5 6.5H13M3 13L6.5 9.5M6.5 9.5V13M6.5 9.5H3'
-                        : 'M9.5 2.5H13.5V6.5M13.5 2.5L9 7M6.5 13.5H2.5V9.5M2.5 13.5L7 9'
-                    }
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+            style={{ width: companionWidth }}
+            aria-label={companionLabel}
+          >
+            {companion}
+          </aside>
+        )}
+        <div
+          ref={panelRef}
+          tabIndex={-1}
+          className={cx(
+            'he-drawer__panel',
+            split && 'he-drawer__panel--split',
+            joinedCompanion && 'he-drawer__panel--with-companion',
+            className,
+          )}
+          style={{ width: expanded ? expandedWidth : width }}
+          {...rest}
+        >
+          <div className="he-drawer__header">
+            <div className="he-drawer__heading">
+              {eyebrow != null && <span className="he-drawer__eyebrow">{eyebrow}</span>}
+              {title != null && (
+                <div className="he-drawer__title" id={titleId}>
+                  {title}
+                </div>
+              )}
+              {meta != null && <div className="he-drawer__meta">{meta}</div>}
+            </div>
+            <div className="he-drawer__actions">
+              {onToggleExpand != null && (
+                <button
+                  type="button"
+                  className="he-drawer__action"
+                  onClick={onToggleExpand}
+                  aria-expanded={expanded}
+                  aria-label={expanded ? collapseLabel : expandLabel}
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+                    <path
+                      d={
+                        expanded
+                          ? 'M13 3L9.5 6.5M9.5 6.5V3M9.5 6.5H13M3 13L6.5 9.5M6.5 9.5V13M6.5 9.5H3'
+                          : 'M9.5 2.5H13.5V6.5M13.5 2.5L9 7M6.5 13.5H2.5V9.5M2.5 13.5L7 9'
+                      }
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
+              {actions}
+              <button type="button" className="he-drawer__close" onClick={onClose} aria-label={closeLabel}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </button>
-            )}
-            {actions}
-            <button type="button" className="he-drawer__close" onClick={onClose} aria-label={closeLabel}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </button>
+            </div>
           </div>
+          {tabs != null && <div className="he-drawer__nav">{tabs}</div>}
+          <div className="he-drawer__body">
+            {aside == null ? (
+              children
+            ) : (
+              <>
+                <div className="he-drawer__main">{children}</div>
+                <div className="he-drawer__aside">{aside}</div>
+              </>
+            )}
+          </div>
+          {footer != null && <div className="he-drawer__footer">{footer}</div>}
         </div>
-        {tabs != null && <div className="he-drawer__nav">{tabs}</div>}
-        <div className="he-drawer__body">
-          {aside == null ? (
-            children
-          ) : (
-            <>
-              <div className="he-drawer__main">{children}</div>
-              <div className="he-drawer__aside">{aside}</div>
-            </>
-          )}
-        </div>
-        {footer != null && <div className="he-drawer__footer">{footer}</div>}
       </div>
     </div>,
     document.body,

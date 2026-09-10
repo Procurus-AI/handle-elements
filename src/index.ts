@@ -170,6 +170,9 @@ export {
 export {
   EmailComposer,
   type EmailComposerProps,
+  type EmailComposerVariant,
+  type EmailComposerDensity,
+  type EmailComposerHeaderVariant,
   type EmailComposerChannel,
   type EmailComposerContact,
 } from './components/EmailComposer/EmailComposer';
@@ -185,7 +188,12 @@ export {
   type DataTableLayout,
   type DataTableNulls,
 } from './components/DataTable/DataTable';
-export { Drawer, type DrawerProps, type DrawerSide } from './components/Drawer/Drawer';
+export {
+  Drawer,
+  type DrawerProps,
+  type DrawerSide,
+  type DrawerCompanionVariant,
+} from './components/Drawer/Drawer';
 export {
   Sidebar,
   SidebarHeader,

@@ -16,6 +16,22 @@
   justify-content: flex-start;
 }
 
+.he-drawer__workspace {
+  display: flex;
+  min-width: 0;
+  max-width: 100vw;
+  height: 100%;
+  outline: none;
+}
+
+.he-drawer--left .he-drawer__workspace {
+  flex-direction: row-reverse;
+}
+
+.he-drawer__workspace--with-companion {
+  box-shadow: var(--he-shadow-lift);
+}
+
 .he-drawer__panel {
   position: relative;
   display: flex;
@@ -27,7 +43,42 @@
   font-family: var(--he-font-sans);
   box-shadow: var(--he-shadow-lift);
   outline: none;
+  flex: 0 0 auto;
   transition: width var(--he-transition-base);
+}
+
+.he-drawer__panel--with-companion {
+  box-shadow: none;
+}
+
+.he-drawer__companion {
+  position: relative;
+  z-index: 1;
+  min-width: 320px;
+  max-width: calc(100vw - 320px);
+  height: 100%;
+  flex: 0 1 auto;
+  overflow: hidden;
+  background: var(--he-surface);
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+  animation: he-drawer-companion-in var(--he-transition-base);
+}
+
+.he-drawer__companion--floating {
+  display: flex;
+  align-items: flex-end;
+  padding: var(--he-space-4);
+  border: 0 !important;
+  background: transparent;
+}
+
+.he-drawer--right .he-drawer__companion {
+  border-left: 1px solid var(--he-border);
+}
+
+.he-drawer--left .he-drawer__companion {
+  border-right: 1px solid var(--he-border);
 }
 
 .he-drawer--right .he-drawer__panel {
@@ -224,12 +275,47 @@
   }
 }
 
+@keyframes he-drawer-companion-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 720px) {
+  .he-drawer__workspace {
+    width: 100%;
+  }
+
+  .he-drawer__panel {
+    width: 100% !important;
+  }
+
+  .he-drawer__companion {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    min-width: 0;
+    max-width: none;
+    border: 0 !important;
+  }
+
+  .he-drawer__companion--floating {
+    padding: var(--he-space-3);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* The side-specific selectors that set the slide-in outrank a bare
    * `.he-drawer__panel`, so the override has to match their specificity. */
   .he-drawer,
   .he-drawer--right .he-drawer__panel,
-  .he-drawer--left .he-drawer__panel {
+  .he-drawer--left .he-drawer__panel,
+  .he-drawer__companion {
     animation: none;
   }
 

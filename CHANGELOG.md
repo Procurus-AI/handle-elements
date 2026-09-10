@@ -1,5 +1,42 @@
 # Changelog
 
+## 0.4.2
+
+### Added
+
+- `Drawer` connected workspaces through the generic `companion` slot. A composer, note editor,
+  call surface, or any other Handle element can open immediately beside a record drawer while the
+  source record remains visible and interactive.
+- Full-height `panel` and compact bottom-aligned `floating` companion presentations, configurable
+  widths, accessible region labels, and companion-first Escape dismissal.
+- Focus management across the joined workspace: opening a companion moves focus into the new tool,
+  the focus trap spans both surfaces, and closing the companion restores focus to the record panel.
+- `EmailComposer` embedded and compact presentations for connected drawer workflows.
+- Built-in `EmailComposer` Close, Cancel, and primary Send controls with configurable labels,
+  disabled state, and callbacks, while retaining the product-specific action slot.
+- `EmailComposer` `headerVariant="actions"`, which hides the heading and groups channel selection,
+  Copy, Cancel, Send, and Close into one compact action bar with an automatic accessible label.
+- `Examples/Payment Drawer` Storybook workflow built exclusively from Handle Elements. It reproduces
+  the supplied payment record and demonstrates Email, WhatsApp, phone, notes, snooze, assignment,
+  payment-link copying, full-height drafting, and the minimized Messenger-style composer.
+
+### Changed
+
+- Reworked `EmailComposer` footer layout so formatting stays aligned left while built-in Cancel and
+  Send actions form a consistent right-aligned action group.
+- Compact composer chrome now uses a shorter scrollable message viewport, denser address and subject
+  rows, and a stable responsive action layout instead of an improvised wrapping header.
+- The payment drawer hierarchy now leads with amount due and a clear primary contact group, followed
+  by payment facts, policy facts, and quiet workflow rows instead of a flat collection of pill buttons.
+
+### Responsive and accessibility
+
+- Joined companions collapse to a full-screen tool on narrow viewports; floating companions retain
+  an inset window treatment.
+- Reduced-motion preferences disable companion entrance animation.
+- The combined drawer and companion remain one modal focus scope with labelled regions and keyboard
+  dismissal that closes the temporary tool before the underlying record.
+
 ## 0.4.1
 
 ### Added
