@@ -79,7 +79,7 @@ to GitHub Packages.
 ## Components
 
 Button · Chip · StatusPill · Card · StatCard · PageHeader · Tabs (underline/pills) ·
-Input · Textarea · Select · Composer · DataTable · Drawer ·
+Input · Textarea · Select · Composer · EmailComposer · DataTable · Drawer ·
 Sidebar (SidebarHeader / SidebarItem / SidebarSection / SidebarFooterItem, collapsible rail) ·
 AgentWorkspace · AgentResponse (FindingList / FindingItem / ActivityTrail / AgentEvidenceDisclosure) ·
 InboxList · ReviewWorkspace · ReviewField · EvidencePreview
