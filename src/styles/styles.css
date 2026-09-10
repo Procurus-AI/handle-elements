@@ -31,6 +31,7 @@
 @import '../components/Input/Select.css';
 @import '../components/Input/SearchInput.css';
 @import '../components/Composer/Composer.css';
+@import '../components/EmailComposer/EmailComposer.css';
 @import '../components/Toolbar/Toolbar.css';
 @import '../components/Pagination/Pagination.css';
 @import '../components/DataTable/DataTable.css';

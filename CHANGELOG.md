@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0
+
+### Added
+
+- `EmailComposer` — a responsive, channel-aware drafting window with editable recipients,
+  subject and message content; consumer-provided WhatsApp, email, phone or custom channel icons;
+  clipboard copy feedback; workflow action slots; and light/dark theme support.
+- Built-in rich-text controls for bold, italic, underline, bulleted lists and numbered lists,
+  including active formatting states and clean plain-text copying.
+- Full and compact Storybook examples based on the Handle email review workflow.
+
 ## 0.3.3
 
 ### Added

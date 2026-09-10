@@ -168,6 +168,12 @@ export {
   type ComposerVariant,
 } from './components/Composer/Composer';
 export {
+  EmailComposer,
+  type EmailComposerProps,
+  type EmailComposerChannel,
+  type EmailComposerContact,
+} from './components/EmailComposer/EmailComposer';
+export {
   DataTable,
   TableCell,
   type DataTableProps,
