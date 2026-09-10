@@ -197,6 +197,10 @@
   line-height: 1;
 }
 
+.he-email-composer__contact--removable {
+  padding-right: 3px;
+}
+
 .he-email-composer__avatar {
   display: inline-flex;
   align-items: center;
@@ -223,6 +227,62 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-email-composer__contact-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--he-radius-full);
+  background: transparent;
+  color: var(--he-text-faint);
+  cursor: pointer;
+}
+
+.he-email-composer__contact-remove:hover {
+  background: var(--he-surface);
+  color: var(--he-text);
+}
+
+.he-email-composer__contact-remove:focus-visible {
+  outline: 2px solid var(--he-focus);
+  outline-offset: 1px;
+}
+
+.he-email-composer__recipient-input {
+  min-width: calc(var(--he-space-7) * 3);
+  height: 28px;
+  flex: 1 1 calc(var(--he-space-7) * 3);
+  padding: 0 var(--he-space-1);
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--he-text);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-body-sm);
+  line-height: 1;
+}
+
+.he-email-composer__recipient-input::placeholder {
+  color: var(--he-text-faint);
+}
+
+.he-email-composer__recipient-input--invalid {
+  color: var(--he-error);
+}
+
+.he-email-composer__recipient-error {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
   white-space: nowrap;
 }
 
