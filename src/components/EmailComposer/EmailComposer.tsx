@@ -4,8 +4,10 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type ClipboardEvent,
   type FormEvent,
   type HTMLAttributes,
+  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
 } from 'react';
@@ -46,7 +48,15 @@ export interface EmailComposerProps
   channelsLabel?: string;
   /** Extra window controls after the built-in copy action. */
   headerActions?: ReactNode;
+  /** Controlled recipients. Use with `onToChange`. */
   to?: readonly EmailComposerContact[];
+  /** Initial recipients for an editable, uncontrolled field. */
+  defaultTo?: readonly EmailComposerContact[];
+  onToChange?: (contacts: readonly EmailComposerContact[]) => void;
+  /** Allows recipients to be entered and removed. Default `true`. */
+  editableTo?: boolean;
+  toInputLabel?: string;
+  toInputPlaceholder?: string;
   from?: EmailComposerContact;
   toLabel?: ReactNode;
   fromLabel?: ReactNode;
@@ -84,16 +94,57 @@ function contactInitials(label: string) {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-function ContactChip({ contact }: { contact: EmailComposerContact }) {
+function ContactChip({
+  contact,
+  onRemove,
+}: {
+  contact: EmailComposerContact;
+  onRemove?: () => void;
+}) {
   const title = contact.address && contact.address !== contact.label ? contact.address : undefined;
   return (
-    <span className="he-email-composer__contact" title={title}>
+    <span
+      className={cx(
+        'he-email-composer__contact',
+        onRemove != null && 'he-email-composer__contact--removable',
+      )}
+      title={title}
+    >
       <span className="he-email-composer__avatar" aria-hidden>
         {contact.avatar ?? contactInitials(contact.label)}
       </span>
       <span className="he-email-composer__contact-label">{contact.label}</span>
+      {onRemove != null && (
+        <button
+          type="button"
+          className="he-email-composer__contact-remove"
+          aria-label={`Remove ${contact.label}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            onRemove();
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+            <path d="m3 3 6 6M9 3 3 9" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+          </svg>
+        </button>
+      )}
     </span>
   );
+}
+
+function parseEmailContact(rawValue: string): EmailComposerContact | null {
+  const value = rawValue.trim();
+  if (!value) return null;
+  const namedAddress = value.match(/^(.*?)\s*<([^<>]+)>$/);
+  const address = (namedAddress?.[2] ?? value).trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)) return null;
+  const name = namedAddress?.[1]?.trim().replace(/^['"]|['"]$/g, '');
+  return {
+    id: `email:${address.toLowerCase()}`,
+    label: name || address,
+    address,
+  };
 }
 
 function fallbackCopy(text: string) {
@@ -123,7 +174,12 @@ export function EmailComposer({
   onChannelChange,
   channelsLabel,
   headerActions,
-  to = [],
+  to,
+  defaultTo = [],
+  onToChange,
+  editableTo = true,
+  toInputLabel = 'Add recipient',
+  toInputPlaceholder = 'Add recipients',
   from,
   toLabel = 'To',
   fromLabel = 'From',
@@ -157,15 +213,22 @@ export function EmailComposer({
   );
   const [internalSubject, setInternalSubject] = useState(defaultSubject);
   const [internalValue, setInternalValue] = useState(defaultValue);
+  const [internalTo, setInternalTo] = useState<EmailComposerContact[]>(() => [...defaultTo]);
+  const [recipientInput, setRecipientInput] = useState('');
+  const [recipientInvalid, setRecipientInvalid] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeFormats, setActiveFormats] = useState<string[]>([]);
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
+  const recipientInputRef = useRef<HTMLInputElement>(null);
 
   const selectedChannel = activeChannel ?? internalChannel;
   const resolvedSubject = subject ?? internalSubject;
   const resolvedValue = value ?? internalValue;
+  const resolvedTo = to ?? internalTo;
   const titleId = ariaLabel || ariaLabelledBy ? undefined : generatedTitleId;
+  const recipientInputId = `${generatedTitleId}-recipient`;
+  const recipientErrorId = `${generatedTitleId}-recipient-error`;
 
   useEffect(
     () => () => {
@@ -214,6 +277,83 @@ export function EmailComposer({
   };
 
   const preserveSelection = (event: MouseEvent<HTMLButtonElement>) => event.preventDefault();
+
+  const updateRecipients = (nextContacts: EmailComposerContact[]) => {
+    if (to === undefined) setInternalTo(nextContacts);
+    onToChange?.(nextContacts);
+  };
+
+  const addRecipients = (values: readonly string[]) => {
+    const invalid: string[] = [];
+    const additions: EmailComposerContact[] = [];
+    values.forEach((rawValue) => {
+      const contact = parseEmailContact(rawValue);
+      if (contact) additions.push(contact);
+      else if (rawValue.trim()) invalid.push(rawValue.trim());
+    });
+
+    if (additions.length > 0) {
+      const knownAddresses = new Set(
+        resolvedTo.map((contact) => (contact.address ?? contact.label).toLowerCase()),
+      );
+      const nextContacts = [...resolvedTo];
+      additions.forEach((contact) => {
+        const address = (contact.address ?? contact.label).toLowerCase();
+        if (!knownAddresses.has(address)) {
+          knownAddresses.add(address);
+          nextContacts.push(contact);
+        }
+      });
+      updateRecipients(nextContacts);
+    }
+
+    setRecipientInvalid(invalid.length > 0);
+    return invalid;
+  };
+
+  const commitRecipientInput = () => {
+    if (!recipientInput.trim()) return true;
+    const invalid = addRecipients([recipientInput]);
+    if (invalid.length === 0) setRecipientInput('');
+    return invalid.length === 0;
+  };
+
+  const changeRecipientInput = (event: ChangeEvent<HTMLInputElement>) => {
+    const nextValue = event.target.value;
+    setRecipientInvalid(false);
+    if (!nextValue.includes(',')) {
+      setRecipientInput(nextValue);
+      return;
+    }
+    const parts = nextValue.split(',');
+    const tail = parts.pop() ?? '';
+    const invalid = addRecipients(parts);
+    setRecipientInput([...invalid, tail].filter(Boolean).join(', '));
+  };
+
+  const handleRecipientKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === ',' || event.key === 'Enter') {
+      event.preventDefault();
+      commitRecipientInput();
+      return;
+    }
+    if (event.key === 'Backspace' && recipientInput === '' && resolvedTo.length > 0) {
+      updateRecipients(resolvedTo.slice(0, -1));
+    }
+  };
+
+  const handleRecipientPaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    const pasted = event.clipboardData.getData('text');
+    if (!/[,;\n]/.test(pasted)) return;
+    event.preventDefault();
+    const invalid = addRecipients(pasted.split(/[,;\n]+/));
+    setRecipientInput(invalid.join(', '));
+  };
+
+  const removeRecipient = (id: string) => {
+    updateRecipients(resolvedTo.filter((contact) => contact.id !== id));
+    recipientInputRef.current?.focus();
+  };
 
   const selectChannel = (channel: EmailComposerChannel) => {
     if (activeChannel === undefined) setInternalChannel(channel.id);
@@ -307,15 +447,55 @@ export function EmailComposer({
         </div>
       </header>
 
-      {(to.length > 0 || from != null) && (
+      {(editableTo || resolvedTo.length > 0 || from != null) && (
         <div className="he-email-composer__addresses">
-          {to.length > 0 && (
+          {(editableTo || resolvedTo.length > 0) && (
             <div className="he-email-composer__address-row">
-              <span className="he-email-composer__address-label">{toLabel}</span>
-              <div className="he-email-composer__contacts">
-                {to.map((contact) => (
-                  <ContactChip key={contact.id} contact={contact} />
+              <label className="he-email-composer__address-label" htmlFor={recipientInputId}>
+                {toLabel}
+              </label>
+              <div
+                className="he-email-composer__contacts"
+                onClick={() => recipientInputRef.current?.focus()}
+              >
+                {resolvedTo.map((contact) => (
+                  <ContactChip
+                    key={contact.id}
+                    contact={contact}
+                    onRemove={editableTo ? () => removeRecipient(contact.id) : undefined}
+                  />
                 ))}
+                {editableTo && (
+                  <input
+                    ref={recipientInputRef}
+                    id={recipientInputId}
+                    type="text"
+                    inputMode="email"
+                    autoComplete="off"
+                    className={cx(
+                      'he-email-composer__recipient-input',
+                      recipientInvalid && 'he-email-composer__recipient-input--invalid',
+                    )}
+                    value={recipientInput}
+                    placeholder={resolvedTo.length === 0 ? toInputPlaceholder : undefined}
+                    aria-label={toInputLabel}
+                    aria-invalid={recipientInvalid}
+                    aria-describedby={recipientInvalid ? recipientErrorId : undefined}
+                    onChange={changeRecipientInput}
+                    onKeyDown={handleRecipientKeyDown}
+                    onPaste={handleRecipientPaste}
+                    onBlur={commitRecipientInput}
+                  />
+                )}
+                {recipientInvalid && (
+                  <span
+                    id={recipientErrorId}
+                    className="he-email-composer__recipient-error"
+                    role="alert"
+                  >
+                    Enter a valid email address
+                  </span>
+                )}
               </div>
             </div>
           )}

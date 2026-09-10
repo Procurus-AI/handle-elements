@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1
+
+### Added
+
+- `EmailComposer` recipients can now be entered like a native email client: comma or Enter creates
+  a chip, multi-address paste accepts comma/semicolon-separated addresses, Backspace removes the
+  latest chip, and each recipient has an accessible remove control.
+- Controlled and uncontrolled recipient APIs through `to` / `onToChange` and `defaultTo`, with
+  duplicate prevention and inline invalid-address feedback.
+
 ## 0.4.0
 
 ### Added

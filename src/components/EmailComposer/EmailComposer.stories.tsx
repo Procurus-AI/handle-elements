@@ -29,7 +29,7 @@ const meta = {
     meta: 'Drafted by Handle',
     channels,
     defaultActiveChannel: 'email',
-    to: [{ id: 'elena', label: 'elena.alvarez@maple.co' }],
+    defaultTo: [{ id: 'elena', label: 'elena.alvarez@maple.co' }],
     from: { id: 'renewals', label: 'renewals@acme-insurance.com' },
     defaultSubject: 'Your upcoming auto renewal',
     defaultValue: draft,
