@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useMemo,
   useRef,
@@ -57,6 +58,13 @@ export interface DataTableColumn<T> {
   truncate?: boolean;
   /** Extra class on every cell + header in this column. */
   className?: string;
+  /**
+   * Renders this column's cell in the table's `<tfoot>` totals row, receiving
+   * every filtered (pre-page) row — return a sum, count, or label. A footer row
+   * is drawn only when at least one column defines this; columns that don't
+   * leave an empty cell, so a total lands under exactly its column.
+   */
+  footer?: (rows: T[]) => ReactNode;
 }
 
 export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -109,6 +117,27 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   maxHeight?: number | string;
   /** Row rendered under the table, inside the card frame — e.g. pagination. */
   footer?: ReactNode;
+  /**
+   * Full-width detail rendered in a recessed row directly beneath its row when
+   * expanded. Return `null` for rows with nothing to reveal — those get no
+   * chevron and stay inert. Supplying this prop prepends a narrow expander
+   * column with a rotating chevron; when `onRowClick` is unset the whole row
+   * also toggles expansion.
+   */
+  renderExpanded?: (row: T, index: number) => ReactNode;
+  /** Controlled set of expanded row keys (values from `rowKey`). Omit for uncontrolled. */
+  expandedKeys?: Array<string | number>;
+  onExpandedChange?: (keys: Array<string | number>) => void;
+  /** Initially expanded keys for uncontrolled mode. */
+  defaultExpandedKeys?: Array<string | number>;
+  /** Accessible label for the expander toggle. Default 'Toggle row details'. */
+  expandLabel?: string;
+  /**
+   * Quiet trailing actions for a row — icon buttons, a menu. Rendered in a
+   * pinned end column that stays hidden until the row is hovered or holds focus,
+   * so the affordance is discoverable without adding chrome to every row.
+   */
+  rowActions?: (row: T, index: number) => ReactNode;
   /** `fixed` makes every `column.width` binding; slack goes to the unset columns. */
   layout?: DataTableLayout;
   /** Optional minimum width for the table canvas; narrower containers scroll instead of crushing cells. */
@@ -155,6 +184,12 @@ export function DataTable<T>({
   stickyHeader = false,
   maxHeight,
   footer,
+  renderExpanded,
+  expandedKeys,
+  onExpandedChange,
+  defaultExpandedKeys,
+  expandLabel = 'Toggle row details',
+  rowActions,
   layout = 'auto',
   minTableWidth,
   page = 1,
@@ -165,6 +200,28 @@ export function DataTable<T>({
   const [internalSort, setInternalSort] = useState<DataTableSort | null>(defaultSort);
   const isControlled = controlledSort !== undefined;
   const sort = isControlled ? controlledSort : internalSort;
+
+  const [internalExpanded, setInternalExpanded] = useState<Set<string | number>>(
+    () => new Set(defaultExpandedKeys ?? []),
+  );
+  const isExpandControlled = expandedKeys !== undefined;
+  const expandedSet = useMemo(
+    () => new Set(isExpandControlled ? expandedKeys : internalExpanded),
+    [isExpandControlled, expandedKeys, internalExpanded],
+  );
+  const keyOf = (row: T, index: number): string | number =>
+    rowKey ? rowKey(row, index) : index;
+  const toggleExpand = (key: string | number) => {
+    const next = new Set(expandedSet);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    if (!isExpandControlled) setInternalExpanded(next);
+    onExpandedChange?.([...next]);
+  };
+  const hasExpander = renderExpanded != null;
+  const hasActions = rowActions != null;
+  const hasFooterRow = columns.some((c) => c.footer != null);
+  const totalCols = columns.length + (hasExpander ? 1 : 0) + (hasActions ? 1 : 0);
 
   const columnByKey = useMemo(() => {
     const map = new Map<string, DataTableColumn<T>>();
@@ -273,6 +330,13 @@ export function DataTable<T>({
           )}
           <thead className="he-table__head">
             <tr>
+              {hasExpander && (
+                <th
+                  scope="col"
+                  className="he-table__th he-table__expander-cell"
+                  aria-label={expandLabel}
+                />
+              )}
               {columns.map((col) => {
                 const active = sort?.key === col.key;
                 const ariaSort = !col.sortable
@@ -310,66 +374,161 @@ export function DataTable<T>({
                   </th>
                 );
               })}
+              {hasActions && (
+                <th
+                  scope="col"
+                  className="he-table__th he-table__actions-cell"
+                  aria-label="Actions"
+                />
+              )}
             </tr>
           </thead>
           <tbody className="he-table__body">
             {pagedData.length === 0 ? (
               <tr className="he-table__empty-row">
-                <td className="he-table__empty" colSpan={columns.length}>
+                <td className="he-table__empty" colSpan={totalCols}>
                   {emptyState}
                 </td>
               </tr>
             ) : (
               pagedData.map((row, index) => {
                 const selected = isRowSelected?.(row, index) ?? false;
+                const key = keyOf(row, index);
+                const expandedContent = hasExpander ? renderExpanded!(row, index) : null;
+                const canExpand = expandedContent != null;
+                const isExpanded = canExpand && expandedSet.has(key);
+                // Row-level activation: onRowClick wins; otherwise an expandable
+                // row toggles its own detail. A row with neither stays inert.
+                const activate = onRowClick
+                  ? () => onRowClick(row, index)
+                  : canExpand
+                    ? () => toggleExpand(key)
+                    : undefined;
                 return (
-                  <tr
-                    key={rowKey ? rowKey(row, index) : index}
-                    className={cx(
-                      'he-table__row',
-                      onRowClick && 'he-table__row--clickable',
-                      selected && 'he-table__row--selected',
-                    )}
-                    // aria-current, not aria-selected: the row already carries
-                    // role="button" when onRowClick is set, and aria-selected is
-                    // not valid there.
-                    aria-current={selected ? 'true' : undefined}
-                    onClick={onRowClick ? () => onRowClick(row, index) : undefined}
-                    // Keyboard access for row-click-to-drawer: focusable rows that
-                    // activate on Enter/Space, so the pattern is not mouse-only.
-                    tabIndex={onRowClick ? 0 : undefined}
-                    role={onRowClick ? 'button' : undefined}
-                    onKeyDown={
-                      onRowClick
-                        ? (e: KeyboardEvent<HTMLTableRowElement>) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              onRowClick(row, index);
+                  <Fragment key={key}>
+                    <tr
+                      className={cx(
+                        'he-table__row',
+                        activate && 'he-table__row--clickable',
+                        selected && 'he-table__row--selected',
+                        isExpanded && 'he-table__row--expanded',
+                      )}
+                      // aria-current, not aria-selected: the row already carries
+                      // role="button" when activatable, and aria-selected is not
+                      // valid there.
+                      aria-current={selected ? 'true' : undefined}
+                      onClick={activate}
+                      // Keyboard access for row activation: focusable rows that
+                      // fire on Enter/Space, so the pattern is not mouse-only.
+                      tabIndex={activate ? 0 : undefined}
+                      role={activate ? 'button' : undefined}
+                      onKeyDown={
+                        activate
+                          ? (e: KeyboardEvent<HTMLTableRowElement>) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                activate();
+                              }
                             }
-                          }
-                        : undefined
-                    }
-                  >
-                    {columns.map((col) => (
-                      <td
-                        key={col.key}
-                        className={cx(
-                          'he-table__td',
-                          col.align && `he-table__cell--${col.align}`,
-                          col.truncate && 'he-table__td--truncate',
-                          col.className,
-                        )}
-                      >
-                        {col.render
-                          ? col.render(row, index)
-                          : ((row as Record<string, unknown>)[col.key] as ReactNode) ?? null}
-                      </td>
-                    ))}
-                  </tr>
+                          : undefined
+                      }
+                    >
+                      {hasExpander && (
+                        <td className="he-table__td he-table__expander-cell">
+                          {canExpand && (
+                            <button
+                              type="button"
+                              className={cx(
+                                'he-table__expander',
+                                isExpanded && 'he-table__expander--open',
+                              )}
+                              aria-expanded={isExpanded}
+                              aria-label={expandLabel}
+                              // Stop the row handler from double-firing.
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleExpand(key);
+                              }}
+                            >
+                              <svg
+                                width="12"
+                                height="12"
+                                viewBox="0 0 12 12"
+                                fill="none"
+                                aria-hidden
+                              >
+                                <path
+                                  d="M4.5 2.5 8 6l-3.5 3.5"
+                                  stroke="currentColor"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                        </td>
+                      )}
+                      {columns.map((col) => (
+                        <td
+                          key={col.key}
+                          className={cx(
+                            'he-table__td',
+                            col.align && `he-table__cell--${col.align}`,
+                            col.truncate && 'he-table__td--truncate',
+                            col.className,
+                          )}
+                        >
+                          {col.render
+                            ? col.render(row, index)
+                            : ((row as Record<string, unknown>)[col.key] as ReactNode) ?? null}
+                        </td>
+                      ))}
+                      {hasActions && (
+                        <td className="he-table__td he-table__actions-cell">
+                          {/* Stop the row handler firing when an action is used. */}
+                          <div
+                            className="he-table__actions"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {rowActions!(row, index)}
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                    {isExpanded && (
+                      <tr className="he-table__expansion-row">
+                        <td className="he-table__expansion" colSpan={totalCols}>
+                          <div className="he-table__expansion-inner">{expandedContent}</div>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 );
               })
             )}
           </tbody>
+          {hasFooterRow && pagedData.length > 0 && (
+            <tfoot className="he-table__foot">
+              <tr>
+                {hasExpander && <td className="he-table__tf he-table__expander-cell" />}
+                {columns.map((col) => (
+                  <td
+                    key={col.key}
+                    className={cx(
+                      'he-table__tf',
+                      col.align && `he-table__cell--${col.align}`,
+                      col.truncate && 'he-table__td--truncate',
+                      col.className,
+                    )}
+                  >
+                    {col.footer ? col.footer(sortedData) : null}
+                  </td>
+                ))}
+                {hasActions && <td className="he-table__tf he-table__actions-cell" />}
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
       {/* Sibling of the scroller, not a child: it stays visible while the body scrolls. */}

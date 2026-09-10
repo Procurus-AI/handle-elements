@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.4.3
+
+### Added
+
+- Expandable `DataTable` rows through `renderExpanded`, with a narrow leading chevron and a
+  recessed full-width detail row that remains visually attached to its parent record.
+- Controlled and uncontrolled expansion APIs through `expandedKeys` / `onExpandedChange` and
+  `defaultExpandedKeys`, keyed by the table's existing `rowKey` contract.
+- Keyboard-accessible row expansion: when no separate `onRowClick` behavior is supplied, the full
+  row toggles from mouse click, Enter, or Space, while the dedicated chevron remains independently
+  operable and reports `aria-expanded`.
+- Quiet trailing row actions through `rowActions`. Actions stay visually hidden at rest, appear on
+  hover, keyboard focus, selection, or expansion, remain visible on touch devices, and stop their
+  click events from accidentally activating the row beneath them.
+- Per-column totals through `DataTableColumn.footer`. Footer renderers receive the complete filtered
+  and sorted dataset before pagination so counts and financial totals do not change between pages;
+  their cells preserve the corresponding column alignment.
+- `Elements/DataTable/Expandable rows + quiet actions`, a complete collections example with nested
+  receipt tables, controlled expansion, responsive row actions, menus, tooltips, status states,
+  receipt counts, sortable dates, and currency totals.
+
+### Changed
+
+- Empty, expanded, footer, and action rows now calculate their spans from the complete rendered
+  column structure, including optional expander and action columns.
+- Expanded parent rows and their detail surfaces share one quiet recessed treatment; dense tables
+  receive matching compact expansion and footer spacing.
+- Expander rotation and action fades respect reduced-motion preferences.
+
 ## 0.4.2
 
 ### Added
