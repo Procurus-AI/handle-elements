@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../lib/cx';
+import { Button } from '../Button/Button';
 
 export interface EmailComposerChannel {
   /** Stable identity passed to `onChannelChange`. */
@@ -34,10 +35,18 @@ export interface EmailComposerContact {
   avatar?: ReactNode;
 }
 
+export type EmailComposerVariant = 'window' | 'embedded';
+export type EmailComposerDensity = 'default' | 'compact';
+export type EmailComposerHeaderVariant = 'default' | 'actions';
+
 export interface EmailComposerProps
   extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'title' | 'onCopy'> {
   /** Window title. Default `New message`. */
   title?: ReactNode;
+  /** `embedded` removes the card chrome and fills a parent workspace. */
+  variant?: EmailComposerVariant;
+  /** `compact` reduces vertical chrome and caps the message viewport. */
+  density?: EmailComposerDensity;
   /** Quiet drafting context beside the title. */
   meta?: ReactNode;
   /** Icon controls mounted in the window header. */
@@ -48,6 +57,9 @@ export interface EmailComposerProps
   channelsLabel?: string;
   /** Extra window controls after the built-in copy action. */
   headerActions?: ReactNode;
+  /** Shows the library-owned close control in the window header. */
+  onClose?: () => void;
+  closeLabel?: string;
   /** Controlled recipients. Use with `onToChange`. */
   to?: readonly EmailComposerContact[];
   /** Initial recipients for an editable, uncontrolled field. */
@@ -74,8 +86,20 @@ export interface EmailComposerProps
   formatting?: boolean;
   /** Product-owned formatting or attachment controls after the built-in tools. */
   toolbar?: ReactNode;
-  /** Approval, send, edit, or product-specific actions in the footer. */
+  /** Product-specific actions rendered before the built-in Cancel and Send controls. */
   actions?: ReactNode;
+  /** Shows a library-owned secondary Cancel action. */
+  onCancel?: () => void;
+  cancelLabel?: string;
+  /** Shows a library-owned primary Send action. */
+  onSend?: () => void;
+  sendLabel?: string;
+  sendDisabled?: boolean;
+  /**
+   * `actions` hides the heading and groups channels, Copy, Cancel, Send, and
+   * Close into one compact window bar.
+   */
+  headerVariant?: EmailComposerHeaderVariant;
   /** Shows the library-owned clipboard control. Default `true`. */
   copyable?: boolean;
   /** Clipboard payload override. By default the subject and body are copied. */
@@ -167,6 +191,8 @@ function fallbackCopy(text: string) {
  */
 export function EmailComposer({
   title = 'New message',
+  variant = 'window',
+  density = 'default',
   meta,
   channels = [],
   activeChannel,
@@ -174,6 +200,8 @@ export function EmailComposer({
   onChannelChange,
   channelsLabel,
   headerActions,
+  onClose,
+  closeLabel = 'Close composer',
   to,
   defaultTo = [],
   onToChange,
@@ -196,6 +224,12 @@ export function EmailComposer({
   formatting = true,
   toolbar,
   actions,
+  onCancel,
+  cancelLabel = 'Cancel',
+  onSend,
+  sendLabel = 'Send',
+  sendDisabled = false,
+  headerVariant = 'default',
   copyable = true,
   copyText,
   copyLabel = 'Copy',
@@ -226,9 +260,28 @@ export function EmailComposer({
   const resolvedSubject = subject ?? internalSubject;
   const resolvedValue = value ?? internalValue;
   const resolvedTo = to ?? internalTo;
-  const titleId = ariaLabel || ariaLabelledBy ? undefined : generatedTitleId;
+  const actionsHeader = headerVariant === 'actions';
+  const resolvedAriaLabel =
+    ariaLabel ?? (actionsHeader ? (typeof title === 'string' ? title : 'Message composer') : undefined);
+  const titleId = resolvedAriaLabel || ariaLabelledBy || actionsHeader ? undefined : generatedTitleId;
   const recipientInputId = `${generatedTitleId}-recipient`;
   const recipientErrorId = `${generatedTitleId}-recipient-error`;
+  const hasHeading = !actionsHeader && (title != null || meta != null);
+  const hasBuiltInActions = onCancel != null || onSend != null;
+  const builtInActions = hasBuiltInActions ? (
+    <div className="he-email-composer__built-in-actions">
+      {onCancel != null && (
+        <Button variant="ghost" size="sm" onClick={onCancel}>
+          {cancelLabel}
+        </Button>
+      )}
+      {onSend != null && (
+        <Button size="sm" disabled={sendDisabled} onClick={onSend}>
+          {sendLabel}
+        </Button>
+      )}
+    </div>
+  ) : null;
 
   useEffect(
     () => () => {
@@ -387,18 +440,28 @@ export function EmailComposer({
 
   return (
     <section
-      className={cx('he-email-composer', className)}
-      aria-label={ariaLabel}
+      className={cx(
+        'he-email-composer',
+        variant === 'embedded' && 'he-email-composer--embedded',
+        density === 'compact' && 'he-email-composer--compact',
+        actionsHeader && 'he-email-composer--actions-header',
+        className,
+      )}
+      aria-label={resolvedAriaLabel}
       aria-labelledby={ariaLabelledBy ?? titleId}
       {...rest}
     >
       <header className="he-email-composer__header">
-        <div className="he-email-composer__heading">
-          <h2 id={titleId} className="he-email-composer__title">
-            {title}
-          </h2>
-          {meta != null && <span className="he-email-composer__meta">{meta}</span>}
-        </div>
+        {hasHeading && (
+          <div className="he-email-composer__heading">
+            {title != null && (
+              <h2 id={titleId} className="he-email-composer__title">
+                {title}
+              </h2>
+            )}
+            {meta != null && <span className="he-email-composer__meta">{meta}</span>}
+          </div>
+        )}
 
         <div className="he-email-composer__window-actions">
           {channels.length > 0 && (
@@ -441,8 +504,21 @@ export function EmailComposer({
               <span aria-live="polite">{copied ? copiedLabel : copyLabel}</span>
             </button>
           )}
-          {headerActions != null && (
-            <div className="he-email-composer__header-actions">{headerActions}</div>
+          {actionsHeader && builtInActions}
+          {(headerActions != null || onClose != null) && (
+            <div className="he-email-composer__header-actions">
+              {headerActions}
+              {onClose != null && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={closeLabel}
+                  onClick={onClose}
+                >
+                  <CloseIcon />
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </header>
@@ -532,7 +608,10 @@ export function EmailComposer({
         />
       </div>
 
-      {(formatting || toolbar != null || actions != null) && (
+      {(formatting ||
+        toolbar != null ||
+        actions != null ||
+        (!actionsHeader && hasBuiltInActions)) && (
         <footer className="he-email-composer__footer">
           {(formatting || toolbar != null) && (
             <div className="he-email-composer__toolbar">
@@ -584,7 +663,12 @@ export function EmailComposer({
               {toolbar}
             </div>
           )}
-          {actions != null && <div className="he-email-composer__actions">{actions}</div>}
+          {(actions != null || (!actionsHeader && hasBuiltInActions)) && (
+            <div className="he-email-composer__actions">
+              {actions}
+              {!actionsHeader && builtInActions}
+            </div>
+          )}
         </footer>
       )}
     </section>
@@ -631,6 +715,14 @@ function CheckIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
       <path d="m2.5 7.8 3.1 3.1 6.9-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="m4 4 8 8m0-8-8 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }

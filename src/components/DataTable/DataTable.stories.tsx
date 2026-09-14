@@ -1,17 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Avatar } from '../Avatar/Avatar';
+import { Badge } from '../Badge/Badge';
 import { Button } from '../Button/Button';
 import { Chip } from '../Chip/Chip';
 import { Drawer } from '../Drawer/Drawer';
 import { EmptyState } from '../EmptyState/EmptyState';
 import { Container, Grid, Stack } from '../Layout/Layout';
+import { Menu, MenuItem, MenuSeparator } from '../Menu/Menu';
 import { Money } from '../Money/Money';
 import { Pagination } from '../Pagination/Pagination';
 import { SearchInput } from '../Input/SearchInput';
 import { Sparkline } from '../Sparkline/Sparkline';
 import { StatusPill } from '../StatusPill/StatusPill';
+import { Switch } from '../Switch/Switch';
 import { Text } from '../Text/Text';
+import { Tooltip } from '../Tooltip/Tooltip';
 import { Toolbar, ToolbarGroup, ResultCount } from '../Toolbar/Toolbar';
 import { DataTable, TableCell, type DataTableColumn } from './DataTable';
 
@@ -447,4 +452,330 @@ export const FixedWidths: Story = {
       </Stack>
     </Container>
   ),
+};
+
+// ---- Expandable rows + quiet row actions ----
+// A collections book: each policy owns one or more receipts. The row reveals a
+// nested receipts table on expand, and hover surfaces the reach-out actions
+// (email, WhatsApp, more) without adding chrome to the resting row. Icons are
+// inline SVGs — the package ships no icon dependency.
+
+const iconProps = { width: 15, height: 15, viewBox: '0 0 16 16', fill: 'none' as const, 'aria-hidden': true };
+
+const MailIcon = () => (
+  <svg {...iconProps}>
+    <rect x="2" y="3.5" width="12" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+    <path d="m3 5 5 3.4L13 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const WhatsappIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413" />
+  </svg>
+);
+
+const MoreIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+    <circle cx="3.5" cy="8" r="1.3" />
+    <circle cx="8" cy="8" r="1.3" />
+    <circle cx="12.5" cy="8" r="1.3" />
+  </svg>
+);
+
+interface Receipt {
+  coverageStart: string;
+  series: string;
+  clause: string | null;
+  endorsement: string | null;
+  premium: number;
+  currency: string;
+  dueDate: string;
+  method: string;
+  status: 'pending' | 'paid' | 'overdue';
+}
+
+interface Policy {
+  id: string;
+  client: string;
+  policyNo: string;
+  insurer: string;
+  premium: number;
+  currency: string;
+  due: 'today' | 'soon' | 'overdue';
+  receipts: Receipt[];
+}
+
+const receipt = (over: Partial<Receipt> = {}): Receipt => ({
+  coverageStart: '10-09-2026',
+  series: '7/12',
+  clause: null,
+  endorsement: null,
+  premium: 6090.79,
+  currency: 'MXN',
+  dueDate: '10-09-2026',
+  method: 'Mensual',
+  status: 'pending',
+  ...over,
+});
+
+const POLICIES: Policy[] = [
+  {
+    id: 'p1',
+    client: 'Ana Lucía Flores Lugo',
+    policyNo: '722349198',
+    insurer: 'GNP',
+    premium: 6090.79,
+    currency: 'MXN',
+    due: 'today',
+    receipts: [
+      receipt({ series: '7/12', premium: 6090.79 }),
+      receipt({ series: '8/12', premium: 6090.79, dueDate: '10-10-2026', status: 'pending' }),
+      receipt({ series: '6/12', premium: 6090.79, dueDate: '10-08-2026', status: 'paid' }),
+    ],
+  },
+  {
+    id: 'p2',
+    client: 'Arturo Gerardo Lozano Brunswick',
+    policyNo: '720297951',
+    insurer: 'GNP',
+    premium: 1942.44,
+    currency: 'MXN',
+    due: 'today',
+    receipts: [receipt({ series: '1/1', premium: 1942.44, method: 'Anual' })],
+  },
+  {
+    id: 'p3',
+    client: 'Centro Educativo Nido S.C.',
+    policyNo: '717262299',
+    insurer: 'GNP',
+    premium: 31939.86,
+    currency: 'MXN',
+    due: 'overdue',
+    receipts: [
+      receipt({ series: '2/4', premium: 15969.93, method: 'Trimestral', status: 'overdue', dueDate: '01-09-2026' }),
+      receipt({ series: '3/4', premium: 15969.93, method: 'Trimestral', dueDate: '01-12-2026' }),
+    ],
+  },
+  {
+    id: 'p4',
+    client: 'Daniel David Cohen Orozco',
+    policyNo: '186007555',
+    insurer: 'GNP',
+    premium: 3131.9,
+    currency: 'MXN',
+    due: 'soon',
+    receipts: [
+      receipt({ series: '4/12', premium: 3131.9, dueDate: '15-09-2026' }),
+      receipt({ series: '5/12', premium: 3131.9, dueDate: '15-10-2026' }),
+    ],
+  },
+  {
+    id: 'p5',
+    client: 'Evaristo Rubio Calderón',
+    policyNo: '226911089',
+    insurer: 'GNP',
+    premium: 713.92,
+    currency: 'USD',
+    due: 'today',
+    receipts: [receipt({ series: '1/1', premium: 713.92, currency: 'USD', method: 'Anual' })],
+  },
+];
+
+const DUE_META: Record<Policy['due'], { status: 'ok' | 'warn' | 'error'; label: string }> = {
+  today: { status: 'warn', label: 'Hoy' },
+  soon: { status: 'ok', label: 'Próximo' },
+  overdue: { status: 'error', label: 'Vencido' },
+};
+
+const RECEIPT_STATUS: Record<Receipt['status'], { status: 'ok' | 'warn' | 'error'; label: string }> = {
+  paid: { status: 'ok', label: 'Pagado' },
+  pending: { status: 'warn', label: 'Pendiente' },
+  overdue: { status: 'error', label: 'Vencido' },
+};
+
+/** dd-mm-yyyy → a sortable yyyymmdd number, so date columns sort chronologically. */
+const dateSortValue = (d: string): number => {
+  const [dd, mm, yyyy] = d.split('-');
+  return Number(`${yyyy}${mm}${dd}`);
+};
+
+const mono = (v: ReactNode) => <span style={{ fontFamily: 'var(--he-font-mono)' }}>{v}</span>;
+
+// Curated to the columns that carry signal — Cláusula / Endoso are almost always
+// empty in this book, so they'd read as a column of dashes. `footer` on Serie and
+// Prima total draws the <tfoot> totals row.
+const receiptColumns: DataTableColumn<Receipt>[] = [
+  {
+    key: 'series',
+    header: 'Serie',
+    sortable: true,
+    sortValue: (r) => Number(r.series.split('/')[0]),
+    render: (r) => mono(r.series),
+    footer: () => 'Total',
+  },
+  { key: 'coverageStart', header: 'Inicio de vigencia', sortable: true, sortValue: (r) => dateSortValue(r.coverageStart), render: (r) => mono(r.coverageStart) },
+  { key: 'dueDate', header: 'Vencimiento', sortable: true, sortValue: (r) => dateSortValue(r.dueDate), render: (r) => mono(r.dueDate) },
+  { key: 'method', header: 'Forma de pago', sortable: true, render: (r) => r.method },
+  {
+    key: 'premium',
+    header: 'Prima total',
+    sortable: true,
+    render: (r) => <Money value={r.premium} currency={r.currency} />,
+    footer: (rows) => <Money value={rows.reduce((sum, r) => sum + r.premium, 0)} currency={rows[0]?.currency ?? 'MXN'} />,
+  },
+  {
+    key: 'status',
+    header: 'Estatus',
+    sortable: true,
+    render: (r) => {
+      const m = RECEIPT_STATUS[r.status];
+      return <StatusPill status={m.status} label={m.label} appearance="soft" withDot={false} />;
+    },
+  },
+];
+
+/** Quiet icon action wrapped in a Tooltip. */
+function RowAction({ label, onClick, children }: { label: string; onClick?: () => void; children: ReactNode }) {
+  return (
+    <Tooltip content={label}>
+      <Button variant="ghost" size="icon-sm" aria-label={label} onClick={onClick}>
+        {children}
+      </Button>
+    </Tooltip>
+  );
+}
+
+const policyColumns = (showAvatar: boolean): DataTableColumn<Policy>[] => [
+  {
+    key: 'client',
+    header: 'Cliente',
+    sortable: true,
+    render: (r) => (
+      <TableCell
+        media={showAvatar ? <Avatar name={r.client} size="sm" /> : undefined}
+        primary={
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            {r.client}
+            {r.receipts.length > 1 && (
+              <Badge tone="neutral" aria-label={`${r.receipts.length} recibos`}>
+                {r.receipts.length}
+              </Badge>
+            )}
+          </span>
+        }
+      />
+    ),
+  },
+  {
+    key: 'policyNo',
+    header: 'Póliza',
+    sortable: true,
+    render: (r) => <span style={{ fontFamily: 'var(--he-font-mono)', color: 'var(--he-text-dim)' }}>{r.policyNo}</span>,
+  },
+  { key: 'insurer', header: 'Aseguradora', sortable: true, render: (r) => <Chip size="sm">{r.insurer}</Chip> },
+  {
+    key: 'premium',
+    header: 'Prima total',
+    sortable: true,
+    width: '160px',
+    render: (r) => <Money value={r.premium} currency={r.currency} />,
+  },
+  {
+    key: 'due',
+    header: 'Vence',
+    sortable: true,
+    sortValue: (r) => ({ overdue: 0, today: 1, soon: 2 })[r.due],
+    width: '120px',
+    render: (r) => {
+      const m = DUE_META[r.due];
+      return <StatusPill status={m.status} label={m.label} appearance="soft" withDot={false} />;
+    },
+  },
+];
+
+/**
+ * The screenshot pattern, rebuilt from the kit: a policies table where each row
+ * expands to its receipts (a nested `DataTable`) and carries quiet trailing
+ * actions that only surface on hover / keyboard focus.
+ *
+ * - `renderExpanded` adds the leading chevron column and the recessed detail row.
+ *   With `onRowClick` unset, the whole row toggles — click anywhere, or focus + Enter.
+ * - `rowActions` pins email / WhatsApp / more to the row end, hidden until hover.
+ * - `Badge` on the client counts receipts so multi-receipt rows read at a glance.
+ */
+export const ExpandableWithActions: Story = {
+  name: 'Expandable rows + quiet actions',
+  render: () => {
+    const [expanded, setExpanded] = useState<Array<string | number>>(['p1']);
+    const [showAvatar, setShowAvatar] = useState(true);
+    return (
+      <DataTable
+        columns={policyColumns(showAvatar)}
+        data={POLICIES}
+        rowKey={(r) => r.id}
+        caption="Cobranza del día"
+        captionHidden
+        defaultSort={{ key: 'premium', direction: 'desc' }}
+        minTableWidth={760}
+        expandLabel="Ver recibos"
+        expandedKeys={expanded}
+        onExpandedChange={setExpanded}
+        toolbar={
+          <>
+            <Text weight="medium">Cobranza del día</Text>
+            <Switch
+              checked={showAvatar}
+              onCheckedChange={setShowAvatar}
+              label="Avatares"
+              labelPosition="start"
+            />
+          </>
+        }
+        renderExpanded={(r) => (
+          <Stack gap={3}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <Text size="sm" weight="medium">
+                Recibos
+              </Text>
+              <Badge tone="neutral">{r.receipts.length}</Badge>
+            </span>
+            <DataTable
+              card={false}
+              dense
+              columns={receiptColumns}
+              data={r.receipts}
+              rowKey={(rc) => `${r.id}-${rc.series}`}
+              defaultSort={{ key: 'dueDate', direction: 'asc' }}
+            />
+          </Stack>
+        )}
+        rowActions={(r) => (
+          <>
+            <RowAction label="Enviar correo">
+              <MailIcon />
+            </RowAction>
+            <RowAction label="Enviar WhatsApp">
+              <WhatsappIcon />
+            </RowAction>
+            <Menu
+              trigger={
+                <Button variant="ghost" size="icon-sm" aria-label="Más acciones">
+                  <MoreIcon />
+                </Button>
+              }
+              label={`Acciones · ${r.client}`}
+              placement="bottom-end"
+            >
+              <MenuItem>Ver póliza</MenuItem>
+              <MenuItem>Copiar número</MenuItem>
+              <MenuItem>Registrar pago</MenuItem>
+              <MenuSeparator />
+              <MenuItem destructive>Marcar incobrable</MenuItem>
+            </Menu>
+          </>
+        )}
+      />
+    );
+  },
 };
