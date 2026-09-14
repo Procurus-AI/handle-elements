@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.4
+
+### Fixed
+
+- `Skeleton` with a numeric `width` / `height` rendered 0px tall. The value goes into a custom
+  property, and React only appends `px` to known CSS properties — never to a `--*` one — so
+  `height={34}` wrote `--he-skeleton-height: 34`, leaving `height: var(…)` invalid at
+  computed-value time and collapsing the element to `height: auto`. Numeric sizes are now
+  normalized to pixels; string values with a unit are unchanged.
+
 ## 0.4.3
 
 ### Added
