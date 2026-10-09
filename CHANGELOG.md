@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.5
+
+### Fixed
+
+- `Select` widened through `className` (e.g. `width: 100%`) only widened its wrapper: the native
+  `<select>` kept its intrinsic width, so a click on the rest of the pill — the chevron included —
+  landed on the wrapper and never opened the list. The field now grows to fill the wrapper in both
+  axes; an auto-sized `Select` is unchanged.
+
 ## 0.4.4
 
 ### Fixed
