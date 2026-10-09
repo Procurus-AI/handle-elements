@@ -20,6 +20,12 @@
   font-weight: 500;
   color: inherit;
   padding-right: 18px;
+  /* The wrapper carries the consumer's className, so a widened pill must widen
+   * the field too — otherwise the empty part of the pill (chevron included) is
+   * dead to clicks. flex-grow (not width: 100%) leaves the auto-sized case alone. */
+  flex: 1 1 auto;
+  min-width: 0;
+  align-self: stretch;
 }
 
 .he-select__chevron {
