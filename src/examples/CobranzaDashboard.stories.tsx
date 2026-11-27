@@ -34,7 +34,7 @@ import { Toolbar, ToolbarGroup, ResultCount } from '../components/Toolbar/Toolba
  * when a segment has no live clients.
  */
 const meta = {
-  title: 'Examples/Cobranza Dashboard',
+  title: 'Pages/Examples/Cobranza Dashboard',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 

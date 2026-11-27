@@ -14,7 +14,7 @@ import {
 } from './AgentResponse';
 
 const meta = {
-  title: 'Elements/Agent Response',
+  title: 'Organisms/Agent Response',
   component: AgentResponse,
   args: {
     agent: 'Handle',

@@ -7,7 +7,7 @@ import { Tabs } from '../Tabs/Tabs';
 import { Composer } from './Composer';
 
 const meta = {
-  title: 'Elements/Composer',
+  title: 'Organisms/Composer',
   component: Composer,
   args: { placeholder: 'Ask anything about your book of business' },
   argTypes: {
@@ -126,9 +126,10 @@ export const ShortcutsAbove: Story = {
   ),
 };
 
-/** A single-row command surface for a persistent agent dock. */
-export const InlineDock: Story = {
+/** Dock surfaces: a single-row inline command surface, then the input-led dock with one compact activity/action band beneath it. */
+export const UnifiedAgentDock: Story = {
   render: (args) => (
+    <div style={{ display: 'grid', gap: 'var(--he-spacing-6)' }}>
     <Composer
       {...args}
       layout="inline"
@@ -139,12 +140,6 @@ export const InlineDock: Story = {
       onMic={() => {}}
       onSubmit={() => {}}
     />
-  ),
-};
-
-/** Input-led dock with one compact activity/action band beneath it. */
-export const UnifiedAgentDock: Story = {
-  render: (args) => (
     <Composer
       {...args}
       variant="dock"
@@ -183,5 +178,6 @@ export const UnifiedAgentDock: Story = {
       submitLabel="Send to Handle"
       onSubmit={() => {}}
     />
+    </div>
   ),
 };

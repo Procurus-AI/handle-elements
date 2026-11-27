@@ -2,7 +2,7 @@
   display: block;
   width: 100%;
   max-width: 100%;
-  color: var(--he-chart-ink);
+  color: var(--he-text-primary);
   font-family: var(--he-font-sans);
 }
 
@@ -13,7 +13,7 @@
   width: 100%;
   height: var(--he-segmentbar-h, 10px);
   overflow: hidden;
-  background: var(--he-chart-track);
+  background: var(--he-bg-subtle);
 }
 
 .he-segmentbar--sm {
@@ -29,7 +29,7 @@
 }
 
 .he-segmentbar--rounded .he-segmentbar__track {
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
 }
 
 .he-segmentbar__seg {
@@ -41,7 +41,7 @@
 /* Hairline separators: a track-colored inset between adjacent segments so the
  * bar reads as distinct parts without introducing a new color. */
 .he-segmentbar--gap .he-segmentbar__seg + .he-segmentbar__seg {
-  box-shadow: inset 2px 0 0 var(--he-chart-track);
+  box-shadow: inset 2px 0 0 var(--he-bg-subtle);
 }
 
 /* Unfilled remainder (total > sum): just the track showing through. */
@@ -61,7 +61,7 @@
 /* ---- legend ---- */
 .he-segmentbar__legend {
   list-style: none;
-  margin: var(--he-space-3) 0 0;
+  margin: var(--he-spacing-3) 0 0;
   padding: 0;
   display: grid;
   /* One row per segment by default. `legendMinWidth` sets the custom property
@@ -70,37 +70,43 @@
    * keeps its own number within a track's width instead of at the far edge of
    * the page. */
   grid-template-columns: repeat(auto-fit, minmax(var(--he-segmentbar-legend-min, 100%), 1fr));
-  gap: var(--he-space-2) var(--he-space-4);
+  gap: var(--he-spacing-2) var(--he-spacing-4);
 }
 
 .he-segmentbar__legend-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: baseline;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
 }
 
 /* The dot + label pair is a plain Chip; let it shrink and clip long labels. */
 .he-segmentbar__legend-chip {
   min-width: 0;
   overflow: hidden;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 /* Mono numerals so values and percentages align in a tidy column. */
 .he-segmentbar__value {
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   font-variant-numeric: tabular-nums;
-  color: var(--he-chart-ink);
+  color: var(--he-text-primary);
   text-align: right;
 }
 
 .he-segmentbar__pct {
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   font-variant-numeric: tabular-nums;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   text-align: right;
   min-width: 3ch;
 }

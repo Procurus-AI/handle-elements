@@ -82,7 +82,7 @@ import { formatCurrency } from '../format';
  * DataTable owns the sort and slicing upstream would sort only the visible page.
  */
 const meta = {
-  title: 'Examples/Policies',
+  title: 'Pages/Examples/Policies',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
@@ -643,10 +643,10 @@ function PoliciesView() {
         width: '10%',
         sortable: true,
         // Deliberately NOT `variant="mono"`. That variant is styled with
-        // `--he-text-faint` (measured 2.51:1 on light at 10.5px) because it is
+        // `--he-text-tertiary` (measured 2.51:1 on light at 10.5px) because it is
         // the library's quiet-metadata idiom — a legend swatch, a unit tag. Ramo
         // is a load-bearing data value, so it takes the default chip's
-        // `--he-text-dim` (5.64:1) instead.
+        // `--he-text-secondary` (5.64:1) instead.
         render: (r) => <Chip size="sm">{r.ramo}</Chip>,
       },
       {
@@ -752,7 +752,7 @@ function PoliciesView() {
             the total is a floor. The strip holds six tracks down to 1240px and
             then WRAPS to five and four, each row internally baseline-aligned,
             instead of growing three baselines inside one row. The 1px grid gap
-            over --he-border keeps drawing the hairlines when it wraps. */}
+            over --he-border-default keeps drawing the hairlines when it wraps. */}
         <StatCardGroup variant="rail" minColumnWidth="192px">
           <StatCard
             tone="neutral"

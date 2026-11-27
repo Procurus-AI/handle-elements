@@ -1,6 +1,6 @@
 .he-barchart {
   display: grid;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   width: 100%;
   max-width: 100%;
 }
@@ -9,9 +9,9 @@
   display: grid;
   grid-template-columns: minmax(0, auto) 1fr max-content;
   align-items: center;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   /* Fill tone flows down via currentColor. */
-  color: var(--he-chart-ink);
+  color: var(--he-text-primary);
 }
 
 .he-barchart__label {
@@ -20,14 +20,17 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  color: var(--he-text-dim);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-secondary);
 }
 
 .he-barchart__track {
   min-width: 0;
-  background: var(--he-chart-track);
-  border-radius: var(--he-radius-full);
+  background: var(--he-bg-subtle);
+  border-radius: var(--he-corner-full);
   overflow: hidden;
 }
 
@@ -36,23 +39,29 @@
   min-width: 2px;
   background: currentColor;
   border-radius: inherit;
-  transition: width var(--he-transition-base);
+  transition: width var(--he-motion-base);
 }
 
 .he-barchart__value {
   justify-self: end;
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   font-variant-numeric: tabular-nums;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   white-space: nowrap;
 }
 
 .he-barchart__hint {
   grid-column: 2 / -1;
   font-family: var(--he-font-sans);
-  font-size: var(--he-caption);
-  color: var(--he-text-faint);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
 }
 
 /* bar thickness — pill track for thin bars, softer radius for chunky ones */
@@ -66,34 +75,33 @@
 
 .he-barchart--lg .he-barchart__track {
   height: 16px;
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
 }
 
 /* tones — currentColor paints the fill */
 .he-barchart__row--accent {
-  color: var(--he-chart-accent);
+  color: var(--he-accent-default);
 }
 
 .he-barchart__row--ok {
-  color: var(--he-chart-pos);
+  color: var(--he-status-success-solid);
 }
 
 .he-barchart__row--warn {
-  color: var(--he-warn);
+  color: var(--he-status-warning-text);
 }
 
 .he-barchart__row--error {
-  color: var(--he-chart-neg);
+  color: var(--he-status-danger-solid);
 }
 
 .he-barchart__row--neutral {
-  color: var(--he-neutral);
+  color: var(--he-status-idle-text);
 }
 
-/* Hover lifts the fill (never darkens) with a faint shadow so a hovered row
- * reads as raised rather than dimmed. */
+/* Hover lifts the fill (never darkens); no shadow, nothing else casts one. */
 .he-barchart__row:hover .he-barchart__fill {
-  box-shadow: var(--he-shadow-card);
+  filter: brightness(1.08);
 }
 
 @media (prefers-reduced-motion: reduce) {

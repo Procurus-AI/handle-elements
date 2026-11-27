@@ -4,8 +4,9 @@
   max-width: 100%;
   /* Contain the centered edge x-labels so they never spill past the card. */
   overflow: hidden;
-  color: var(--he-chart-ink);
-  font-family: var(--he-font-mono);
+  color: var(--he-text-primary);
+  font-family: var(--he-font-sans);
+  font-variant-numeric: tabular-nums;
 }
 
 .he-histogram__plot {
@@ -26,9 +27,11 @@
 }
 
 .he-histogram__value {
-  font-size: var(--he-caption);
+  font-size: var(--he-type-caption-size);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   line-height: 1;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
   margin-bottom: 4px;
   white-space: nowrap;
 }
@@ -38,11 +41,11 @@
   min-height: 1px;
   background: currentColor;
   border-radius: 1px 1px 0 0;
-  transition: height var(--he-transition-base);
+  transition: height var(--he-motion-base);
 }
 
 .he-histogram__bar--peak {
-  color: var(--he-chart-accent);
+  color: var(--he-accent-default);
 }
 
 .he-histogram__xaxis {
@@ -56,32 +59,34 @@
   flex: 1 1 0;
   min-width: 0;
   text-align: center;
-  font-size: var(--he-caption);
+  font-size: var(--he-type-caption-size);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   line-height: 1.2;
-  color: var(--he-chart-axis);
+  color: var(--he-text-tertiary);
   white-space: nowrap;
   overflow: visible;
 }
 
 /* tones — currentColor drives the bar fill */
 .he-histogram--accent {
-  color: var(--he-chart-accent);
+  color: var(--he-accent-default);
 }
 
 .he-histogram--ok {
-  color: var(--he-chart-pos);
+  color: var(--he-status-success-solid);
 }
 
 .he-histogram--warn {
-  color: var(--he-warn);
+  color: var(--he-status-warning-text);
 }
 
 .he-histogram--error {
-  color: var(--he-chart-neg);
+  color: var(--he-status-danger-solid);
 }
 
 .he-histogram--neutral {
-  color: var(--he-neutral);
+  color: var(--he-status-idle-text);
 }
 
 @media (prefers-reduced-motion: reduce) {

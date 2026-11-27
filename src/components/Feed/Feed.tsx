@@ -5,7 +5,7 @@ import { DateText, RelativeTime } from '../DateText/DateText';
 import { DEFAULT_LOCALE, formatDateTime, isValidDate, toDate, type DateInput } from '../../format/time';
 
 /** Opt-in, for state the row's own words do not already carry. There is no
- *  `accent`: Borealis at 6px needs a rescue ring to be visible on --he-surface,
+ *  `accent`: Borealis at 6px needs a rescue ring to be visible on --he-bg-surface,
  *  and no history event is "Borealis". */
 export type FeedItemTone = 'default' | 'ok' | 'warn' | 'error' | 'neutral';
 

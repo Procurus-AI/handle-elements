@@ -65,12 +65,12 @@ export interface ColumnChartProps extends Omit<HTMLAttributes<HTMLDivElement>, '
 }
 
 const toneVar: Record<Exclude<ColumnTone, 'series'>, string> = {
-  ink: 'var(--he-chart-ink)',
-  accent: 'var(--he-chart-accent)',
-  ok: 'var(--he-chart-pos)',
-  warn: 'var(--he-warn)',
-  error: 'var(--he-chart-neg)',
-  neutral: 'var(--he-neutral)',
+  ink: 'var(--he-text-primary)',
+  accent: 'var(--he-accent-default)',
+  ok: 'var(--he-status-success-solid)',
+  warn: 'var(--he-status-warning-text)',
+  error: 'var(--he-status-danger-solid)',
+  neutral: 'var(--he-status-idle-text)',
 };
 
 function colorFor(meta: ColumnSeries | undefined, index: number): string {

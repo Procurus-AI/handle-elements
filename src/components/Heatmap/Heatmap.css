@@ -6,7 +6,7 @@
    * pushing past the card; inline-flex alone sizes to content and overflows. */
   max-width: 100%;
   font-family: var(--he-font-sans);
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 /* Horizontal overflow keeps wide grids scrollable without breaking layout. */
@@ -31,10 +31,13 @@
 }
 
 .he-heatmap__col-label {
-  font-family: var(--he-font-mono);
-  font-size: 10px;
+  font-family: var(--he-font-sans);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--he-type-caption-size);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   line-height: 1;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -58,10 +61,13 @@
   flex: 0 0 auto;
   min-width: 2.5em;
   padding-right: 4px;
-  font-family: var(--he-font-mono);
-  font-size: 10px;
+  font-family: var(--he-font-sans);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--he-type-caption-size);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
   line-height: 1;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   text-align: right;
   white-space: nowrap;
 }
@@ -81,21 +87,21 @@
 }
 
 .he-heatmap__cell--sm {
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
 }
 
 .he-heatmap__cell--md {
-  border-radius: var(--he-radius-sm);
+  border-radius: var(--he-corner-lg);
 }
 
 .he-heatmap__cell--full {
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
 }
 
 /* Blank cells: no fill, faint outline distinguishes them from a zero value. */
 .he-heatmap__cell--empty {
   background: transparent;
-  border-color: var(--he-chart-grid);
+  border-color: var(--he-border-subtle);
 }
 
 .he-heatmap__cell--hidden {
@@ -111,12 +117,12 @@ button.he-heatmap__cell {
 }
 
 button.he-heatmap__cell:hover {
-  outline: 2px solid var(--he-chart-axis);
+  outline: 2px solid var(--he-text-tertiary);
   outline-offset: 1px;
 }
 
 button.he-heatmap__cell:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 1px;
 }
 
@@ -125,9 +131,13 @@ button.he-heatmap__cell:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  color: var(--he-text-faint);
+  font-family: var(--he-font-sans);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
 }
 
 .he-heatmap__legend-scale {
@@ -139,17 +149,17 @@ button.he-heatmap__cell:focus-visible {
   width: 12px;
   height: 12px;
   background: var(--he-heat-0);
-  border: 1px solid var(--he-chart-grid);
+  border: 1px solid var(--he-border-subtle);
 }
 
 .he-heatmap__legend-cell--sm {
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
 }
 
 .he-heatmap__legend-cell--md {
-  border-radius: var(--he-radius-sm);
+  border-radius: var(--he-corner-lg);
 }
 
 .he-heatmap__legend-cell--full {
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
 }

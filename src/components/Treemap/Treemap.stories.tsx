@@ -28,7 +28,7 @@ const mrr: TreemapDatum[] = [
 const usd = (v: number) => `$${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k`;
 
 const meta = {
-  title: 'Charts/Treemap',
+  title: 'Organisms/Treemap',
   component: Treemap,
   args: { data: mrr, height: 340, colorMode: 'series', gap: 2, formatValue: usd },
   argTypes: {
@@ -264,7 +264,7 @@ export const CustomTiles: Story = {
               >
                 {acc.label}
               </span>
-              <span style={{ fontFamily: 'var(--he-font-mono)', fontSize: 11, opacity: 0.82 }}>
+              <span style={{ fontFamily: 'var(--he-font-sans)', fontVariantNumeric: 'tabular-nums', fontSize: 11, opacity: 0.82 }}>
                 {asUsd(acc.value)}
               </span>
               {/* Bottom band: compact motion chip on the left, owners pinned right. */}
@@ -278,7 +278,7 @@ export const CustomTiles: Story = {
                   gap: 8,
                 }}
               >
-                <Chip variant="dot" size="sm" dotColor="var(--he-accent)">
+                <Chip variant="dot" size="sm" dotColor="var(--he-accent-default)">
                   {acc.motion}
                 </Chip>
                 <AvatarStack size="xs" items={acc.owners.map((name) => ({ id: name, name }))} />
@@ -344,8 +344,8 @@ export const ColorLens: Story = {
               onClick={() => setLens(key)}
               style={{
                 cursor: 'pointer',
-                background: lens === key ? 'var(--he-action)' : undefined,
-                color: lens === key ? 'var(--he-on-action)' : undefined,
+                background: lens === key ? 'var(--he-accent-default)' : undefined,
+                color: lens === key ? 'var(--he-accent-on-accent)' : undefined,
               }}
             >
               {LENS_LABEL[key]}
@@ -360,13 +360,13 @@ export const ColorLens: Story = {
           colorBy={lens === 'usage' ? () => ({ tone: 'heat' }) : undefined}
         />
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <Chip variant="dot" plain dotColor="var(--he-chart-pos)">
+          <Chip variant="dot" plain dotColor="var(--he-status-success-solid)">
             Healthy
           </Chip>
-          <Chip variant="dot" plain dotColor="var(--he-chart-neg)">
+          <Chip variant="dot" plain dotColor="var(--he-status-danger-solid)">
             At risk
           </Chip>
-          <Chip variant="dot" plain dotColor="var(--he-chart-ink)">
+          <Chip variant="dot" plain dotColor="var(--he-text-primary)">
             In deployment
           </Chip>
           <Chip variant="dot" plain dotPattern="hatch">

@@ -30,7 +30,7 @@ const brokers: TrendGridItem[] = [
 ];
 
 const meta = {
-  title: 'Charts/TrendGrid',
+  title: 'Organisms/Trend Grid',
   component: TrendGrid,
   parameters: { layout: 'padded' },
   args: {

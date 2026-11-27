@@ -119,15 +119,15 @@ function tileColor(
       // Light green ramp on both themes → dark text reads on it.
       return { fill: heatColor(heat), textClass: 'he-treemap__tile--heat-text' };
     case 'pos':
-      return { fill: 'var(--he-chart-pos)', textClass: 'he-treemap__tile--light-text' };
+      return { fill: 'var(--he-status-success-solid)', textClass: 'he-treemap__tile--light-text' };
     case 'neg':
-      return { fill: 'var(--he-chart-neg)', textClass: 'he-treemap__tile--light-text' };
+      return { fill: 'var(--he-status-danger-solid)', textClass: 'he-treemap__tile--light-text' };
     case 'ink':
-      // Ink follows --he-text, which inverts by theme; pair with inverse text.
-      return { fill: 'var(--he-chart-ink)', textClass: 'he-treemap__tile--ink-text' };
+      // Ink follows --he-text-primary, which inverts by theme; pair with inverse text.
+      return { fill: 'var(--he-text-primary)', textClass: 'he-treemap__tile--ink-text' };
     case 'accent':
-      // Borealis green → midnight text (--he-on-accent).
-      return { fill: 'var(--he-chart-accent)', textClass: 'he-treemap__tile--on-accent-text' };
+      // Borealis green → midnight text (--he-accent-on-accent).
+      return { fill: 'var(--he-accent-default)', textClass: 'he-treemap__tile--on-accent-text' };
     case 'series':
     default:
       return {

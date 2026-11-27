@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { Button } from '../Button/Button';
-import { Tabs } from '../Tabs/Tabs';
-import { Card } from './Card';
+import { Button } from '../components/Button/Button';
+import { Tabs } from '../components/Tabs/Tabs';
+import { Card } from '../components/Card/Card';
 
 /** Composite example — the connector-directory pattern (quiet underline nav,
  * pill filters, flat hairline cards with an icon tile and a ghost + action). */
 const meta = {
-  title: 'Examples/Directory',
+  title: 'Pages/Examples/Directory',
   component: Card,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Card>;
@@ -34,11 +34,12 @@ function Tile({ name }: { name: string }) {
         justifyContent: 'center',
         width: 34,
         height: 34,
-        borderRadius: 'var(--he-radius-sm)',
-        background: 'var(--he-accent)',
-        color: 'var(--he-on-accent)',
-        fontFamily: 'var(--he-font-display)',
-        fontSize: 17,
+        borderRadius: 'var(--he-corner-lg)',
+        background: 'var(--he-accent-default)',
+        color: 'var(--he-accent-on-accent)',
+        fontFamily: 'var(--he-font-sans)',
+        fontSize: 'var(--he-type-heading-md-size)',
+        fontWeight: 'var(--he-type-heading-md-weight)',
         flexShrink: 0,
       }}
     >
@@ -64,10 +65,10 @@ export const ConnectorGrid: Story = {
           onChange={setNav}
         />
         <div style={{ padding: '28px 0 18px' }}>
-          <h2 style={{ margin: 0, fontFamily: 'var(--he-font-display)', fontWeight: 300, fontSize: 28 }}>
+          <h2 style={{ margin: 0, fontFamily: 'var(--he-font-sans)', fontWeight: 'var(--he-type-heading-lg-weight)', fontSize: 'var(--he-type-heading-lg-size)', letterSpacing: 'var(--he-type-heading-lg-tracking)' }}>
             Connectors
           </h2>
-          <p style={{ margin: '6px 0 0', color: 'var(--he-text-dim)', fontSize: 'var(--he-body-sm)' }}>
+          <p style={{ margin: '6px 0 0', color: 'var(--he-text-secondary)', fontSize: 'var(--he-type-body-sm-size)' }}>
             Connect services so Handle can access and act on your data
           </p>
         </div>
@@ -100,11 +101,11 @@ export const ConnectorGrid: Story = {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <Tile name={item.name} />
                 <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ fontSize: 'var(--he-body-sm)', fontWeight: 500 }}>{item.name}</div>
+                  <div style={{ fontSize: 'var(--he-type-body-sm-size)', fontWeight: 500 }}>{item.name}</div>
                   <div
                     style={{
-                      fontSize: 'var(--he-caption)',
-                      color: 'var(--he-text-dim)',
+                      fontSize: 'var(--he-type-caption-size)',
+                      color: 'var(--he-text-secondary)',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',

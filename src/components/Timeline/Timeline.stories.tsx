@@ -68,7 +68,7 @@ const buckets = [
 ];
 
 const meta = {
-  title: 'Charts/Timeline',
+  title: 'Organisms/Timeline',
   component: Timeline,
   args: {
     events: renewals,
@@ -125,23 +125,6 @@ const cramped: TimelineEvent[] = Array.from({ length: 12 }, (_, i) => ({
   value: 100_000 + i * 40_000,
 }));
 
-/** Greedy first-fit packing: deterministic lanes, every marker centered on its line. */
-export const Collisions: Story = {
-  render: () => (
-    <Panel title="Collisions" eyebrow="cluster=lane" lede="Twelve renewals inside three days.">
-      <Timeline
-        events={cramped}
-        start={at(0)}
-        end={at(6)}
-        cluster="lane"
-        sizeBy="value"
-        height={110}
-        formatValue={mxn}
-      />
-    </Panel>
-  ),
-};
-
 // Deterministic pseudo-random spread — stories must render identically on the
 // server, on hydration and in a snapshot, so never Math.random here.
 const lcg = (seed: number) => () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
@@ -151,41 +134,9 @@ const dense: TimelineEvent[] = Array.from({ length: 400 }, (_, i) => {
   return { id: `d${i}`, date: at(Math.round(skew * 365)), label: `Policy ${i + 1}` };
 });
 
-/** Past `ridgeThreshold`, marks would be a blob — the variant degrades to density. */
-export const Ridge: Story = {
-  render: () => (
-    <Panel title="Twelve months" eyebrow="variant=auto" lede="400 events — auto-flips to the ridge.">
-      <Timeline events={dense} start={at(0)} end={at(365)} height={110} />
-    </Panel>
-  ),
-};
-
 const tones: TimelineEvent[] = (['default', 'accent', 'ok', 'warn', 'error', 'neutral'] as const).map(
   (tone, i) => ({ id: tone, date: at(i * 15), label: tone, tone }),
 );
-
-/** Accent is a fill, so it gets the authored --he-accent-line ring instead of a halo. */
-export const Tones: Story = {
-  render: () => (
-    <Panel title="Tones" eyebrow="Status" lede="Tone is a class; the class sets --he-timeline-mark.">
-      <Timeline events={tones} start={at(0)} end={at(90)} height={64} />
-    </Panel>
-  ),
-};
-
-/** A size encoding without a legend is unreadable — hence the default. */
-export const SizeLegend: Story = {
-  render: (args) => (
-    <Stack gap={5}>
-      <Panel title="With legend" eyebrow="showLegend" lede="Default whenever sizeBy='value'.">
-        <Timeline {...args} showLegend />
-      </Panel>
-      <Panel title="Without legend" eyebrow="showLegend={false}" lede="Area now means nothing.">
-        <Timeline {...args} showLegend={false} />
-      </Panel>
-    </Stack>
-  ),
-};
 
 /** Marks become buttons in date order: Arrow keys walk them, Home/End jump to the ends. */
 export const Interactive: Story = {
@@ -204,21 +155,46 @@ export const Interactive: Story = {
   },
 };
 
-/** Empty state: the axis still resolves, so the panel does not collapse. */
-export const Empty: Story = {
-  render: () => (
-    <Panel title="No renewals" eyebrow="Next 90 days" lede="Domain comes from the props, not the data.">
-      <Timeline events={[]} start={at(0)} end={at(90)} bands={buckets} height={110} />
-    </Panel>
-  ),
-};
-
-/** Same composition on Midnight — the halo follows --he-surface in both themes. */
+/** Same composition on Midnight — the halo follows --he-bg-surface in both themes. */
 export const Dark: Story = {
   globals: { theme: 'dark' },
   render: (args) => (
     <Panel title="Renewals" eyebrow="Next 90 days" lede="Dark theme via html[data-theme='dark'].">
       <Timeline {...args} eventTooltip={(mark) => `${mark.events.length} policies · ${mxn(mark.total)}`} />
     </Panel>
+  ),
+};
+
+/** Collisions, density ridge, tones, size legend and empty state in one grid. */
+export const States: Story = {
+  render: (args) => (
+    <Stack gap={5}>
+      <Panel title="Collisions" eyebrow="cluster=lane" lede="Twelve renewals inside three days.">
+        <Timeline
+          events={cramped}
+          start={at(0)}
+          end={at(6)}
+          cluster="lane"
+          sizeBy="value"
+          height={110}
+          formatValue={mxn}
+        />
+      </Panel>
+      <Panel title="Twelve months" eyebrow="variant=auto" lede="400 events: past the ridge threshold it degrades to density.">
+        <Timeline events={dense} start={at(0)} end={at(365)} height={110} />
+      </Panel>
+      <Panel title="Tones" eyebrow="Status" lede="Tone is a class; the class sets --he-timeline-mark.">
+        <Timeline events={tones} start={at(0)} end={at(90)} height={64} />
+      </Panel>
+      <Panel title="With legend" eyebrow="showLegend" lede="Default whenever sizeBy='value'.">
+        <Timeline {...args} showLegend />
+      </Panel>
+      <Panel title="Without legend" eyebrow="showLegend={false}" lede="Area now means nothing.">
+        <Timeline {...args} showLegend={false} />
+      </Panel>
+      <Panel title="No renewals" eyebrow="Next 90 days" lede="Domain comes from the props, not the data.">
+        <Timeline events={[]} start={at(0)} end={at(90)} bands={buckets} height={110} />
+      </Panel>
+    </Stack>
   ),
 };

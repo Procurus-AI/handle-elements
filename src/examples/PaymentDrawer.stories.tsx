@@ -122,7 +122,7 @@ Monto pendiente: $6,090.79
 Quedamos atentos.`;
 
 const meta = {
-  title: 'Examples/Payment Drawer',
+  title: 'Pages/Examples/Payment Drawer',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 

@@ -4,42 +4,41 @@
   margin: 0;
   padding: 0;
   list-style: none;
-  color: var(--he-text);
+  color: var(--he-text-primary);
   container-type: inline-size;
 }
 
 .he-inbox-list--surface {
   overflow: hidden;
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-lg);
-  box-shadow: var(--he-shadow-card);
+  background: var(--he-bg-surface);
+  border: 1px solid var(--he-border-default);
+  border-radius: var(--he-corner-xl);
 }
 
 .he-inbox-item {
   display: flex;
   align-items: center;
-  gap: var(--he-space-4);
+  gap: var(--he-spacing-4);
   min-width: 0;
 }
 
 .he-inbox-list--surface .he-inbox-item + .he-inbox-item {
-  border-top: 1px solid var(--he-border);
+  border-top: 1px solid var(--he-border-default);
 }
 
 .he-inbox-list--plain .he-inbox-item + .he-inbox-item {
-  margin-top: var(--he-space-1);
+  margin-top: var(--he-spacing-1);
 }
 
 .he-inbox-item__body {
   display: grid;
   grid-template-columns: minmax(176px, 0.8fr) minmax(240px, 1.5fr) minmax(132px, 0.55fr);
   align-items: center;
-  gap: var(--he-space-5);
+  gap: var(--he-spacing-6);
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
-  padding: var(--he-space-5);
+  padding: var(--he-spacing-6);
   border: 0;
   background: transparent;
   color: inherit;
@@ -49,15 +48,15 @@
 
 button.he-inbox-item__body {
   cursor: pointer;
-  transition: background var(--he-transition-fast);
+  transition: background var(--he-motion-fast);
 }
 
 button.he-inbox-item__body:hover {
-  background: var(--he-surface-2);
+  background: var(--he-bg-subtle);
 }
 
 button.he-inbox-item__body:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: -2px;
 }
 
@@ -71,7 +70,7 @@ button.he-inbox-item__body:focus-visible {
 
 .he-inbox-item__identity {
   align-items: center;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
 }
 
 .he-inbox-item__leading {
@@ -87,10 +86,11 @@ button.he-inbox-item__body:focus-visible {
 
 .he-inbox-item__subject {
   overflow: hidden;
-  color: var(--he-text);
-  font-size: var(--he-body);
-  font-weight: 500;
-  line-height: 1.35;
+  color: var(--he-text-primary);
+  font-size: var(--he-type-body-md-emphasis-size);
+  line-height: var(--he-type-body-md-emphasis-line);
+  font-weight: var(--he-type-body-md-emphasis-weight);
+  letter-spacing: var(--he-type-body-md-emphasis-tracking);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -98,36 +98,41 @@ button.he-inbox-item__body:focus-visible {
 .he-inbox-item__title {
   flex: 1 1 auto;
   min-width: 0;
-  color: var(--he-text);
-  font-size: var(--he-body);
-  font-weight: 500;
-  line-height: 1.35;
+  color: var(--he-text-primary);
+  font-size: var(--he-type-body-md-emphasis-size);
+  line-height: var(--he-type-body-md-emphasis-line);
+  font-weight: var(--he-type-body-md-emphasis-weight);
+  letter-spacing: var(--he-type-body-md-emphasis-tracking);
   overflow-wrap: anywhere;
 }
 
 .he-inbox-item__subject-meta,
 .he-inbox-item__description {
   overflow: hidden;
-  margin-top: var(--he-space-1);
-  color: var(--he-text-dim);
-  font-size: var(--he-body-sm);
-  line-height: 1.4;
+  margin-top: var(--he-spacing-1);
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .he-inbox-item__context-copy {
-  margin-top: var(--he-space-1);
-  color: var(--he-text-dim);
-  font-size: var(--he-body-sm);
-  line-height: 1.4;
+  margin-top: var(--he-spacing-1);
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
   overflow-wrap: anywhere;
 }
 
 .he-inbox-item__title-row {
   display: flex;
   align-items: flex-start;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   min-width: 0;
 }
 
@@ -135,26 +140,26 @@ button.he-inbox-item__body:focus-visible {
   width: 7px;
   height: 7px;
   flex: 0 0 auto;
-  border-radius: var(--he-radius-full);
-  background: var(--he-neutral);
+  border-radius: var(--he-corner-full);
+  background: var(--he-status-idle-text);
 }
 
 .he-inbox-item__dot--ok {
-  background: var(--he-ok);
+  background: var(--he-status-success-text);
 }
 
 .he-inbox-item__dot--warn {
-  background: var(--he-warn);
+  background: var(--he-status-warning-text);
 }
 
 .he-inbox-item__dot--error {
-  background: var(--he-error);
+  background: var(--he-status-danger-text);
 }
 
 .he-inbox-item__status {
   display: inline-flex;
   flex: 0 0 auto;
-  margin-left: var(--he-space-1);
+  margin-left: var(--he-spacing-1);
 }
 
 .he-inbox-item__sr-only {
@@ -173,40 +178,40 @@ button.he-inbox-item__body:focus-visible {
   display: block;
   width: 100%;
   height: 4px;
-  margin-top: var(--he-space-2);
+  margin-top: var(--he-spacing-2);
   overflow: hidden;
-  border-radius: var(--he-radius-full);
-  background: var(--he-surface-2);
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-subtle);
 }
 
 .he-inbox-item__progress-fill {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: var(--he-neutral);
+  background: var(--he-status-idle-text);
 }
 
 .he-inbox-item__progress-fill--ok {
-  background: var(--he-ok);
+  background: var(--he-status-success-text);
 }
 
 .he-inbox-item__progress-fill--warn {
-  background: var(--he-warn);
+  background: var(--he-status-warning-text);
 }
 
 .he-inbox-item__progress-fill--error {
-  background: var(--he-error);
+  background: var(--he-status-danger-text);
 }
 
 .he-inbox-item__action {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  padding-right: var(--he-space-5);
+  padding-right: var(--he-spacing-6);
 }
 
 .he-inbox-list--plain .he-inbox-item__body {
-  padding-block: var(--he-space-3);
+  padding-block: var(--he-spacing-3);
 }
 
 /* Compact keeps the same information architecture and type sizes while
@@ -218,30 +223,30 @@ button.he-inbox-item__body:focus-visible {
 
 .he-inbox-list--compact .he-inbox-item__body {
   grid-template-columns: minmax(160px, 0.8fr) minmax(220px, 1.5fr) minmax(120px, 0.55fr);
-  gap: var(--he-space-4);
-  padding: var(--he-space-4);
+  gap: var(--he-spacing-4);
+  padding: var(--he-spacing-4);
 }
 
 .he-inbox-list--compact .he-inbox-item__identity {
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
 }
 
 .he-inbox-list--compact .he-inbox-item__progress {
-  margin-top: var(--he-space-1);
+  margin-top: var(--he-spacing-1);
 }
 
 .he-inbox-list--compact .he-inbox-item__action {
-  padding-right: var(--he-space-4);
+  padding-right: var(--he-spacing-4);
 }
 
 .he-inbox-list--compact.he-inbox-list--plain .he-inbox-item__body {
-  padding-block: var(--he-space-2);
+  padding-block: var(--he-spacing-2);
 }
 
 @container (max-width: 56rem) {
   .he-inbox-item__body {
     grid-template-columns: minmax(160px, 0.8fr) minmax(220px, 1.3fr);
-    gap: var(--he-space-4);
+    gap: var(--he-spacing-4);
   }
 
   .he-inbox-item__context {
@@ -250,7 +255,7 @@ button.he-inbox-item__body:focus-visible {
 
   .he-inbox-list--compact .he-inbox-item__body {
     grid-template-columns: minmax(144px, 0.8fr) minmax(200px, 1.3fr);
-    gap: var(--he-space-3);
+    gap: var(--he-spacing-3);
   }
 }
 
@@ -259,13 +264,13 @@ button.he-inbox-item__body:focus-visible {
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 0;
-    padding-bottom: var(--he-space-4);
+    padding-bottom: var(--he-spacing-4);
   }
 
   .he-inbox-item__body {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--he-space-3);
-    padding-bottom: var(--he-space-3);
+    gap: var(--he-spacing-3);
+    padding-bottom: var(--he-spacing-3);
   }
 
   .he-inbox-item__context {
@@ -273,22 +278,22 @@ button.he-inbox-item__body:focus-visible {
   }
 
   .he-inbox-item__action {
-    margin-left: var(--he-space-5);
+    margin-left: var(--he-spacing-6);
   }
 
   .he-inbox-list--compact .he-inbox-item {
-    padding-bottom: var(--he-space-3);
+    padding-bottom: var(--he-spacing-3);
   }
 
   .he-inbox-list--compact .he-inbox-item__body {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--he-space-2);
-    padding: var(--he-space-3) var(--he-space-4) var(--he-space-2);
+    gap: var(--he-spacing-2);
+    padding: var(--he-spacing-3) var(--he-spacing-4) var(--he-spacing-2);
   }
 
   .he-inbox-list--compact .he-inbox-item__action {
-    margin-left: var(--he-space-4);
-    padding-right: var(--he-space-4);
+    margin-left: var(--he-spacing-4);
+    padding-right: var(--he-spacing-4);
   }
 }
 

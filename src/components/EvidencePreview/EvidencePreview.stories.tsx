@@ -7,7 +7,7 @@ import { Text } from '../Text/Text';
 import { EvidencePreview } from './EvidencePreview';
 
 const meta = {
-  title: 'Elements/Evidence Preview',
+  title: 'Organisms/Evidence Preview',
   component: EvidencePreview,
   args: {
     title: 'DOC-20260221-WA0027.pdf',

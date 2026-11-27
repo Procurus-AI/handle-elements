@@ -4,7 +4,7 @@ import { Button } from '../Button/Button';
 import { ReviewField, ReviewFieldList } from './ReviewField';
 
 const meta = {
-  title: 'Elements/Review Field',
+  title: 'Organisms/Review Field',
   component: ReviewField,
   argTypes: {
     tone: { control: 'inline-radio', options: ['ok', 'warn', 'error', 'neutral'] },
@@ -111,7 +111,7 @@ function Evidence({ extracted, reference }: { extracted: string; reference: stri
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: 'var(--he-space-4)',
+        gap: 'var(--he-spacing-4)',
       }}
     >
       <EvidenceValue label="Extracted" value={extracted} />
@@ -122,14 +122,13 @@ function Evidence({ extracted, reference }: { extracted: string; reference: stri
 
 function EvidenceValue({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ display: 'grid', gap: 'var(--he-space-1)' }}>
+    <div style={{ display: 'grid', gap: 'var(--he-spacing-1)' }}>
       <span
         style={{
-          color: 'var(--he-text-faint)',
-          fontFamily: 'var(--he-font-mono)',
-          fontSize: 'var(--he-caption)',
-          letterSpacing: 'var(--he-tracking-caps)',
-          textTransform: 'uppercase',
+          color: 'var(--he-text-tertiary)',
+          fontFamily: 'var(--he-font-sans)',
+          fontSize: 'var(--he-type-caption-size)',
+          lineHeight: 'var(--he-type-caption-line)',
         }}
       >
         {label}

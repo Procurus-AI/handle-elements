@@ -21,7 +21,7 @@ Best regards,
 Acme Insurance`;
 
 const meta = {
-  title: 'Elements/Email Composer',
+  title: 'Organisms/Email Composer',
   component: EmailComposer,
   parameters: { layout: 'centered' },
   args: {
@@ -44,7 +44,7 @@ export const Draft: Story = {
   render: (args) => {
     const [channel, setChannel] = useState('email');
     return (
-      <div style={{ width: 700, maxWidth: 'calc(100vw - var(--he-space-6))' }}>
+      <div style={{ width: 700, maxWidth: 'calc(100vw - var(--he-spacing-8))' }}>
         <EmailComposer
           {...args}
           activeChannel={channel}
@@ -64,7 +64,7 @@ export const Draft: Story = {
 /** The composer collapses its window controls without losing the channel picker. */
 export const Compact: Story = {
   render: (args) => (
-    <div style={{ width: 390, maxWidth: 'calc(100vw - var(--he-space-6))' }}>
+    <div style={{ width: 390, maxWidth: 'calc(100vw - var(--he-spacing-8))' }}>
       <EmailComposer
         {...args}
         actions={<Button style={{ width: '100%' }}>Use draft</Button>}
