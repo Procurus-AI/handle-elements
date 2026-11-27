@@ -1,0 +1,89 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Introduction/Benchmarks" />
+
+# Benchmarks
+
+Handle Elements borrows practices from public design systems instead of inventing them. This page lists the systems we use as references, the specific points we claim from each, and the place in this repo where each point is implemented. A point that is not built yet is marked **planned**.
+
+Research date: 2026-11-27. Each URL below was opened when the research was done.
+
+<DocTable
+  head={['Reference', 'Role', 'What we take', 'What we do not take']}
+  rows={[
+    [<a href="https://atomicdesign.bradfrost.com/chapter-2/">Atomic Design</a>, 'Benchmark', 'Five levels for organising components.', 'Strict rules. Frost calls it a mental model.'],
+    [<a href="https://primer.style/product/primitives/">GitHub Primer</a>, 'Benchmark', 'CSS custom properties, light and dark by attribute, table and empty-state rules.', 'Nine themes and the JS theme object.'],
+    [<a href="https://carbondesignsystem.com/components/data-table/usage/">IBM Carbon</a>, 'Benchmark', 'Row heights, status indicator rules, empty states, layering.', 'Sass theming and four whole themes.'],
+    [<a href="https://atlassian.design/foundations/tokens/design-tokens">Atlassian</a>, 'Benchmark', 'Token naming by meaning, status roles, contrast rules.', 'The discovery role and the full token count.'],
+    [<a href="https://design-system.service.gov.uk/components/tag/">GOV.UK</a>, 'Benchmark', 'Page structure per component, recent changes, tag rules.', 'The visual style.'],
+    [<a href="https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale">Radix Colors</a>, 'Secondary', 'Each colour slot has one job.', 'The 12 steps.'],
+    [<a href="https://shopify.dev/docs/api/app-home/polaris-web-components/feedback-and-status-indicators/badge">Polaris</a>, 'Secondary', 'Badge copy: short, past tense, same status same tone.', 'The rest of the system.'],
+    [<a href="https://linear.app/now/how-we-redesigned-the-linear-ui">Linear</a>, 'Visual reference', 'A small number of inputs for a theme.', 'Nothing to copy as code. Linear uses Inter for titles; Handle uses a serif for page titles on purpose.'],
+    [<a href="https://vercel.com/geist/colors">Geist</a>, 'Secondary', 'A fixed job for each step of a scale.', 'The 10-step scales as such.'],
+  ]}
+/>
+
+## Atomic Design
+
+- **Five levels: atoms, molecules, organisms, templates, pages.** [Atomic Design, chapter 2](https://atomicdesign.bradfrost.com/chapter-2/).
+  Implemented by: the Storybook sidebar, the level list in `src/levels.json` and the rule check `scripts/check-levels.mjs` (`npm run check:levels`). Planned. The rules are on [Atomic Design](?path=/docs/introduction-atomic-design--docs).
+- **The levels are a mental model, not dogma.** Same chapter.
+  Implemented by: the molecule and organism rule on the Atomic Design page, which says to pick one and note it when people disagree. Written.
+
+## GitHub Primer
+
+- **Tokens come in layers: base and functional.** [Primitives](https://primer.style/product/primitives/).
+  Implemented by: `src/styles/tokens.css`. Section 1 is the primitives and section 2 is the semantic layer. Built.
+- **Tokens are CSS variables.** Same page.
+  Implemented by: every token is a `--he-*` custom property in `tokens.css`. Built.
+- **Theme is switched by an attribute on a high-level element.** Same page. Primer uses `data-color-mode`.
+  Implemented by: the `data-theme` attribute on `<html>`, with the values `light` and `dark`, handled in `tokens.css`. We use our own attribute name and have no `auto` value. Built.
+- **Table density has named values and a normal default.** [Data table](https://primer.style/product/components/data-table/).
+  Implemented by: `--he-row-height` (40px) and `--he-row-header-height` (36px), documented on the Spacing page. The DataTable restyle that uses them is planned. A condensed size is not in 1.0.0.
+- **Table accessibility bar: text at 4.5:1, plus rules for labels, sort buttons and pagination.** [Data table accessibility](https://primer.style/product/components/data-table/accessibility/).
+  Implemented by: the AA adjustments in `scripts/tokens/build-tokens.mjs` (built) and `npm run check:a11y`, which runs axe-core on every story in both themes (planned).
+- **Empty states: title first, one primary action, specific error copy.** [Empty states](https://primer.style/product/ui-patterns/empty-states/).
+  Implemented by: the empty-state rules on the [Content](?path=/docs/foundations-content--docs) page (written) and the EmptyState component (restyle planned).
+
+## IBM Carbon
+
+- **Data table row heights, with 40px as the default.** [Data table usage](https://carbondesignsystem.com/components/data-table/usage/).
+  Implemented by: `--he-row-height` and the DataTable component. The token is built. The DataTable restyle is planned.
+- **Pagination sits at the bottom of the table.** Same page.
+  Implemented by: the Pagination component with a plain range label. Planned.
+- **Status indicators use at least two of colour, shape and symbol.** [Status indicator pattern](https://carbondesignsystem.com/patterns/status-indicator-pattern/).
+  Implemented by: Badge always pairs colour with a word and a dot. The rule is written on the Color page. The Badge restyle is planned.
+- **Empty states have a short title, one action and no dead ends. They replace the table.** [Empty states pattern](https://carbondesignsystem.com/patterns/empty-states-pattern/).
+  Implemented by: the Content page and EmptyState. Same status as above.
+- **Role tokens keep their names across themes and only the values change.** [Themes overview](https://carbondesignsystem.com/elements/themes/overview/).
+  Implemented by: the dark block in `tokens.css` redefines the same `--he-*` names. Built.
+- **Layering with a small number of levels.** [Color usage](https://carbondesignsystem.com/elements/color/usage/).
+  Implemented by: three elevation tokens, `--he-elevation-panel`, `-popover` and `-modal`. See [Elevation](?path=/docs/foundations-elevation--docs). Built.
+
+## Atlassian Design System
+
+- **A token name has a foundation, a property and a modifier.** [Design tokens](https://atlassian.design/foundations/tokens/design-tokens).
+  Implemented by: names such as `--he-status-success-text` and `--he-text-primary` in `tokens.css`. Built.
+- **Choose tokens by meaning, not by looks.** Same page.
+  Implemented by: the rule "Bind to semantic tokens only" on the Color page. `npm run check:tokens` rejects literal colours in component CSS. Built.
+- **Themes change the values behind the same names.** Same page.
+  Implemented by: light values in `:root`, dark values under `[data-theme='dark']` in `tokens.css`. Built.
+- **Do not use an accent colour when the colour has semantic meaning.** [Color](https://atlassian.design/foundations/color).
+  Implemented by: accent tokens are never used for status. The rule is on the Color page, and it will be repeated in the Badge docs (planned).
+- **Contrast: 4.5:1 for small text.** Same page.
+  Implemented by: the AA adjustments generated by `scripts/tokens/build-tokens.mjs` and listed in `tokens/aa-adjustments.json`. Shown on [Deviations from Figma](?path=/docs/foundations-deviations-from-figma--docs). Built.
+
+## GOV.UK Design System
+
+- **Each component page follows one structure.** [Tag](https://design-system.service.gov.uk/components/tag/).
+  Implemented by: the per-component docs template, with purpose, example, when to use, variants, props, tokens used, accessibility and recent changes. Planned.
+- **Pages list research and a recent changes table with dates and versions.** Same page.
+  Implemented by: the [Changelog](?path=/docs/introduction-changelog--docs) page and its Recent changes table. Built.
+- **Do not carry meaning in colour alone. Tags are not links or buttons. Sentence case, not uppercase.** Same page.
+  Implemented by: the Content page and the Color rule "Status always has a word, never colour alone". Badge and StatusPill restyle is planned.
+
+<Rule title="What this page does not claim">
+  Primer, Carbon, Atlassian and GOV.UK pages we could not read are not cited. We do not copy any
+  of their visual styles. The look comes from Kevin's Figma file.
+</Rule>

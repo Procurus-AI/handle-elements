@@ -1,0 +1,82 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Foundations/Content" />
+
+# Content
+
+The interface is in Spanish (es-MX). These rules cover the words, numbers and dates in it. The examples are the ones we use in stories.
+
+## Voice
+
+- Write in sentence case. Capitalise the first word and proper names only: "Ejecutar validación", not "Ejecutar Validación".
+- Use short words and short sentences. Say what happened or what to do next.
+- Talk about the customer's work (pagos, recibos, credenciales), not about the system's internals.
+- No uppercase labels. The one exception is Caption, which may be set in capitals above a number ("MONTO VENCIDO"). GOV.UK dropped uppercase tags after research, and we follow that for everything else.
+
+## Status words
+
+A status is one or two words in past tense. The same state always has the same word and the same tone. Polaris asks for the same ("Refunded"), and Carbon asks that colour never stand alone.
+
+<DocTable
+  head={['Word', 'Tone', 'Meaning']}
+  rows={[
+    ['Pagado', 'success', 'The receipt is paid.'],
+    ['Pendiente', 'warning', 'Waiting for payment or for a check.'],
+    ['Vencido', 'danger', 'The due date passed without payment.'],
+    ['Sin conectar', 'idle', 'No connection to the insurer yet.'],
+  ]}
+/>
+
+- Give the badge its own table column. Do not let it wrap. Keep the label short, because a tooltip is not an accessible way to read a long one.
+- A status is never a link or a button. GOV.UK says the same about tags.
+- When a login worked but validation has not finished, say so: "Acceso confirmado, validación en curso". Do not show a failure for something that is still running.
+
+## Numbers and currency
+
+- Money: symbol, thousands separator and two decimals. `$103,708.44`. Large totals keep the same format: `$112,601,918.79`.
+- Counts: thousands separator, no decimals. `53,938`.
+- Format with `formatCurrency` and the `Money` component, not by hand. Do not mix currencies in one total.
+- Machine identifiers (policy and receipt numbers) are shown as they are, in Plex Mono: `3101-02938188-00`.
+- A range reads in plain words: "Mostrando 111–120 de 1,000". Do not write "1 of 25 of 140" style labels. A customer found that label unclear.
+
+## Dates
+
+- Use `DateText` and `formatDateTime`. The default locale is `es-MX`.
+- Use relative time ("hace 2 horas") only for activity. Show the full date for due dates and anything money depends on.
+
+## Empty states
+
+The title states the fact. The body states the fix. Give one action, and never leave a dead end. This follows Carbon and Primer.
+
+<DocTable
+  head={['Case', 'Title', 'Body', 'Action']}
+  rows={[
+    ['First use', 'Aún no hay recibos', 'Conecta una aseguradora para que lleguen tus recibos.', 'Conectar aseguradora'],
+    ['No results', 'Ningún recibo coincide', 'Quita un filtro o cambia las fechas.', 'Quitar filtros'],
+    ['Error', 'No pudimos cargar los recibos', 'Revisa tu conexión e inténtalo de nuevo.', 'Reintentar'],
+  ]}
+/>
+
+The empty state replaces the table, headers included. Keep error text specific and not technical.
+
+## Actions
+
+- One primary action per view. It is the only element that uses the accent colour.
+- Name the action with a verb and its object: "Ejecutar validación", "Conectar aseguradora".
+- Show one way to reach a thing. The team has asked for one settings button, not two on the same screen.
+- Show the default choice with a "Recomendado" tag and ask for one decision per screen.
+
+## Problems we are trying to fix
+
+These come from what the team and customers said, counted and without names.
+
+- Two configuration buttons on one screen (raised in the 2026-11-26 standup).
+- An unclear pagination label (1 customer call).
+- A status that says failure while validation is still pending (1 customer session, 1 call about connected credentials with missing data).
+- A menu that shows only on hover and is hard to find (1 customer session). Row actions stay visible.
+
+<Rule title="Copy is part of the component">
+  Every component story uses Spanish copy that follows this page. If a story needs a word that is
+  not here, add it here first.
+</Rule>

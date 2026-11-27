@@ -1,0 +1,168 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
+import { TokenTable, Rule } from './DocParts';
+
+<Meta title="Foundations/Color" />
+
+# Color
+
+Colour has two layers. Primitives are the raw palette from Kevin's Figma file. Semantic tokens give each primitive a job (surface, text, border, accent, status). Components use semantic tokens only. They never use a primitive, and they never use a literal value.
+
+Every value on this page is read from the CSS variables in `tokens.css`, so what you see is what ships. The semantic tables show the same variable twice: once under `data-theme="light"` and once under `data-theme="dark"`.
+
+<Rule title="Bind to semantic tokens only">
+  Pick a token by what it means, not by which colour it happens to match. A component that uses
+  `--he-gray-150` instead of `--he-bg-app` breaks in dark mode. `npm run check:tokens` fails the
+  build when component CSS uses a literal colour.
+</Rule>
+
+## Primitives
+
+These are the variable-bound fills of the Figma file, generated into `tokens.css` by `scripts/tokens/build-tokens.mjs`. Do not use them in component CSS.
+
+export const scale = (name, steps) => steps.map((s) => `var(--he-${name}-${s})`);
+
+<ColorPalette>
+  <ColorItem
+    title="Gray"
+    subtitle="Light-theme neutrals. --he-gray-{step}"
+    colors={scale('gray', [0, 25, 50, 100, 150, 200, 300, 400, 500, 600, 700, 800, 900, 950])}
+  />
+  <ColorItem
+    title="Neutral (warm)"
+    subtitle="Dark-theme base and midnight. --he-neutral-{step}"
+    colors={scale('neutral', [0, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950])}
+  />
+  <ColorItem
+    title="Brand"
+    subtitle="Verde, Borealis, Midnight, Smooth black, Sandstone"
+    colors={['var(--he-verde)', 'var(--he-verde-hover)', 'var(--he-verde-press)', 'var(--he-borealis)', 'var(--he-midnight)', 'var(--he-smooth-black)', 'var(--he-sandstone)']}
+  />
+  <ColorItem
+    title="Success"
+    subtitle="--he-success-{50,100,200,500,600,700}"
+    colors={scale('success', [50, 100, 200, 500, 600, 700])}
+  />
+  <ColorItem
+    title="Warning"
+    subtitle="--he-warning-{50,100,200,500,600,700}"
+    colors={scale('warning', [50, 100, 200, 500, 600, 700])}
+  />
+  <ColorItem
+    title="Danger"
+    subtitle="--he-danger-{50,100,200,500,600,700}"
+    colors={scale('danger', [50, 100, 200, 500, 600, 700])}
+  />
+  <ColorItem
+    title="Chart base"
+    subtitle="--he-chart-base-{1..6}"
+    colors={scale('chart-base', [1, 2, 3, 4, 5, 6])}
+  />
+</ColorPalette>
+
+The accent in the live Figma variables is Borealis, a pale lime, with Midnight text on it. Verde stays in the palette as a primitive but is not the default accent.
+
+## Semantic tokens
+
+### Surfaces
+
+<TokenTable
+  tokens={[
+    { token: '--he-bg-app', kind: 'fill', use: 'Page canvas behind everything.' },
+    { token: '--he-bg-panel', kind: 'fill', use: 'Panels and side areas that sit on the canvas.' },
+    { token: '--he-bg-surface', kind: 'fill', use: 'Cards, tables, inputs.' },
+    { token: '--he-bg-subtle', kind: 'fill', use: 'Quiet fills: table headers, tracks, idle chips.' },
+    { token: '--he-bg-hover', kind: 'fill', use: 'Hover state of a row or item.' },
+    { token: '--he-bg-active', kind: 'fill', use: 'Pressed or selected state.' },
+    { token: '--he-bg-inverse', kind: 'fill', use: 'Tooltips and other reversed surfaces.' },
+  ]}
+/>
+
+### Text
+
+<TokenTable
+  tokens={[
+    { token: '--he-text-primary', kind: 'text', use: 'Body text and headings.' },
+    { token: '--he-text-secondary', kind: 'text', use: 'Supporting text and labels.' },
+    { token: '--he-text-tertiary', kind: 'text', use: 'Captions and hints. Adjusted for AA.' },
+    { token: '--he-text-disabled', kind: 'text', use: 'Disabled controls. Exempt from the 4.5:1 rule.' },
+    { token: '--he-text-inverse', kind: 'text', on: '--he-bg-inverse', use: 'Text on --he-bg-inverse.' },
+  ]}
+/>
+
+### Borders
+
+<TokenTable
+  tokens={[
+    { token: '--he-border-subtle', kind: 'border', use: 'Dividers inside a surface.' },
+    { token: '--he-border-default', kind: 'border', use: 'Panels, inputs, table lines.' },
+    { token: '--he-border-strong', kind: 'border', use: 'Controls that need more edge, such as checkboxes.' },
+    { token: '--he-border-focus', kind: 'border', use: 'Focus ring.' },
+  ]}
+/>
+
+### Accent
+
+<TokenTable
+  tokens={[
+    { token: '--he-accent-default', kind: 'fill', use: 'The one primary action in a view.' },
+    { token: '--he-accent-hover', kind: 'fill', use: 'Hover of the primary action.' },
+    { token: '--he-accent-press', kind: 'fill', use: 'Pressed primary action.' },
+    { token: '--he-accent-subtle', kind: 'fill', use: 'Quiet brand fill, for example a selected choice.' },
+    { token: '--he-accent-on-accent', kind: 'text', on: '--he-accent-default', use: 'Text and icons on --he-accent-default.' },
+    { token: '--he-accent-text', kind: 'text', use: 'Brand-coloured text and links.' },
+  ]}
+/>
+
+<Rule title="Accent is brand action only, never a status">
+  Lime marks the main action and brand moments. It never means success, selected-and-good or
+  anything else with a state. Atlassian gives the same advice: do not use an accent colour when the
+  colour has semantic meaning.
+</Rule>
+
+### Status
+
+Four tones: success, warning, danger and idle. Each has a surface, a border, a text colour and a solid colour. Use surface plus text for badges, and solid for dots and bars.
+
+<TokenTable
+  tokens={[
+    { token: '--he-status-success-surface', kind: 'fill', use: 'Pagado. Badge background.' },
+    { token: '--he-status-success-border', kind: 'border', use: 'Badge border.' },
+    { token: '--he-status-success-text', kind: 'text', on: '--he-status-success-surface', use: 'Badge text. Adjusted for AA in light.' },
+    { token: '--he-status-success-solid', kind: 'fill', use: 'Dot, bar, icon.' },
+    { token: '--he-status-warning-surface', kind: 'fill', use: 'Pendiente. Badge background.' },
+    { token: '--he-status-warning-border', kind: 'border', use: 'Badge border.' },
+    { token: '--he-status-warning-text', kind: 'text', on: '--he-status-warning-surface', use: 'Badge text. Adjusted for AA in light.' },
+    { token: '--he-status-warning-solid', kind: 'fill', use: 'Dot, bar, icon.' },
+    { token: '--he-status-danger-surface', kind: 'fill', use: 'Vencido. Badge background.' },
+    { token: '--he-status-danger-border', kind: 'border', use: 'Badge border.' },
+    { token: '--he-status-danger-text', kind: 'text', on: '--he-status-danger-surface', use: 'Badge text. Adjusted for AA in light.' },
+    { token: '--he-status-danger-solid', kind: 'fill', use: 'Dot, bar, icon.' },
+    { token: '--he-status-idle-surface', kind: 'fill', use: 'Sin conectar. Badge background.' },
+    { token: '--he-status-idle-border', kind: 'border', use: 'Badge border.' },
+    { token: '--he-status-idle-text', kind: 'text', on: '--he-status-idle-surface', use: 'Badge text.' },
+    { token: '--he-status-idle-solid', kind: 'fill', use: 'Dot, bar, icon.' },
+  ]}
+/>
+
+<Rule title="Status always has a word, never colour alone">
+  A status shows a word and a dot together (Pagado, Vencido, Pendiente, Sin conectar). Colour alone
+  fails WCAG 1.4.1. Carbon asks for at least two of colour, shape and symbol, and GOV.UK says the
+  same about tags.
+</Rule>
+
+### Chart series
+
+<TokenTable
+  tokens={[
+    { token: '--he-chart-1', kind: 'fill', use: 'Series 1. In dark it follows --he-text-primary, because midnight would vanish on a dark surface.' },
+    { token: '--he-chart-2', kind: 'fill', use: 'Series 2.' },
+    { token: '--he-chart-3', kind: 'fill', use: 'Series 3.' },
+    { token: '--he-chart-4', kind: 'fill', use: 'Series 4.' },
+    { token: '--he-chart-5', kind: 'fill', use: 'Series 5.' },
+    { token: '--he-chart-6', kind: 'fill', use: 'Series 6.' },
+  ]}
+/>
+
+## Switching theme
+
+Set `data-theme="dark"` on `<html>`. Do not key on `prefers-color-scheme`. A `.he-theme-dark` class works on a subtree, but it does not reach portalled surfaces such as Menu, Modal, Drawer, Tooltip and Toast, so prefer the attribute.

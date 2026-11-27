@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Introduction/Changelog" />
+
+# Changelog
+
+Releases before 1.0.0 are in `CHANGELOG.md` at the root of the repo.
+
+## 1.0.0 (draft)
+
+Draft for team review. Not published.
+
+### Changed
+
+- **Tokens come from Kevin's Figma variables.** Colours, type, spacing, corners and elevation are generated into `src/styles/tokens.css` by `scripts/tokens/build-tokens.mjs`. The generator reads the variable-bound fills, not the typed labels, which had drifted in 66 places. `npm run tokens -- --check` fails if the file is edited by hand.
+- **Inter is the UI font.** It replaces Neue Haas Unica. Sentient and IBM Plex Mono are unchanged. The build fails if `fonts.css` points to a missing file.
+- **The primary accent is Borealis.** Midnight text sits on it. Verde stays as a palette colour.
+- **Five text tokens are adjusted to reach 4.5:1 contrast.** The list is in `tokens/aa-adjustments.json` and on [Deviations from Figma](?path=/docs/foundations-deviations-from-figma--docs).
+- **Existing components are restyled through tokens.** Button, Badge, Tabs, the input family, Segmented, Pagination, EmptyState, Sidebar, PageHeader, Panel, Card, DataTable, StatCard, StatToggle, Chip, StatusPill, Modal, Drawer, Menu, Tooltip and Calendar keep their props.
+- **Icon sizes are 12, 14, 16, 20 and 24.** The stroke is scaled to stay 1.5px on screen.
+
+### Added
+
+- New components: Checkbox, Radio, Field, Stepper, ChoiceCard, Toast and ThemeSwitch.
+- New token scales: `--he-spacing-*`, `--he-corner-*`, `--he-type-<style>-*` and `--he-elevation-*`.
+- Documentation: Introduction, Foundations and this changelog.
+- Checks: `check:levels`, `check:compat` and `check:a11y` (planned, part of the 1.0.0 gate).
+
+### Deprecated
+
+- The 0.x token names stay as aliases or kept values. See [Migration from 0.x](?path=/docs/introduction-migration-from-0-x--docs).
+
+### Removed
+
+- Nothing. No export is removed.
+
+## Recent changes
+
+<DocTable
+  head={['Date', 'Version', 'Change']}
+  rows={[
+    ['2026-11-27', '1.0.0 (draft)', 'Tokens generated from the Figma variables, with AA adjustments.'],
+    ['2026-11-27', '1.0.0 (draft)', 'Inter added as the UI font. Neue Haas Unica removed.'],
+    ['2026-11-27', '1.0.0 (draft)', 'Legacy token names re-pointed at the semantic tokens or kept with their 0.x values.'],
+    ['2026-11-27', '1.0.0 (draft)', 'Documentation pages added: Introduction, Foundations.'],
+  ]}
+/>
+
+<Rule title="How to add an entry">
+  Add a row to Recent changes with the date, the version and one plain sentence. Say what a
+  consumer will see. Put the longer explanation in the section for that version.
+</Rule>

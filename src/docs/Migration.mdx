@@ -1,0 +1,132 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Introduction/Migration from 0.x" />
+
+# Migration from 0.x
+
+1.0.0 is a restyle, not a rewrite. No export is removed, and no 0.x component is replaced by an alias to a differently shaped one. Old props still type-check. Most consumers need a version bump and a short check.
+
+`npm run check:compat` builds the 0.4.5 declarations and type-checks every old component with its old props against the new one, and every old exported type against the new one. It is part of the 1.0.0 gate (planned: the script is not in the repo yet).
+
+## What changes
+
+- **Font.** Neue Haas Unica is gone. Inter is the UI face. Sentient (page titles) and IBM Plex Mono (identifiers) are unchanged. The Inter files and licence ship in the package.
+- **Tokens.** Values come from Kevin's Figma variables. Colour roles in the 0.x names now point at the new semantic tokens, so they follow light and dark by themselves.
+- **Exports.** None removed. New components are new exports (Checkbox, Radio, Field, Stepper, ChoiceCard, Toast, ThemeSwitch).
+- **Look you will see.**
+  - The primary button and other brand actions use the accent (Borealis, a pale lime) with Midnight text.
+  - The page canvas is a light gray (`--he-bg-app`), and cards and tables are white or near white on top of it.
+  - Tabs and nav items use a soft fill for the selected state, not a border or underline. The Tabs `underline` variant keeps its prop and is restyled.
+  - Status badges carry a word and a dot, in four tones.
+  - Dark mode has real status colours, not tints of the light ones.
+
+## Token aliases
+
+The 0.x names stay in `tokens.css` under a "legacy" section. They are deprecated. "Alias of" means the old name now resolves to the new token. "Kept" means the old value did not change, because a new name would have collided with it.
+
+export const legacy = [
+  ["--he-bg", "alias", "--he-bg-app"],
+  ["--he-surface", "alias", "--he-bg-surface"],
+  ["--he-surface-2", "alias", "--he-bg-subtle"],
+  ["--he-text", "alias", "--he-text-primary"],
+  ["--he-text-dim", "alias", "--he-text-secondary"],
+  ["--he-text-faint", "alias", "--he-text-tertiary"],
+  ["--he-border", "alias", "--he-border-default"],
+  ["--he-accent", "alias", "--he-accent-default"],
+  ["--he-on-accent", "alias", "--he-accent-on-accent"],
+  ["--he-focus", "alias", "--he-border-focus"],
+  ["--he-ok", "alias", "--he-status-success-text"],
+  ["--he-ok-bg", "alias", "--he-status-success-surface"],
+  ["--he-warn", "alias", "--he-status-warning-text"],
+  ["--he-warn-bg", "alias", "--he-status-warning-surface"],
+  ["--he-error", "alias", "--he-status-danger-text"],
+  ["--he-error-bg", "alias", "--he-status-danger-surface"],
+  ["--he-neutral", "alias", "--he-status-idle-text"],
+  ["--he-neutral-bg", "alias", "--he-status-idle-surface"],
+  ["--he-chart-ink", "alias", "--he-text-primary"],
+  ["--he-chart-grid", "alias", "--he-border-subtle"],
+  ["--he-chart-axis", "alias", "--he-text-tertiary"],
+  ["--he-chart-track", "alias", "--he-bg-subtle"],
+  ["--he-chart-accent", "alias", "--he-accent-default"],
+  ["--he-chart-pos", "alias", "--he-status-success-solid"],
+  ["--he-chart-neg", "alias", "--he-status-danger-solid"],
+  ["--he-shadow-card", "alias", "--he-elevation-panel"],
+  ["--he-shadow-lift", "alias", "--he-elevation-popover"],
+  ["--he-series-1", "alias", "--he-chart-1"],
+  ["--he-series-2", "alias", "--he-chart-2"],
+  ["--he-series-3", "alias", "--he-chart-3"],
+  ["--he-series-4", "alias", "--he-chart-4"],
+  ["--he-series-5", "alias", "--he-chart-5"],
+  ["--he-series-6", "alias", "--he-chart-6"],
+  ["--he-white", "kept-color", ""],
+  ["--he-gray-light", "kept-color", ""],
+  ["--he-black", "kept-color", ""],
+  ["--he-accent-line", "kept-color", ""],
+  ["--he-action", "alias", "--he-midnight"],
+  ["--he-action-hover", "kept-color", ""],
+  ["--he-on-action", "kept-color", ""],
+  ["--he-action-border", "kept", "transparent"],
+  ["--he-heat-0", "alias", "--he-bg-subtle"],
+  ["--he-heat-1", "kept-color", ""],
+  ["--he-heat-2", "kept-color", ""],
+  ["--he-heat-3", "kept-color", ""],
+  ["--he-heat-4", "kept-color", ""],
+  ["--he-display-1", "kept", "56px"],
+  ["--he-display-2", "kept", "40px"],
+  ["--he-title", "kept", "28px"],
+  ["--he-heading", "kept", "20px"],
+  ["--he-body", "kept", "15px"],
+  ["--he-body-sm", "kept", "13px"],
+  ["--he-caption", "kept", "11.5px"],
+  ["--he-micro", "kept", "9px"],
+  ["--he-tracking-caps", "kept", "0.14em"],
+  ["--he-space-1", "kept", "4px"],
+  ["--he-space-2", "kept", "8px"],
+  ["--he-space-3", "kept", "12px"],
+  ["--he-space-4", "kept", "16px"],
+  ["--he-space-5", "kept", "24px"],
+  ["--he-space-6", "kept", "32px"],
+  ["--he-space-7", "kept", "48px"],
+  ["--he-radius-xs", "kept", "4px"],
+  ["--he-radius-sm", "kept", "8px"],
+  ["--he-radius-md", "kept", "12px"],
+  ["--he-radius-lg", "kept", "16px"],
+  ["--he-radius-full", "kept", "999px"],
+  ["--he-scrim", "kept-color", ""],
+  ["--he-scrim-soft", "kept-color", ""],
+  ["--he-transition-fast", "kept", "150ms ease"],
+  ["--he-transition-base", "kept", "200ms ease"]];
+
+export const now = ([n, kind, v]) =>
+  kind === 'alias'
+    ? [<code>{n}</code>, 'Alias of', <code>{v}</code>]
+    : kind === 'kept-color'
+      ? [<code>{n}</code>, 'Kept', 'The 0.x colour value, unchanged. See the legacy section of tokens.css.']
+      : [<code>{n}</code>, 'Kept', <code>{v}</code>];
+
+<DocTable head={['0.x name', 'Now', 'New token or value']} rows={legacy.map(now)} />
+
+Use the new names in new code. The kept spacing and radius scales have different values from the new ones. `--he-space-*` is not `--he-spacing-*`, and `--he-radius-sm` is 8px while `--he-corner-sm` is 4px.
+
+<Rule title="--he-action keeps its 0.x look">
+  `--he-action` is still the Midnight pill. It is not an alias of the accent. Code that used it for
+  a primary button keeps the old look until the component itself is restyled.
+</Rule>
+
+## Steps for handle-v2
+
+1. Bump `@procurus-ai/handle-elements` to 1.0.0.
+2. Keep both imports: `fonts.css` and `styles.css`. Set `data-theme` on `<html>` as before.
+3. Delete the `--he-font-sans` override in `globals.css`. The package now sets Inter itself, and the override would pin the old face.
+4. Check the `.he-switch--checked` dark patch. If handle-v2 overrides it for dark mode, remove the patch and look at the Switch in dark. Keep it only if the Switch still looks wrong.
+5. Run `npm run build` and look at one table page, one form page and one page in dark mode.
+6. Search the code for the deprecated names above and move them to the new tokens over time. There is no deadline in 1.0.0.
+
+## If something looks different
+
+Check these first.
+
+- A colour looks gray where it was white: the page now sits on `--he-bg-app`. Put cards on `--he-bg-surface`.
+- Text looks slightly darker or lighter: five text tokens were adjusted for AA. See [Deviations from Figma](?path=/docs/foundations-deviations-from-figma--docs).
+- Text wraps differently: the font changed, so check fixed-width columns and long labels.

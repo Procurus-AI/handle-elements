@@ -1,3 +1,5 @@
+export { Icon, type IconProps, type IconName, type IconSize } from './components/Icon/Icon';
+export { Wordmark, Brandmark, type LogoProps, type LogoTone } from './components/Logo/Logo';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/Button/Button';
 export {
   Chip,

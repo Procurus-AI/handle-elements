@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Introduction/Atomic Design" />
+
+# Atomic Design
+
+Components are sorted into five levels, from [Brad Frost's Atomic Design](https://atomicdesign.bradfrost.com/chapter-2/). Each level is a folder in the Storybook sidebar, and each story title starts with its level, for example `Atoms/Button`.
+
+## The five levels
+
+<DocTable
+  head={['Level', 'What it is', 'Examples here']}
+  rows={[
+    ['Atoms', 'The smallest parts. Used alone or inside everything else.', 'Icon, Text, Button, Badge, StatusPill, Count, Chip, Input (with Textarea, Select, SearchInput), Checkbox, Radio, Switch, Avatar, Logo, Loading, Meter, Money, DateText, Layout, Tooltip'],
+    ['Molecules', 'A small group of atoms with one job and no domain knowledge.', 'Tab and Tabs, NavItem, Segmented, FilterChip, CarrierChip, Pagination, EmptyState, Field, StatCell, StatCard, StatToggle, CarrierStatusCard, CalendarDay, ChoiceCard, Stepper, Toast, ThemeSwitch, Menu, DescriptionList, List, Toolbar, Section, Sparkline, SegmentBar'],
+    ['Organisms', 'A distinct section of a screen. It knows a domain object or owns a region.', 'Sidebar, PageHeader, Panel, Card, DataTable, Modal, Drawer, Calendar, Composer, EmailComposer, AgentResponse, ReviewField, ReviewWorkspace, InboxList, Feed, Timeline, EvidencePreview, BarChart, ColumnChart, Histogram, Heatmap, RadialGauge, Treemap, TrendGrid'],
+    ['Templates', 'A page layout with no real content.', 'AppShell, ListPage, AgentWorkspace'],
+    ['Pages', 'A template filled with real content. Stories only, never shipped in the package.', 'App shell (light and dark), Validación de pagos · Pendientes, Registros · Recibos, Propuestas / Configuración · Aseguradoras, and the existing examples'],
+  ]}
+/>
+
+Component folders stay flat, as `src/components/<Name>/`. The level is a field in `src/levels.json` and in the story title, not a folder.
+
+## Molecule or organism?
+
+Frost gives no hard rule here. This is ours.
+
+<Rule title="The rule">
+  A **molecule** has one job and no data fetching or domain knowledge. An **organism** knows a
+  domain object (a receipt, a credential) or owns a region of the screen. If the team argues about
+  it for more than a minute, pick one and write the reason on the component's docs page.
+</Rule>
+
+Examples: Pagination does one job and knows nothing about receipts, so it is a molecule. DataTable owns the main region of a list screen, so it is an organism.
+
+## Import direction
+
+A component may import from its own level or a lower one, and never from a higher one. An atom cannot import a molecule, and a molecule cannot import an organism.
+
+`npm run check:levels` enforces this. It fails when:
+
+- a story title does not start with the level of its component,
+- a component is missing from `src/levels.json` or appears twice,
+- a component imports one from a higher level.
+
+This check is planned. The script and `src/levels.json` are part of the 1.0.0 gate and are not in the repo yet.
+
+## A mental model, not dogma
+
+Frost says the levels are a mental model and not a process. The levels run at the same time, the names are not fixed, and the book says "atomic design is not rigid dogma" ([chapter 2](https://atomicdesign.bradfrost.com/chapter-2/)). We use the levels to keep the sidebar and the imports in order. We do not use them to decide how a team works. When the level of a component is unclear, the cost of a wrong guess is a story title and one line in `levels.json`.
+
+Pages stay thin. They exist to test the system with real content, not to hold new components.
