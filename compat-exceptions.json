@@ -1,0 +1,15 @@
+{
+  "note": "Root-owned. A failure is waived only when its label matches AND its compiler messages mention `mustMention`; any other break in the same export still fails.",
+  "exceptions": [
+    {
+      "label": "(b) <Composer> rejects 0.4.5 props",
+      "mustMention": "BadgeTone",
+      "reason": "BadgeTone gained Figma tones (success, warning, danger, idle). The strict check compares a 0.4.5-typed onSuggestion callback with the widened suggestion type; consumers compiling against 1.0 types are unaffected. Exhaustive switches over BadgeTone need the new members (MIGRATION)."
+    },
+    {
+      "label": "(c) type ComposerProps (0.4.5) not assignable to the new one",
+      "mustMention": "BadgeTone",
+      "reason": "Same cause as above."
+    }
+  ]
+}

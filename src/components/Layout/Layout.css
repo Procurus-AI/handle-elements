@@ -5,7 +5,7 @@
 .he-stack {
   display: flex;
   flex-direction: column;
-  gap: var(--he-stack-gap, var(--he-space-4));
+  gap: var(--he-stack-gap, var(--he-spacing-4));
   min-width: 0;
 }
 .he-stack--row {
@@ -17,13 +17,13 @@
 
 .he-grid {
   display: grid;
-  gap: var(--he-grid-gap, var(--he-space-4));
+  gap: var(--he-grid-gap, var(--he-spacing-4));
   min-width: 0;
 }
 
 .he-divider {
   flex-shrink: 0;
-  background: var(--he-border);
+  background: var(--he-border-default);
   border: 0;
 }
 .he-divider--horizontal {
@@ -39,5 +39,5 @@
   width: 100%;
   margin-inline: auto;
   max-width: var(--he-container-max, 70rem);
-  padding: var(--he-container-pad, var(--he-space-6));
+  padding: var(--he-container-pad, var(--he-spacing-8));
 }

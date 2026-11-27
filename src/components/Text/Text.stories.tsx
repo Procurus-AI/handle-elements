@@ -3,7 +3,7 @@ import { Stack } from '../Layout/Layout';
 import { Text } from './Text';
 
 const meta = {
-  title: 'Elements/Text',
+  title: 'Atoms/Text',
   component: Text,
   args: {
     children: 'El desempeño del agente de cobranza en toda la flota, en un solo lugar.',

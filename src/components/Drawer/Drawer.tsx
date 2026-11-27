@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../lib/cx';
+import { Icon } from '../Icon/Icon';
 
 export type DrawerSide = 'right' | 'left';
 export type DrawerCompanionVariant = 'panel' | 'floating';
@@ -99,7 +100,7 @@ export function Drawer({
   actions,
   expanded = false,
   onToggleExpand,
-  expandedWidth = 'min(880px, calc(100vw - var(--he-space-7)))',
+  expandedWidth = 'min(880px, calc(100vw - var(--he-spacing-12)))',
   tabs,
   aside,
   footer,
@@ -282,9 +283,7 @@ export function Drawer({
               )}
               {actions}
               <button type="button" className="he-drawer__close" onClick={onClose} aria-label={closeLabel}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
+                <Icon name="x" size={16} />
               </button>
             </div>
           </div>

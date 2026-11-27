@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../lib/cx';
+import { CalendarDay } from '../CalendarDay/CalendarDay';
+import { Icon } from '../Icon/Icon';
 
 /** Status vocabulary shared by day markers and panel rows (mirrors StatusPill). */
 export type CalendarStatus = 'ok' | 'warn' | 'error' | 'neutral' | 'accent';
@@ -61,16 +63,6 @@ const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), 
 const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
-const ChevronLeft = (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden focusable="false">
-    <path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-const ChevronRight = (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden focusable="false">
-    <path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 export function Calendar({
   month,
@@ -147,7 +139,7 @@ export function Calendar({
                 aria-label="Previous month"
                 onClick={() => changeMonth(addMonths(viewMonth, -1))}
               >
-                {ChevronLeft}
+                <Icon name="chevron-left" />
               </button>
               <button
                 type="button"
@@ -155,7 +147,7 @@ export function Calendar({
                 aria-label="Next month"
                 onClick={() => changeMonth(addMonths(viewMonth, 1))}
               >
-                {ChevronRight}
+                <Icon name="chevron-right" />
               </button>
             </div>
             <h2 className="he-cal__title">{monthTitle}</h2>
@@ -176,51 +168,25 @@ export function Calendar({
         {cells.map((date) => {
           const inMonth = date.getMonth() === viewMonth.getMonth();
           if (!inMonth && !showOutsideDays) {
-            return <div key={date.toISOString()} className="he-cal__day he-cal__day--blank" role="gridcell" aria-hidden />;
+            return <CalendarDay key={date.toISOString()} empty role="gridcell" />;
           }
 
           const isToday = isSameDay(date, todayDate);
           const isSelected = selectedDate != null && isSameDay(date, selectedDate);
-          const dayMarkers = markers?.(date) ?? [];
 
           return (
-            <button
-              type="button"
+            <CalendarDay
               key={date.toISOString()}
               role="gridcell"
-              className={cx(
-                'he-cal__day',
-                !inMonth && 'he-cal__day--outside',
-                isToday && 'he-cal__day--today',
-                isSelected && 'he-cal__day--selected',
-              )}
-              aria-pressed={isSelected}
-              aria-current={isToday ? 'date' : undefined}
+              day={date.getDate()}
+              today={isToday}
+              outside={!inMonth}
+              selected={isSelected}
+              events={markers?.(date)}
               onClick={() => selectDay(date)}
             >
-              {renderDay ? (
-                renderDay({ date, inMonth, isToday, isSelected })
-              ) : (
-                <>
-                  <span className={cx('he-cal__daynum', isToday && 'he-cal__daynum--today')}>
-                    {date.getDate()}
-                  </span>
-                  {dayMarkers.length > 0 && (
-                    <ul className="he-cal__markers">
-                      {dayMarkers.map((marker, i) => (
-                        <li
-                          key={marker.key ?? i}
-                          className={cx('he-cal__marker', `he-cal__marker--${marker.status}`)}
-                        >
-                          <span className="he-cal__marker-dot" aria-hidden />
-                          <span className="he-cal__marker-label">{marker.label}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              )}
-            </button>
+              {renderDay ? renderDay({ date, inMonth, isToday, isSelected }) : undefined}
+            </CalendarDay>
           );
         })}
       </div>
@@ -238,12 +204,6 @@ export interface CalendarPanelProps extends Omit<HTMLAttributes<HTMLDivElement>,
   /** Sticky footer (e.g. pagination). */
   footer?: ReactNode;
 }
-
-const CloseIcon = (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden focusable="false">
-    <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-  </svg>
-);
 
 export function CalendarPanel({
   title,
@@ -266,7 +226,7 @@ export function CalendarPanel({
           </div>
           {onClose != null && (
             <button type="button" className="he-cal-panel__close" aria-label={closeLabel} onClick={onClose}>
-              {CloseIcon}
+              <Icon name="x" />
             </button>
           )}
         </header>
@@ -319,7 +279,7 @@ export function CalendarPanelRow({
     >
       {expandable && (
         <span className="he-cal-panel__row-chevron" aria-hidden>
-          {ChevronRight}
+          <Icon name="chevron-right" />
         </span>
       )}
       {status != null && (

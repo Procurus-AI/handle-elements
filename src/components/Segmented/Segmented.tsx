@@ -8,9 +8,9 @@ export interface SegmentedOption<T extends string = string> {
   value: T;
   /** REQUIRED. There is no icon-only escape hatch — an unlabelled glyph is a guess. */
   label: ReactNode;
-  /** Reinforcing glyph left of the word; aria-hidden. 15x15, stroke-width 1.4. */
+  /** Reinforcing glyph left of the word; aria-hidden. Use `<Icon size={16} />`. */
   icon?: ReactNode;
-  /** 6px dot before the label — consequence, at the scale of a bullet. 'default' renders no dot. */
+  /** Accepted for compatibility; the Figma control is neutral, so every tone renders the same. */
   tone?: SegmentedTone;
   disabled?: boolean;
 }
@@ -108,9 +108,6 @@ export function Segmented<T extends string = string>({
           onClick={() => next && onChange(next.value)}
           className={cx('he-segmented__toggle', className)}
         >
-          {current?.tone != null && current.tone !== 'default' && (
-            <span className={cx('he-segmented__dot', `he-segmented__dot--${current.tone}`)} aria-hidden />
-          )}
           {current?.icon ?? <span className="he-segmented__toggle-text">{textOf(current?.label).slice(0, 3)}</span>}
         </button>
       </Tooltip>
@@ -138,9 +135,6 @@ export function Segmented<T extends string = string>({
             disabled={option.disabled}
             onClick={() => onChange(option.value)}
           >
-            {option.tone != null && option.tone !== 'default' && (
-              <span className={cx('he-segmented__dot', `he-segmented__dot--${option.tone}`)} aria-hidden />
-            )}
             {option.icon != null && (
               <span className="he-segmented__icon" aria-hidden>
                 {option.icon}

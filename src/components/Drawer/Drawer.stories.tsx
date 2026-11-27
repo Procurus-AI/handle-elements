@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from '../Button/Button';
 import { Money } from '../Money/Money';
 import { StatCard } from '../StatCard/StatCard';
@@ -8,7 +9,7 @@ import { Tabs } from '../Tabs/Tabs';
 import { Drawer } from './Drawer';
 
 const meta = {
-  title: 'Elements/Drawer',
+  title: 'Organisms/Drawer',
   component: Drawer,
   argTypes: {
     side: { control: 'inline-radio', options: ['right', 'left'] },
@@ -19,39 +20,95 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {
-  args: { side: 'right', title: 'Account details' },
-  render: (args) => {
-    const [open, setOpen] = useState(false);
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>Open drawer</Button>
+/** Opens on load from a focused trigger, so the open state is what axe scans. */
+function OpenOnLoad({
+  label,
+  children,
+}: {
+  label: string;
+  children: (props: { open: boolean; close: () => void }) => ReactNode;
+}) {
+  const trigger = useRef<HTMLButtonElement>(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    trigger.current?.focus();
+    setOpen(true);
+  }, []);
+  return (
+    <>
+      <button
+        ref={trigger}
+        type="button"
+        className="he-btn he-btn--default he-btn--size-default"
+        onClick={() => setOpen(true)}
+      >
+        {label}
+      </button>
+      {children({ open, close: () => setOpen(false) })}
+    </>
+  );
+}
+
+function ReceiptBody() {
+  return (
+    <>
+      <p style={{ marginTop: 0, color: 'var(--he-text-secondary)' }}>
+        Emitido el 12 feb · Vence el 12 mar · Póliza AUT-4471
+      </p>
+      <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
+        <StatCard label="Monto" value={<Money value={18240} currency="MXN" />} />
+        <StatCard label="Días abierto" value="19" footer="Escala a los 30 días" />
+      </div>
+    </>
+  );
+}
+
+export const Open: Story = {
+  render: () => (
+    <OpenOnLoad label="Ver recibo">
+      {({ open, close }) => (
         <Drawer
-          {...args}
           open={open}
-          onClose={() => setOpen(false)}
+          onClose={close}
+          closeLabel="Cerrar"
+          eyebrow="Recibo"
+          title="Recibo 30125559390"
+          meta={<StatusPill status="warn" label="Pendiente" />}
           footer={
             <>
-              <Button variant="ghost" onClick={() => setOpen(false)}>
-                Cancel
+              <Button variant="ghost" onClick={close}>
+                Cancelar
               </Button>
-              <Button onClick={() => setOpen(false)}>Save changes</Button>
+              <Button onClick={close}>Reintentar sincronización</Button>
             </>
           }
         >
-          <p style={{ marginTop: 0, color: 'var(--he-text-dim)' }}>
-            Portfolio summary and pending actions for this account.
-          </p>
-          <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
-            <StatCard label="ARR" value={<Money value={210000} currency="MXN" compact />} delta={{ value: '12%', direction: 'up' }} />
-            <StatCard label="Open tasks" value="4" footer="2 due this week" />
-          </div>
+          <ReceiptBody />
         </Drawer>
-      </>
-    );
+      )}
+    </OpenOnLoad>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(document.body);
+    const canvas = within(canvasElement);
+    const dialog = await body.findByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAttribute('aria-modal', 'true');
+    await expect(dialog).toHaveAccessibleName('Recibo 30125559390');
+    // Focus trap: Shift+Tab from the panel wraps to the last control.
+    await userEvent.tab({ shift: true });
+    await expect(within(dialog).getByRole('button', { name: 'Reintentar sincronización' })).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull());
+    const trigger = canvas.getByRole('button', { name: 'Ver recibo' });
+    await expect(trigger).toHaveFocus();
+    // Leave it open so the accessibility scan sees the open state.
+    await userEvent.click(trigger);
+    await expect(await body.findByRole('dialog')).toBeVisible();
   },
 };
 
+/** Left side, no visible title: the panel is named by `ariaLabel`. */
 export const LeftNoTitle: Story = {
   name: 'Left side, no title',
   render: () => {
@@ -59,43 +116,55 @@ export const LeftNoTitle: Story = {
     return (
       <>
         <Button variant="secondary" onClick={() => setOpen(true)}>
-          Open filters
+          Abrir filtros
         </Button>
-        <Drawer open={open} onClose={() => setOpen(false)} side="left" width="320px" ariaLabel="Filters">
-          <h3 style={{ marginTop: 0, fontFamily: 'var(--he-font-sans)', fontSize: 'var(--he-body)' }}>Filters</h3>
-          <p style={{ color: 'var(--he-text-dim)' }}>Panel content scrolls independently of the page.</p>
+        <Drawer
+          open={open}
+          onClose={() => setOpen(false)}
+          side="left"
+          width="320px"
+          ariaLabel="Filtros"
+          closeLabel="Cerrar"
+        >
+          <p style={{ marginTop: 0, color: 'var(--he-text-secondary)' }}>
+            El contenido del panel se desplaza sin mover la página.
+          </p>
         </Drawer>
       </>
     );
   },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Abrir filtros' }));
+    await expect(await within(document.body).findByRole('dialog', { name: 'Filtros' })).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(within(document.body).queryByRole('dialog')).toBeNull());
+    await expect(within(canvasElement).getByRole('button', { name: 'Abrir filtros' })).toHaveFocus();
+  },
 };
 
 /**
- * Structured header (`eyebrow` + `title` + `meta`) and a native `tabs` bar pinned
- * under the header — the body scrolls beneath it, so tab-switching is a built-in
- * concern of the Drawer, not something each screen re-composes.
+ * Structured header (`eyebrow` + `title` + `meta`) and a `tabs` bar pinned under the
+ * header. The `underline` Tabs variant stays accepted and renders the soft-fill style.
  */
 export const WithTabs: Story = {
-  name: 'Eyebrow + meta + native tabs',
+  name: 'Encabezado y pestañas',
   render: () => {
     const [open, setOpen] = useState(false);
-    const [tab, setTab] = useState('overview');
+    const [tab, setTab] = useState('resumen');
     return (
       <>
-        <Button onClick={() => setOpen(true)}>Open account</Button>
+        <Button onClick={() => setOpen(true)}>Abrir cuenta</Button>
         <Drawer
           open={open}
           onClose={() => setOpen(false)}
+          closeLabel="Cerrar"
           width="460px"
-          eyebrow="Stuck in onboarding"
+          eyebrow="Onboarding detenido"
           title="Protec"
           meta={
-            <>
-              <span style={{ fontWeight: 500, color: 'var(--he-text)' }}>
-                <Money as="span" value={2000} currency="USD" /> /mo
-              </span>
-              <span>· Onboarding-blocked</span>
-            </>
+            <span style={{ fontWeight: 500, color: 'var(--he-text-primary)' }}>
+              <Money as="span" value={2000} currency="USD" /> al mes
+            </span>
           }
           tabs={
             <Tabs
@@ -103,102 +172,63 @@ export const WithTabs: Story = {
               value={tab}
               onChange={setTab}
               items={[
-                { value: 'overview', label: 'Overview' },
-                { value: 'triage', label: 'Triage' },
-                { value: 'history', label: 'History' },
+                { value: 'resumen', label: 'Resumen' },
+                { value: 'pendientes', label: 'Pendientes' },
+                { value: 'historial', label: 'Historial' },
               ]}
             />
           }
-          footer={<Button variant="secondary" onClick={() => setOpen(false)}>Close lead ↗</Button>}
+          footer={
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cerrar cuenta
+            </Button>
+          }
         >
-          {tab === 'overview' && (
+          {tab === 'resumen' && (
             <div style={{ display: 'grid', gap: 12 }}>
-              <StatCard label="ARR" value={<Money value={24000} currency="USD" compact />} />
-              <StatCard label="Open items" value="2" footer="1 bug · 1 request" />
+              <StatCard label="Prima anual" value={<Money value={24000} currency="USD" compact />} />
+              <StatCard label="Pendientes" value="2" footer="1 error · 1 solicitud" />
             </div>
           )}
-          {tab === 'triage' && <p style={{ color: 'var(--he-text-dim)' }}>Highest-priority item first.</p>}
-          {tab === 'history' && <p style={{ color: 'var(--he-text-dim)' }}>Timeline of changes.</p>}
+          {tab === 'pendientes' && <p style={{ color: 'var(--he-text-secondary)' }}>Primero el más urgente.</p>}
+          {tab === 'historial' && <p style={{ color: 'var(--he-text-secondary)' }}>Cambios recientes.</p>}
         </Drawer>
       </>
     );
   },
 };
 
-/**
- * The header is a flex sibling of the scroller, so eyebrow/title/meta can never
- * scroll away. Every control clusters at the trailing edge.
- */
+/** The header is a flex sibling of the scroller, so it never scrolls away; controls sit at the trailing edge. */
 export const WithActions: Story = {
-  name: 'Header actions',
-  render: () => {
-    const [open, setOpen] = useState(false);
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>Open receipt</Button>
-        <Drawer
-          open={open}
-          onClose={() => setOpen(false)}
-          width="420px"
-          eyebrow="Receipt"
-          title="Receipt 30125559390"
-          meta={<StatusPill status="warn" label="Pending" />}
-          actions={
-            <Button variant="ghost" size="icon-sm" aria-label="More">
-              …
-            </Button>
-          }
-          footer={
-            <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
-              View in Receipts
-            </Button>
-          }
-        >
-          <p style={{ marginTop: 0, color: 'var(--he-text-dim)' }}>
-            Issued 12 Feb · Due 12 Mar · Policy AUT-4471
-          </p>
-          <div style={{ display: 'grid', gap: 12, marginTop: 16 }}>
-            <StatCard label="Amount" value={<Money value={18240} currency="MXN" />} />
-            <StatCard label="Days open" value="19" footer="Escalates at 30" />
-          </div>
-        </Drawer>
-      </>
-    );
-  },
-};
-
-/**
- * Expand widens the panel over the same scrim — the table behind stays visible for
- * context. Width transitions on `--he-transition-base` and is nulled under
- * `prefers-reduced-motion`.
- */
-export const Expandable: Story = {
-  name: 'Expandable',
+  name: 'Acciones en el encabezado',
   render: () => {
     const [open, setOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
     return (
       <>
-        <Button onClick={() => setOpen(true)}>Open record</Button>
+        <Button onClick={() => setOpen(true)}>Abrir registro</Button>
         <Drawer
           open={open}
           onClose={() => setOpen(false)}
+          closeLabel="Cerrar"
+          expandLabel="Ampliar panel"
+          collapseLabel="Reducir panel"
           width="480px"
-          eyebrow="Customer"
+          eyebrow="Cliente"
           title="Zazil Selene Montero Sanchez"
-          meta={<StatusPill status="ok" label="Active" />}
+          meta={<StatusPill status="ok" label="Pagado" />}
           expanded={expanded}
-          onToggleExpand={() => setExpanded((v) => !v)}
+          onToggleExpand={() => setExpanded((value) => !value)}
           footer={
             <Button variant="secondary" size="sm" onClick={() => setOpen(false)}>
-              Ask about this customer
+              Preguntar por este cliente
             </Button>
           }
         >
-          {Array.from({ length: 24 }, (_, i) => (
-            <p key={i} style={{ marginTop: i === 0 ? 0 : 16, color: 'var(--he-text-dim)' }}>
-              {i + 1}. Renewal correspondence, endorsement history and payment notes for this
-              record. Scroll the body: the identity block above never moves.
+          {Array.from({ length: 24 }, (_, index) => (
+            <p key={index} style={{ marginTop: index === 0 ? 0 : 16, color: 'var(--he-text-secondary)' }}>
+              {index + 1}. Correspondencia de renovación, historial de endosos y notas de pago de este
+              registro. El encabezado no se mueve al desplazar el cuerpo.
             </p>
           ))}
         </Drawer>

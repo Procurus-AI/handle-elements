@@ -7,7 +7,7 @@ import { Tabs, type TabItem } from '../Tabs/Tabs';
 import { Toolbar, ToolbarGroup, ResultCount } from './Toolbar';
 
 const meta = {
-  title: 'Elements/Toolbar',
+  title: 'Molecules/Toolbar',
   component: Toolbar,
 } satisfies Meta<typeof Toolbar>;
 
@@ -63,7 +63,7 @@ export const CobranzaControls: Story = {
           </Select>
           <ToolbarGroup align="end">
             <ResultCount>
-              {shown.length} de {clients.length}
+              {shown.length} de {clients.length} registros
             </ResultCount>
           </ToolbarGroup>
         </Toolbar>

@@ -1,11 +1,14 @@
 import type { CSSProperties, HTMLAttributes } from 'react';
 import { cx } from '../../lib/cx';
 
-/** Spacing step — maps to the `--he-space-N` scale. `0` collapses the gap. */
+/** Spacing step. Keeps the 0.x numbering (1..7) and maps it onto the 4px scale
+ * `--he-spacing-*`: 1=4, 2=8, 3=12, 4=16, 5=24, 6=32, 7=48 px. `0` collapses the gap. */
 export type Space = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
+const SPACING_STEP = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 8, 7: 12 } as const;
+
 const spaceVar = (n?: Space): string | undefined =>
-  n == null ? undefined : n === 0 ? '0' : `var(--he-space-${n})`;
+  n == null ? undefined : n === 0 ? '0' : `var(--he-spacing-${SPACING_STEP[n]})`;
 
 const ALIGN = {
   start: 'flex-start',
@@ -28,7 +31,7 @@ const JUSTIFY = {
 export interface StackProps extends HTMLAttributes<HTMLDivElement> {
   /** Main axis. Default `column`. */
   direction?: 'row' | 'column';
-  /** Gap between children on the `--he-space` scale. Default `4`. */
+  /** Gap between children on the spacing scale. Default `4`. */
   gap?: Space;
   align?: keyof typeof ALIGN;
   justify?: keyof typeof JUSTIFY;
@@ -69,7 +72,7 @@ export interface GridProps extends HTMLAttributes<HTMLDivElement> {
   columns?: number | string;
   /** Auto-fit tracks of at least this width (used when `columns` is omitted). */
   minColumnWidth?: string;
-  /** Gap on the `--he-space` scale. Default `4`. */
+  /** Gap on the spacing scale. Default `4`. */
   gap?: Space;
   align?: 'start' | 'center' | 'end' | 'stretch';
 }
@@ -127,7 +130,7 @@ export function Divider({ orientation = 'horizontal', className, ...rest }: Divi
 export interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   /** Max content width — a number (px) or any CSS length. Default `70rem`. */
   max?: number | string;
-  /** Inner padding on the `--he-space` scale. Default `6`. */
+  /** Inner padding on the spacing scale. Default `6`. */
   padding?: Space;
 }
 

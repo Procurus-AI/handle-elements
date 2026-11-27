@@ -3,7 +3,7 @@ import { Card } from '../Card/Card';
 import { Meter, ProgressBar } from './Meter';
 
 const meta = {
-  title: 'Elements/Meter',
+  title: 'Atoms/Meter',
   component: Meter,
   args: { value: 64, label: 'Funded', showValue: true },
   argTypes: {

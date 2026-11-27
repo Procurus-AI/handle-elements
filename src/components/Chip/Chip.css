@@ -1,33 +1,39 @@
+/* Chip: the Filter chip family (6px corner, hairline border, quiet label). `active`
+ * marks an applied filter with the Figma active fill; `plain` strips the chrome. */
 .he-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px var(--he-space-2);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  background: var(--he-surface-2);
-  color: var(--he-text-dim);
-  font-family: var(--he-font-sans);
-  font-size: var(--he-caption);
-  font-weight: 500;
-  line-height: 1.6;
+  gap: 6px;
+  padding: var(--he-spacing-1) 10px;
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-md);
+  background: var(--he-bg-surface);
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
   white-space: nowrap;
 }
 
 .he-chip--sm {
-  padding: 0 6px;
-  font-size: 10.5px;
+  padding: 2px var(--he-spacing-2);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  letter-spacing: var(--he-type-label-sm-tracking);
 }
 
 .he-chip--mono {
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: var(--he-tracking-caps);
-  color: var(--he-text-faint);
+  font-family: var(--he-type-mono-sm-family);
+  font-size: var(--he-type-mono-sm-size);
+  line-height: var(--he-type-mono-sm-line);
+  font-weight: var(--he-type-mono-sm-weight);
+  letter-spacing: var(--he-type-mono-sm-tracking);
+  color: var(--he-text-tertiary);
 }
 
-/* Borderless — a bare dot + label, e.g. a chart legend item. */
+/* Borderless: a bare dot + label, e.g. a chart legend item. */
 .he-chip--plain {
   padding: 0;
   border: none;
@@ -35,39 +41,32 @@
 }
 
 .he-chip__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--he-radius-full);
-  background: var(--he-accent);
+  width: 5px;
+  height: 5px;
   flex-shrink: 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-text-tertiary);
 }
 
-/* Diagonal hatch — the "No metric" legend swatch. Token stops + transparent
- * keep it clear of the raw-color check. */
+/* Diagonal hatch: the "no metric" legend swatch. */
 .he-chip__dot--hatch {
+  width: 6px;
+  height: 6px;
   background: repeating-linear-gradient(
     45deg,
-    var(--he-text-faint) 0,
-    var(--he-text-faint) 1.5px,
+    var(--he-text-tertiary) 0,
+    var(--he-text-tertiary) 1.5px,
     transparent 1.5px,
     transparent 3px
   );
-  border: 1px solid var(--he-border);
+  border: var(--he-border-width) solid var(--he-border-default);
 }
 
-/* An APPLIED filter, distinct from the neutral legend chip. The state is
- * carried on INK — an ink border and ink label, Card's `selected` idiom — not
- * on a surface swap. `background: var(--he-surface)` measured pixel-identical
- * to its host in BOTH themes whenever the chip sits on a card (a DataTable
- * toolbar, a Panel), so the applied chip had no fill at all while a neutral one
- * did: in dark that inverted the hierarchy outright. Keeping
- * --he-surface-2 means the chip separates from a --he-surface card AND from the
- * --he-bg page. --he-accent stays reserved for Badge/StatusPill fills; a row of
- * three green pills would shout louder than the data. */
+/* An applied filter: Figma "State=active" (fill only, no border). */
 .he-chip--active {
-  background: var(--he-surface-2);
-  border-color: var(--he-text);
-  color: var(--he-text);
+  border-color: transparent;
+  background: var(--he-bg-active);
+  color: var(--he-bg-inverse);
 }
 
 .he-chip__remove {
@@ -76,15 +75,15 @@
   justify-content: center;
   width: 14px;
   height: 14px;
-  margin: 0 -2px 0 0; /* pulls the × toward the pill's right edge, keeping the 5px gap optical */
+  margin: 0 -2px 0 0;
   padding: 0;
   border: 0;
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
   background: none;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   cursor: pointer;
   flex-shrink: 0;
-  transition: color var(--he-transition-fast);
+  transition: color var(--he-motion-fast);
 }
 
 .he-chip__remove svg {
@@ -92,16 +91,8 @@
   height: 10px;
 }
 
-/* Color-only hover: --he-surface-2 -> --he-surface lifts in light but darkens
- * in dark, so no fill change is the only treatment that obeys the house rule
- * in both themes. */
 .he-chip__remove:hover {
-  color: var(--he-text);
-}
-
-.he-chip__remove:focus-visible {
-  outline: 2px solid var(--he-focus);
-  outline-offset: 1px;
+  color: var(--he-text-primary);
 }
 
 .he-chip--sm .he-chip__remove {

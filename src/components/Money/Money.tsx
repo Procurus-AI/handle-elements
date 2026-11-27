@@ -4,6 +4,8 @@ import { cx } from '../../lib/cx';
 
 export type MoneyTone = 'default' | 'muted' | 'positive' | 'negative' | 'auto';
 
+export type MoneySize = 'inherit' | 'metric-xl' | 'metric-lg' | 'metric-md';
+
 export interface MoneyProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
   as?: 'span' | 'div';
   value: number | null | undefined;
@@ -17,6 +19,8 @@ export interface MoneyProps extends Omit<HTMLAttributes<HTMLElement>, 'children'
   accounting?: boolean;
   showCurrencyCode?: boolean;
   tone?: MoneyTone;
+  /** Figma Metric style for the amount. Default `inherit`: the surrounding type. */
+  size?: MoneySize;
   nullLabel?: string;
 }
 
@@ -39,6 +43,7 @@ export function Money({
   accounting,
   showCurrencyCode = false,
   tone = 'default',
+  size = 'inherit',
   nullLabel,
   className,
   ...rest
@@ -62,6 +67,7 @@ export function Money({
     {
       className: cx(
         'he-money',
+        size !== 'inherit' && `he-money--${size}`,
         resolvedTone !== 'default' && `he-money--${resolvedTone}`,
         !hasValue && 'he-money--empty',
         className,

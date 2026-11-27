@@ -4,7 +4,7 @@ import { Money } from './Money';
 import { assertSingleCurrency, formatCurrency, sumMoney, type MoneyValue } from '../../format';
 
 const meta = {
-  title: 'Elements/Money',
+  title: 'Atoms/Money',
   component: Money,
   args: { value: 128400, currency: 'MXN' },
 } satisfies Meta<typeof Money>;

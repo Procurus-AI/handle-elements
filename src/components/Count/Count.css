@@ -1,0 +1,38 @@
+.he-count {
+  --he-count-surface: var(--he-bg-subtle);
+  --he-count-text: var(--he-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: var(--he-corner-full);
+  background: var(--he-count-surface);
+  color: var(--he-count-text);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Only the neutral count carries a hairline (Figma). Inset shadow keeps its size equal to the tones'. */
+.he-count--neutral {
+  box-shadow: inset 0 0 0 var(--he-border-width) var(--he-border-default);
+}
+
+.he-count--success {
+  --he-count-surface: var(--he-status-success-surface);
+  --he-count-text: var(--he-status-success-text);
+}
+
+.he-count--warning {
+  --he-count-surface: var(--he-status-warning-surface);
+  --he-count-text: var(--he-status-warning-text);
+}
+
+.he-count--danger {
+  --he-count-surface: var(--he-status-danger-surface);
+  --he-count-text: var(--he-status-danger-text);
+}

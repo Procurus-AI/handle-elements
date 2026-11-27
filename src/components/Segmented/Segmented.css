@@ -1,21 +1,17 @@
-/* Segmented — one-of-N at row scale. The track is TRANSPARENT and the selected
- * pill is --he-surface, which measures LIGHTER than the rail behind it in both
- * themes (white on the light bg, Midnight on the black bg). The canonical
- * "white pill on a grey track" cannot be used here — --he-surface vs
- * --he-surface-2 is 1.12:1 in both themes AND inverts direction in dark, so a
- * surface-2 track would make selection DARKEN on dark. Selection is carried by
- * ink + hairline + shadow, never by a colored bar. */
+/* Figma "Segmented control": recessed bg/subtle track (border default, corner lg, pad 3, gap 2);
+ * the selected segment is a surface chip with a hairline. Selection is never a coloured bar.
+ * Old `tone` options are accepted and render neutral (no dot). */
 .he-segmented {
   display: flex;
   align-items: stretch;
+  box-sizing: border-box;
   gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  background: transparent;
+  padding: 3px;
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-subtle);
   font-family: var(--he-font-sans);
-  /* Placement hook: on a --he-surface card, set this to --he-surface-2. */
-  --he-segmented-selected: var(--he-surface);
+  width: fit-content;
 }
 
 .he-segmented--block {
@@ -31,25 +27,28 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-height: 24px;
-  padding: 0 var(--he-space-3);
+  gap: var(--he-spacing-2);
+  box-sizing: border-box;
+  height: 26px;
+  padding: 5px 10px;
   appearance: none;
   margin: 0;
-  border: 1px solid transparent;
-  border-radius: calc(var(--he-radius-sm) - 2px);
+  border: var(--he-border-width) solid transparent;
+  border-radius: var(--he-corner-md);
   background: transparent;
-  color: var(--he-text-dim);
-  font-family: inherit;
-  font-size: var(--he-body-sm);
-  font-weight: 500;
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  font-weight: var(--he-type-label-md-weight);
+  line-height: var(--he-type-label-md-line);
+  letter-spacing: var(--he-type-label-md-tracking);
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
   transition:
-    color var(--he-transition-fast),
-    background var(--he-transition-fast),
-    border-color var(--he-transition-fast);
+    color var(--he-motion-fast),
+    background var(--he-motion-fast),
+    border-color var(--he-motion-fast);
 }
 
 .he-segmented__label {
@@ -62,11 +61,9 @@
   flex: 0 0 auto;
 }
 
-/* Hover changes COLOR only — a --he-surface-2 fill DARKENS against --he-surface
- * in light and LIFTS against it in dark, so no fill change is the only treatment
- * that obeys the hover-lifts rule in both themes (Chip.css:95-100). */
 .he-segmented__option:hover:not(:disabled):not(.he-segmented__option--selected) {
-  color: var(--he-text);
+  color: var(--he-text-primary);
+  background: var(--he-bg-hover);
 }
 
 .he-segmented__option:focus-visible {
@@ -75,95 +72,55 @@
 }
 
 .he-segmented__option:disabled {
-  opacity: 0.45;
+  color: var(--he-text-disabled);
   cursor: not-allowed;
 }
 
-/* Selected carries an INK hairline, not a sandstone one. Measured: the pill's
- * fill is 1.04:1 on the light rail and 1.09:1 on the dark one — a fill this
- * close to its backdrop cannot be the indicator, and --he-border-strong only
- * reached 1.65:1 / 1.78:1, both under the 3:1 bar for identifying a control's
- * state. --he-text clears it in both themes (16.9:1 light, 18.9:1 dark) and is
- * the same idiom Card already uses for `selected`. Still no bar, still no
- * color — a monochrome outline. */
 .he-segmented__option--selected {
-  background: var(--he-segmented-selected);
-  border-color: var(--he-text);
-  box-shadow: var(--he-shadow-card);
-  color: var(--he-text);
+  background: var(--he-bg-surface);
+  border-color: var(--he-border-default);
+  color: var(--he-text-primary);
 }
 
-/* Tone dot — consequence at the scale of a bullet (StatToggle.css:63-71,
- * StatusPill.css). Never a band, a bar or a tinted background. */
-.he-segmented__dot {
-  width: 6px;
-  height: 6px;
-  flex: 0 0 auto;
-  border-radius: var(--he-radius-full);
-  background: var(--he-segmented-dot, var(--he-neutral));
+/* sm: 24px overall */
+.he-segmented--sm {
+  padding: 2px;
 }
-
-.he-segmented__dot--ok {
-  --he-segmented-dot: var(--he-ok);
-}
-.he-segmented__dot--warn {
-  --he-segmented-dot: var(--he-warn);
-}
-.he-segmented__dot--error {
-  --he-segmented-dot: var(--he-error);
-}
-.he-segmented__dot--accent {
-  --he-segmented-dot: var(--he-accent);
-}
-
-/* sizes: md = 30px overall (2px pad + 2x1px border + 24px option) — lands on the
- * rail's 29-30px row rhythm, measured. sm = 26px. */
 .he-segmented--sm .he-segmented__option {
-  min-height: 20px;
-  padding: 0 var(--he-space-2);
-  font-size: var(--he-caption);
+  height: 20px;
+  padding: 0 var(--he-spacing-2);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .he-segmented__option {
-    transition: none;
-  }
-}
-
-/* Collapsed toggle — the 56px-rail affordance. A 28px box centred with `margin: 0 auto`:
- * the collapsed rail stretches its content box to 40px (Sidebar.css
- * `.he-sidebar--collapsed .he-tooltip-anchor`), which would park the button 6px left of
- * the centre line every other icon row sits on. Auto margins only resolve inside a
- * flex/grid parent, so this centres in the rail and does nothing anywhere else. The tone
- * dot rides along so a non-production environment is still legible when the words are
- * gone. After the appearance picker moved into the account menu, the environment switch
- * is this control's only consumer. */
+/* Collapsed toggle: the 56px-rail affordance. A 28px box centred with `margin: 0 auto`
+ * (auto margins only resolve inside a flex/grid parent, so this does nothing elsewhere). */
 .he-segmented__toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--he-spacing-1);
   width: 28px;
   height: 28px;
   padding: 0;
   margin: 0 auto;
   appearance: none;
-  border: 1px solid transparent;
-  border-radius: var(--he-radius-sm);
+  border: var(--he-border-width) solid transparent;
+  border-radius: var(--he-corner-md);
   background: transparent;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
   font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-size: var(--he-type-label-sm-size);
   font-weight: 500;
   cursor: pointer;
   transition:
-    color var(--he-transition-fast),
-    background var(--he-transition-fast);
+    color var(--he-motion-fast),
+    background var(--he-motion-fast);
 }
 
 .he-segmented__toggle:hover {
-  color: var(--he-text);
-  background: var(--he-surface-2);
+  color: var(--he-text-primary);
+  background: var(--he-bg-hover);
 }
 
 .he-segmented__toggle:focus-visible {

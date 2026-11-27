@@ -1,0 +1,104 @@
+/* ChoiceCard: selectable card, radio semantics. Selected = border-focus, like Carrier status card. */
+.he-choice-group {
+  display: grid;
+  gap: var(--he-spacing-2);
+}
+
+.he-choice-card {
+  appearance: none;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--he-spacing-3);
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-surface);
+  color: var(--he-text-primary);
+  font-family: var(--he-font-sans);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--he-motion-fast),
+    border-color var(--he-motion-fast);
+}
+
+.he-choice-card:hover:not(:disabled):not(.he-choice-card--checked) {
+  background: var(--he-bg-hover);
+  border-color: var(--he-border-strong);
+}
+
+.he-choice-card--checked {
+  border-color: var(--he-border-focus);
+  box-shadow: 0 0 0 var(--he-border-width) var(--he-border-focus);
+}
+
+.he-choice-card:focus-visible {
+  outline: 2px solid var(--he-border-focus);
+  outline-offset: 2px;
+}
+
+.he-choice-card:disabled {
+  color: var(--he-text-disabled);
+  cursor: not-allowed;
+}
+
+.he-choice-card__icon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--he-text-tertiary);
+}
+
+.he-choice-card__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--he-spacing-1);
+  min-width: 0;
+}
+
+.he-choice-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--he-spacing-2);
+}
+
+.he-choice-card__title {
+  font-size: var(--he-type-heading-sm-size);
+  line-height: var(--he-type-heading-sm-line);
+  font-weight: var(--he-type-heading-sm-weight);
+  letter-spacing: var(--he-type-heading-sm-tracking);
+}
+
+.he-choice-card__desc {
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-secondary);
+}
+
+.he-choice-card:disabled .he-choice-card__desc {
+  color: var(--he-text-disabled);
+}
+
+/* Check slot: a 20px circle that fills when selected. */
+.he-choice-card__check {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: var(--he-border-width) solid var(--he-border-strong);
+  border-radius: var(--he-corner-full);
+  color: var(--he-bg-surface);
+}
+
+.he-choice-card--checked .he-choice-card__check {
+  border-color: var(--he-bg-inverse);
+  background: var(--he-bg-inverse);
+}

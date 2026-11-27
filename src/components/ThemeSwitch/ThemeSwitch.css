@@ -1,0 +1,46 @@
+/* ThemeSwitch (Figma "Theme toggle"): pill, pad 3, gap 2, bg-subtle with a default border.
+ * Modes are 26x24; the checked mode is a bg-surface pill with its own border. */
+.he-theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-subtle);
+}
+
+.he-theme-switch__mode {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 26px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border: var(--he-border-width) solid transparent;
+  border-radius: var(--he-corner-full);
+  background: transparent;
+  color: var(--he-text-tertiary);
+  cursor: pointer;
+  transition:
+    background var(--he-motion-fast),
+    color var(--he-motion-fast);
+}
+
+.he-theme-switch__mode:hover:not(.he-theme-switch__mode--checked) {
+  color: var(--he-text-primary);
+}
+
+.he-theme-switch__mode--checked {
+  border-color: var(--he-border-default);
+  background: var(--he-bg-surface);
+  color: var(--he-text-primary);
+}
+
+.he-theme-switch__mode:focus-visible {
+  outline: 2px solid var(--he-border-focus);
+  outline-offset: 1px;
+}

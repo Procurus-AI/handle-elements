@@ -1,0 +1,142 @@
+/* Toast: bottom-right stack. Surface is bg-surface with the modal elevation; the tone shows as an
+ * icon and a word in the status colour, never as a coloured bar or fill. */
+.he-toast-region {
+  position: fixed;
+  right: var(--he-spacing-4);
+  bottom: var(--he-spacing-4);
+  z-index: 1300;
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-spacing-2);
+  width: min(360px, calc(100vw - (var(--he-spacing-4) * 2)));
+  /* The region is a layout box only; clicks go through the gaps to the page. */
+  pointer-events: none;
+}
+
+.he-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--he-spacing-3);
+  padding: var(--he-spacing-3) var(--he-spacing-3) var(--he-spacing-3) var(--he-spacing-4);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  box-shadow: var(--he-elevation-modal);
+  color: var(--he-text-primary);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  pointer-events: auto;
+  animation: he-toast-in var(--he-motion-base);
+}
+
+.he-toast__icon {
+  flex-shrink: 0;
+  /* Aligns the 16px glyph with the 16px tone line. */
+  margin-top: 1px;
+}
+
+.he-toast--neutral .he-toast__icon,
+.he-toast--neutral .he-toast__tone {
+  color: var(--he-status-idle-text);
+}
+
+.he-toast--success .he-toast__icon,
+.he-toast--success .he-toast__tone {
+  color: var(--he-status-success-text);
+}
+
+.he-toast--warning .he-toast__icon,
+.he-toast--warning .he-toast__tone {
+  color: var(--he-status-warning-text);
+}
+
+.he-toast--danger .he-toast__icon,
+.he-toast--danger .he-toast__tone {
+  color: var(--he-status-danger-text);
+}
+
+.he-toast__content {
+  display: grid;
+  flex: 1;
+  gap: var(--he-spacing-1);
+  min-width: 0;
+  justify-items: start;
+}
+
+.he-toast__tone {
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
+}
+
+.he-toast__title {
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+  color: var(--he-text-primary);
+}
+
+.he-toast__description {
+  color: var(--he-text-secondary);
+}
+
+.he-toast__action {
+  margin: var(--he-spacing-1) 0 0;
+  padding: var(--he-spacing-1) var(--he-spacing-2);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-md);
+  background: var(--he-bg-surface);
+  color: var(--he-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-weight: var(--he-type-label-md-weight);
+  transition: background var(--he-motion-fast);
+}
+
+.he-toast__action:hover {
+  background: var(--he-bg-hover);
+}
+
+.he-toast__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--he-corner-md);
+  background: transparent;
+  color: var(--he-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--he-motion-fast),
+    color var(--he-motion-fast);
+}
+
+.he-toast__close:hover {
+  background: var(--he-bg-hover);
+  color: var(--he-text-primary);
+}
+
+@keyframes he-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-toast {
+    animation: none;
+  }
+}

@@ -1,0 +1,120 @@
+/* Stepper: derived from Tab / Nav item. The current step is a soft fill (bg-subtle, corner md),
+ * labels are Label/md, completed steps use status/success. No Figma board. */
+.he-stepper {
+  font-family: var(--he-font-sans);
+  color: var(--he-text-primary);
+}
+
+.he-stepper__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.he-stepper--horizontal .he-stepper__list {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--he-spacing-2);
+}
+
+.he-stepper--horizontal .he-stepper__step {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.he-stepper__row {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: var(--he-corner-md);
+}
+
+.he-stepper__step--current .he-stepper__row {
+  background: var(--he-bg-subtle);
+}
+
+.he-stepper__marker {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-subtle);
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-label-sm-weight);
+  font-variant-numeric: tabular-nums;
+}
+
+.he-stepper__step--current .he-stepper__marker {
+  background: var(--he-bg-inverse);
+  color: var(--he-bg-surface);
+}
+
+.he-stepper__step--complete .he-stepper__marker {
+  background: var(--he-status-success-surface);
+  color: var(--he-status-success-text);
+}
+
+.he-stepper__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.he-stepper__label {
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+  color: var(--he-text-secondary);
+}
+
+.he-stepper__step--current .he-stepper__label {
+  color: var(--he-text-primary);
+}
+
+.he-stepper__step--upcoming .he-stepper__label {
+  color: var(--he-text-tertiary);
+}
+
+.he-stepper__desc {
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
+}
+
+/* Vertical: the step's content hangs under the marker with a rule at its left. */
+.he-stepper__content {
+  margin: var(--he-spacing-2) 0 var(--he-spacing-2) 19px;
+  padding-left: var(--he-spacing-4);
+  border-left: var(--he-border-width) solid var(--he-border-default);
+}
+
+.he-stepper--horizontal .he-stepper__content {
+  margin: var(--he-spacing-4) 0 0;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.he-stepper__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

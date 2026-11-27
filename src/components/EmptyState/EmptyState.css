@@ -1,14 +1,18 @@
+/* EmptyState (Figma "Empty state"): icon, title (the fact), body (the fix), one optional action.
+ * Vertical gap 8, pad 48/24 at md. */
 .he-empty {
   display: flex;
   flex-direction: column;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-2);
+  box-sizing: border-box;
   width: 100%;
   font-family: var(--he-font-sans);
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 .he-empty--center {
   align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -18,47 +22,47 @@
 }
 
 .he-empty--sm {
-  padding: var(--he-space-4);
+  padding: var(--he-spacing-4);
 }
 
 .he-empty--md {
-  padding: var(--he-space-6) var(--he-space-4);
+  padding: var(--he-spacing-12) var(--he-spacing-6);
 }
 
 .he-empty--lg {
-  padding: var(--he-space-7) var(--he-space-5);
+  padding: var(--he-spacing-16) var(--he-spacing-6);
 }
 
 .he-empty__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-full);
-  color: var(--he-text-faint);
-  background: var(--he-surface);
+  width: 28px;
+  height: 28px;
+  color: var(--he-text-tertiary);
 }
 
 .he-empty__content {
   display: grid;
-  gap: var(--he-space-1);
-  max-width: 360px;
+  gap: var(--he-spacing-2);
+  max-width: 400px;
 }
 
 .he-empty__title {
-  font-size: var(--he-body);
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: var(--he-type-heading-sm-size);
+  line-height: var(--he-type-heading-sm-line);
+  font-weight: var(--he-type-heading-sm-weight);
+  letter-spacing: var(--he-type-heading-sm-tracking);
+  color: var(--he-text-primary);
 }
 
 .he-empty__hint {
-  font-size: var(--he-body-sm);
-  line-height: 1.45;
-  color: var(--he-text-dim);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-tertiary);
 }
 
 .he-empty__action {
-  margin-top: var(--he-space-1);
+  margin-top: var(--he-spacing-2);
 }

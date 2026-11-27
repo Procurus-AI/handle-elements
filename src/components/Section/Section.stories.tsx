@@ -16,7 +16,7 @@ import { Section, SectionLink } from './Section';
  * prints the same fact three times.
  */
 const meta = {
-  title: 'Elements/Section',
+  title: 'Molecules/Section',
   component: Section,
   argTypes: {
     tier: { control: 'inline-radio', options: ['section', 'sub'] },

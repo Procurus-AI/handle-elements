@@ -5,7 +5,7 @@
   padding: 0;
   list-style: none;
   font-family: var(--he-font-sans);
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 .he-list__item {
@@ -13,16 +13,16 @@
 }
 
 .he-list--divided .he-list__item + .he-list__item {
-  border-top: 1px solid var(--he-border);
+  border-top: 1px solid var(--he-border-default);
 }
 
 .he-list__row {
   display: flex;
   align-items: center;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   width: 100%;
-  padding-block: var(--he-space-3);
-  padding-inline: var(--he-list-row-pad-inline, var(--he-space-2));
+  padding-block: var(--he-spacing-3);
+  padding-inline: var(--he-list-row-pad-inline, var(--he-spacing-2));
   margin: 0;
   text-align: left;
   font: inherit;
@@ -30,14 +30,14 @@
 }
 
 .he-list--dense .he-list__row {
-  padding-block: var(--he-space-2);
+  padding-block: var(--he-spacing-2);
 }
 
 /* Compact row — the density step for attention/movement panels. 36px pitch. */
 .he-list--sm .he-list__row {
-  padding-block: var(--he-space-2);
+  padding-block: var(--he-spacing-2);
   min-height: 36px;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
 }
 
 /* Leading gutter — .he-list__content is :first-child exactly when no leading
@@ -47,34 +47,34 @@
 }
 
 .he-list--gutter .he-list__row > .he-list__content:first-child {
-  margin-left: calc(var(--he-list-leading-w) + var(--he-space-3));
+  margin-left: calc(var(--he-list-leading-w) + var(--he-spacing-3));
 }
 
 /* Status dot — same 6px geometry and doctrine as StatusPill__dot. */
 .he-list__dot {
   width: 6px;
   height: 6px;
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
   flex-shrink: 0;
 }
 
 .he-list__dot--ok {
-  background: var(--he-ok);
+  background: var(--he-status-success-text);
 }
 .he-list__dot--warn {
-  background: var(--he-warn);
+  background: var(--he-status-warning-text);
 }
 .he-list__dot--error {
-  background: var(--he-error);
+  background: var(--he-status-danger-text);
 }
 .he-list__dot--neutral {
-  background: var(--he-text-faint);
+  background: var(--he-text-tertiary);
 }
 
 /* Borealis is a fill, but at 1.11:1 a bare 6px disc vanishes on --he-surface;
  * the authored line token rings it so it stays visible without becoming text. */
 .he-list__dot--accent {
-  background: var(--he-accent);
+  background: var(--he-accent-default);
   box-shadow: 0 0 0 1px var(--he-accent-line);
 }
 
@@ -87,17 +87,17 @@ a.he-list__row {
   /* Hook: a full-bleed container (Panel `flush`) squares the corners and does
    * its own clipping, so the fill spans the full width without poking past the
    * card's arc. */
-  border-radius: var(--he-list-row-radius, var(--he-radius-sm));
+  border-radius: var(--he-list-row-radius, var(--he-corner-lg));
   text-decoration: none;
-  transition: background var(--he-transition-fast);
+  transition: background var(--he-motion-fast);
 }
 
 .he-list__item--interactive .he-list__row:hover {
-  background: var(--he-surface-2);
+  background: var(--he-bg-subtle);
 }
 
 .he-list__row:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: -2px;
 }
 
@@ -105,7 +105,7 @@ a.he-list__row {
  * fill IS the selection. A list that marks a CURRENT CHOICE should pass a check
  * glyph in `trailing`. */
 .he-list__item--active .he-list__row {
-  background: var(--he-surface-2);
+  background: var(--he-bg-subtle);
 }
 
 .he-list__item--active .he-list__primary {
@@ -117,17 +117,16 @@ a.he-list__row {
   display: inline-block;
   min-width: 2ch;
   text-align: right;
-  font-family: var(--he-font-mono);
-  font-size: var(--he-body-sm);
+  font-size: var(--he-type-body-sm-size);
   font-variant-numeric: tabular-nums;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
 .he-list__leading {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 /* ---- content ---- */
@@ -144,23 +143,23 @@ a.he-list__row {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--he-body-sm);
-  color: var(--he-text);
+  font-size: var(--he-type-body-sm-size);
+  color: var(--he-text-primary);
 }
 
 .he-list__secondary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--he-caption);
-  color: var(--he-text-dim);
+  font-size: var(--he-type-caption-size);
+  color: var(--he-text-secondary);
 }
 
 /* Primary + inline meta on one line — the slot that keeps a compact row to one line. */
 .he-list__line {
   display: flex;
   align-items: baseline;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   min-width: 0;
 }
 
@@ -178,19 +177,18 @@ a.he-list__row {
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-size: var(--he-type-caption-size);
   font-variant-numeric: tabular-nums;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
   white-space: nowrap;
 }
 
 /* ---- trailing ---- */
 .he-list__value {
   flex: 0 0 auto;
-  font-family: var(--he-font-mono);
-  font-size: var(--he-body-sm);
+  font-size: var(--he-type-body-sm-size);
   font-variant-numeric: tabular-nums;
-  color: var(--he-text);
+  color: var(--he-text-primary);
   white-space: nowrap;
 }
 
@@ -198,7 +196,7 @@ a.he-list__row {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
 @media (prefers-reduced-motion: reduce) {

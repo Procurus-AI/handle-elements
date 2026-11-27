@@ -1,35 +1,56 @@
 .he-money {
   display: inline-flex;
   align-items: baseline;
-  /* Wrap, and no row gap when it does: an inline-flex box neither wraps nor
-   * shrinks by default, so `$246.7M` + `MXN` would push past a narrow stat
-   * tile instead of dropping the code to a second line. Column gap only. */
+  /* Wrap with no row gap: an inline-flex box neither wraps nor shrinks by default,
+   * so `$246.7M` + `MXN` would overrun a narrow stat cell instead of dropping the code. */
   flex-wrap: wrap;
-  gap: 0 var(--he-space-2);
+  gap: 0 var(--he-spacing-2);
   min-width: 0;
-  font-family: var(--he-font-mono);
+  font-family: var(--he-font-sans);
   font-size: inherit;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
-  color: var(--he-text);
+  color: var(--he-text-primary);
+}
+
+/* `size` picks a Figma Metric style; without it the amount inherits its surroundings. */
+.he-money--metric-xl {
+  font-size: var(--he-type-metric-xl-size);
+  line-height: var(--he-type-metric-xl-line);
+  font-weight: var(--he-type-metric-xl-weight);
+  letter-spacing: var(--he-type-metric-xl-tracking);
+}
+
+.he-money--metric-lg {
+  font-size: var(--he-type-metric-lg-size);
+  line-height: var(--he-type-metric-lg-line);
+  font-weight: var(--he-type-metric-lg-weight);
+  letter-spacing: var(--he-type-metric-lg-tracking);
+}
+
+.he-money--metric-md {
+  font-size: var(--he-type-metric-md-size);
+  line-height: var(--he-type-metric-md-line);
+  font-weight: var(--he-type-metric-md-weight);
+  letter-spacing: var(--he-type-metric-md-tracking);
 }
 
 .he-money--muted,
 .he-money--empty {
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
 .he-money--positive {
-  color: var(--he-ok);
+  color: var(--he-status-success-text);
 }
 
 .he-money--negative {
-  color: var(--he-error);
+  color: var(--he-status-danger-text);
 }
 
 .he-money__code {
   font-family: var(--he-font-sans);
   font-size: 0.75em;
   font-weight: 500;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }

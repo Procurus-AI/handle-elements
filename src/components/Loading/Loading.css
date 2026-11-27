@@ -2,10 +2,10 @@
   display: inline-block;
   width: var(--he-spinner-size);
   height: var(--he-spinner-size);
-  border: var(--he-spinner-stroke) solid var(--he-border);
+  border: var(--he-spinner-stroke) solid var(--he-border-default);
   border-top-color: currentColor;
-  border-radius: var(--he-radius-full);
-  color: var(--he-text);
+  border-radius: var(--he-corner-full);
+  color: var(--he-text-primary);
   animation: he-spinner-spin 700ms linear infinite;
 }
 
@@ -37,18 +37,18 @@
 .he-skeleton {
   width: var(--he-skeleton-width, 100%);
   height: var(--he-skeleton-height, 1em);
-  border-radius: var(--he-radius-sm);
-  background: var(--he-surface-2);
+  border-radius: var(--he-corner-sm);
+  background: var(--he-bg-subtle);
   overflow: hidden;
 }
 
 .he-skeleton--text {
   height: var(--he-skeleton-height, 0.875em);
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
 }
 
 .he-skeleton--circle {
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
   width: var(--he-skeleton-width, 32px);
   height: var(--he-skeleton-height, 32px);
 }
@@ -62,13 +62,13 @@
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, var(--he-surface), transparent);
+  background: linear-gradient(90deg, transparent, var(--he-bg-surface), transparent);
   animation: he-skeleton-shimmer 1.3s ease-in-out infinite;
 }
 
 .he-skeleton-group {
   display: grid;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
 }
 
 @keyframes he-spinner-spin {

@@ -3,7 +3,7 @@ import { Badge } from '../Badge/Badge';
 import { Avatar, AvatarStack } from './Avatar';
 
 const meta = {
-  title: 'Elements/Avatar',
+  title: 'Atoms/Avatar',
   component: Avatar,
   args: { name: 'Ariana Rivera' },
   argTypes: {

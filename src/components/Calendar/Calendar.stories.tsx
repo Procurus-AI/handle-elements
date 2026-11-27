@@ -7,7 +7,7 @@ import { Money } from '../Money/Money';
 import { Calendar, CalendarPanel, CalendarPanelRow, type CalendarMarker } from './Calendar';
 
 const meta = {
-  title: 'Elements/Calendar',
+  title: 'Organisms/Calendar',
   component: Calendar,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Calendar>;

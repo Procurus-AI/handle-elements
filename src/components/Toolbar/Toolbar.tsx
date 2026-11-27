@@ -35,7 +35,7 @@ export function ToolbarGroup({ align = 'start', className, ...rest }: ToolbarGro
 
 export interface ResultCountProps extends HTMLAttributes<HTMLSpanElement> {}
 
-/** Quiet mono count summary, e.g. `<ResultCount>{shown} de {total}</ResultCount>`. */
+/** Result count in Label/sm, secondary: `<ResultCount>53,938 registros</ResultCount>`. */
 export function ResultCount({ className, ...rest }: ResultCountProps) {
   return <span className={cx('he-toolbar__count', className)} {...rest} />;
 }

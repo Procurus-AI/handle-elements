@@ -2,13 +2,13 @@
   font-family: var(--he-font-sans);
   font-size: inherit;
   line-height: 1.2;
-  color: var(--he-text);
+  color: var(--he-text-primary);
   white-space: nowrap;
 }
 
 .he-date--muted,
 .he-date--empty {
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
 .he-date--mono {

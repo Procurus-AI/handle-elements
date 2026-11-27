@@ -1,7 +1,7 @@
 import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 
-export type MeterTone = 'default' | 'accent' | 'ok' | 'warn' | 'error' | 'neutral';
+export type MeterTone = 'default' | 'accent' | 'ok' | 'warn' | 'error' | 'neutral' | 'success' | 'warning' | 'danger' | 'idle';
 
 export interface MeterProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   value?: number;

@@ -1,0 +1,81 @@
+.he-stat-cell {
+  --he-stat-cell-dot: var(--he-text-tertiary);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  height: var(--he-stat-height);
+  min-width: 0;
+  padding: 0 20px;
+  color: var(--he-text-primary);
+}
+
+.he-stat-cell__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--he-text-tertiary);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+}
+
+.he-stat-cell__dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-stat-cell-dot);
+}
+
+.he-stat-cell__value {
+  font-family: var(--he-type-metric-lg-family);
+  font-size: var(--he-type-metric-lg-size);
+  line-height: var(--he-type-metric-lg-line);
+  font-weight: var(--he-type-metric-lg-weight);
+  letter-spacing: var(--he-type-metric-lg-tracking);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.he-stat-cell__detail {
+  color: var(--he-text-tertiary);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+}
+
+.he-stat-cell--success {
+  --he-stat-cell-dot: var(--he-status-success-text);
+}
+
+.he-stat-cell--warning {
+  --he-stat-cell-dot: var(--he-status-warning-text);
+}
+
+.he-stat-cell--danger {
+  --he-stat-cell-dot: var(--he-status-danger-text);
+}
+
+/* Panel — Stats (App shell): one bordered surface, cells separated by 1px dividers. */
+.he-stat-strip {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-surface);
+}
+
+.he-stat-strip > .he-stat-cell {
+  flex: 1 1 0;
+}
+
+.he-stat-strip > * + * {
+  border-left: var(--he-border-width) solid var(--he-bg-subtle);
+}

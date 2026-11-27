@@ -1,4 +1,4 @@
-/* Suppress the browser's native search clear affordance — we render our own. */
+/* Suppress the browser's native search clear affordance; we render our own. */
 .he-searchinput .he-input__field::-webkit-search-cancel-button,
 .he-searchinput .he-input__field::-webkit-search-decoration {
   appearance: none;
@@ -12,17 +12,17 @@
   margin: 0;
   border: none;
   background: none;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   cursor: pointer;
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-sm);
   transition:
-    color var(--he-transition-fast),
-    background var(--he-transition-fast);
+    color var(--he-motion-fast),
+    background var(--he-motion-fast);
 }
 
 .he-searchinput__clear:hover {
-  color: var(--he-text);
-  background: var(--he-surface-2);
+  color: var(--he-text-primary);
+  background: var(--he-bg-hover);
 }
 
 .he-searchinput__clear:focus-visible {

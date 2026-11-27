@@ -1,126 +1,101 @@
-/* StatToggle — a clickable stat tile that carries a selected + zero state.
- * Base is a quiet surface; hover lifts; selected fills to a light grey; zero
- * fades the numerals. Selection is carried by the surface, never by a colored
- * bar — a phosphorescent cap on a white tile reads as decoration, not state.
- * `tone` is urgency, and it rides a small dot on the label, the same idiom
- * ListItem uses. All color via --he-* tokens. */
+/* StatToggle: a clickable Stat cell (88px minimum, label above a Metric value).
+ * Active fills with bg-active; hover uses bg-hover; no shadow, no lift. Tone is
+ * urgency, carried by the dot before the label. */
 .he-stattoggle {
+  --he-stattoggle-dot: var(--he-text-tertiary);
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--he-space-1);
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
   min-width: 92px;
-  padding: var(--he-space-3) var(--he-space-4);
+  min-height: var(--he-stat-height);
+  padding: var(--he-spacing-3) 20px;
   text-align: left;
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-md);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  color: var(--he-text-primary);
   cursor: pointer;
   font-family: var(--he-font-sans);
-  transition:
-    border-color var(--he-transition-fast),
-    background var(--he-transition-fast),
-    box-shadow var(--he-transition-fast),
-    transform var(--he-transition-fast);
-  --he-stattoggle-dot: var(--he-neutral);
+  transition: background var(--he-motion-fast);
 }
 
 .he-stattoggle:hover {
-  border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-lift);
-  transform: translateY(-1px);
+  background: var(--he-bg-hover);
 }
 
-.he-stattoggle:focus-visible {
-  outline: 2px solid var(--he-focus);
-  outline-offset: 2px;
+/* The DOM keeps value before label (0.4.5 reading order); the Figma look puts the label first. */
+.he-stattoggle__label {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
 }
 
 .he-stattoggle__value {
-  /* Grid tiles get minmax(0, 1fr) tracks, so the value must be allowed to wrap
-   * inside the tile instead of overrunning its border. */
+  order: 2;
+  /* Grid tiles get minmax(0, 1fr) tracks, so the value must wrap inside the tile. */
   min-width: 0;
-  font-family: var(--he-font-display);
-  font-weight: 400;
-  font-size: var(--he-title);
-  line-height: 1.05;
-  color: var(--he-text);
+  font-family: var(--he-type-metric-lg-family);
+  font-size: var(--he-type-metric-lg-size);
+  line-height: var(--he-type-metric-lg-line);
+  font-weight: var(--he-type-metric-lg-weight);
+  letter-spacing: var(--he-type-metric-lg-tracking);
+  color: var(--he-text-primary);
   font-variant-numeric: tabular-nums;
 }
 
-.he-stattoggle__label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--he-tracking-caps);
-  color: var(--he-text-faint);
+.he-stattoggle__hint {
+  order: 3;
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  color: var(--he-text-tertiary);
 }
 
-/* Tone dot — urgency, carried at the scale of a bullet. Borealis appears here
- * as a FILL, which is the only way it may appear on a light surface. */
 .he-stattoggle__dot {
   width: 6px;
   height: 6px;
   flex: 0 0 auto;
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
   background: var(--he-stattoggle-dot);
 }
 
-.he-stattoggle__hint {
-  font-size: var(--he-body-sm);
-  color: var(--he-text-dim);
-}
-
-/* ---- active (selected) ----
- * The fill IS the selection. A light-grey tile against white neighbours is
- * unambiguous at a glance, and the hairline only firms up to the hover weight
- * so the tile never gains ink on being chosen. */
-.he-stattoggle--active {
-  border-color: var(--he-border-strong);
-  background: var(--he-surface-2);
-}
-
-.he-stattoggle--active .he-stattoggle__label {
-  color: var(--he-text-dim);
-}
-
-/* Selected already sits on --he-surface-2, so lift it with shadow alone rather
- * than a fill that would match the resting state. */
+/* Selected: fill only. The border stays so the tile keeps its size. */
+.he-stattoggle--active,
 .he-stattoggle--active:hover {
-  background: var(--he-surface-2);
+  border-color: transparent;
+  background: var(--he-bg-active);
 }
 
-/* ---- zero (empty) ---- */
 .he-stattoggle--zero .he-stattoggle__value {
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
-.he-stattoggle--zero:not(.he-stattoggle--active) .he-stattoggle__label {
-  color: var(--he-text-faint);
-}
-
-/* ---- tones (dot color) ---- */
 .he-stattoggle--accent {
-  --he-stattoggle-dot: var(--he-accent);
+  --he-stattoggle-dot: var(--he-accent-default);
 }
 .he-stattoggle--ok {
-  --he-stattoggle-dot: var(--he-ok);
+  --he-stattoggle-dot: var(--he-status-success-text);
 }
 .he-stattoggle--warn {
-  --he-stattoggle-dot: var(--he-warn);
+  --he-stattoggle-dot: var(--he-status-warning-text);
 }
 .he-stattoggle--error {
-  --he-stattoggle-dot: var(--he-error);
+  --he-stattoggle-dot: var(--he-status-danger-text);
 }
 
-/* ---- group ---- */
 .he-stattoggle-group {
   display: flex;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   overflow-x: auto;
 }
 
@@ -129,7 +104,6 @@
   overflow: visible;
 }
 
-/* Uniform grid — equal-width tiles that align into clean rows/columns. */
 .he-stattoggle-group--grid {
   display: grid;
   overflow: visible;
@@ -141,13 +115,4 @@
 
 .he-stattoggle-group--grid > .he-stattoggle {
   min-width: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .he-stattoggle {
-    transition: none;
-  }
-  .he-stattoggle:hover {
-    transform: none;
-  }
 }

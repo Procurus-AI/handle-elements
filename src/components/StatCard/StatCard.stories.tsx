@@ -1,14 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '../Badge/Badge';
 import { Card } from '../Card/Card';
-import { Container } from '../Layout/Layout';
 import { Meter } from '../Meter/Meter';
 import { PageHeader } from '../PageHeader/PageHeader';
 import { Sparkline } from '../Sparkline/Sparkline';
 import { StatCard, StatCardGroup, type StatCardTone } from './StatCard';
 
 const meta = {
-  title: 'Elements/StatCard',
+  title: 'Molecules/StatCard',
   component: StatCard,
   args: {
     label: 'Premium volume',
@@ -89,16 +88,6 @@ const KpiRail = ({ columns }: { columns?: number }) => (
 
 export const Rail: Story = {
   render: () => <KpiRail columns={6} />,
-};
-
-// Narrow viewport: the auto-fit tracks wrap, the 1px gaps become horizontal
-// hairlines, and the outer border stays single.
-export const RailResponsive: Story = {
-  render: () => (
-    <Container max={480} padding={0}>
-      <KpiRail />
-    </Container>
-  ),
 };
 
 // The dot replaces marking a tile with a coloured bar — 28px² of colour, not 180px².

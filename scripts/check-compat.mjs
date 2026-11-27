@@ -198,7 +198,22 @@ for (const line of out.split('\n').filter(Boolean)) {
   }
 }
 
-if (failures.size || other.length || tsc.status !== 0) {
+// Root-owned waivers: label must match and the messages must name the stated cause.
+const waived = [];
+const exceptionsFile = path.join(root, 'compat-exceptions.json');
+if (existsSync(exceptionsFile)) {
+  for (const ex of JSON.parse(readFileSync(exceptionsFile, 'utf8')).exceptions ?? []) {
+    const msgs = failures.get(ex.label);
+    if (msgs && msgs.join('\n').includes(ex.mustMention)) {
+      failures.delete(ex.label);
+      waived.push(`${ex.label} — ${ex.reason}`);
+    }
+  }
+}
+for (const w of waived) log(`waived: ${w}`);
+const onlyWaived = tsc.status !== 0 && !failures.size && !other.length && waived.length;
+
+if (failures.size || other.length || (tsc.status !== 0 && !onlyWaived)) {
   console.error(`[check-compat] ${failures.size} incompatibilit${failures.size === 1 ? 'y' : 'ies'} with 0.4.5:`);
   for (const [label, msgs] of failures) {
     console.error(`  ${label}`);

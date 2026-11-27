@@ -4,7 +4,7 @@ import { Skeleton } from './Skeleton';
 import { Spinner } from './Spinner';
 
 const meta = {
-  title: 'Elements/Loading',
+  title: 'Atoms/Loading',
   component: Spinner,
 } satisfies Meta<typeof Spinner>;
 

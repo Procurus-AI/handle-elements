@@ -3,7 +3,7 @@ import { Card } from '../Card/Card';
 import { DateText, RelativeTime } from './DateText';
 
 const meta = {
-  title: 'Elements/DateText',
+  title: 'Atoms/DateText',
   component: RelativeTime,
   args: { date: Date.now() - 3 * 24 * 60 * 60 * 1000 },
 } satisfies Meta<typeof RelativeTime>;

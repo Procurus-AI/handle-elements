@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
 import { Card } from '../Card/Card';
 import { PageHeader } from '../PageHeader/PageHeader';
 import { StatToggle, StatToggleGroup } from './StatToggle';
 
 const meta = {
-  title: 'Elements/StatToggle',
+  title: 'Molecules/StatToggle',
   component: StatToggle,
   args: { label: 'Underwriting', value: 42, active: false },
   argTypes: {
@@ -67,4 +68,39 @@ export const States: Story = {
       <StatToggle label="With hint" value={17} hint="+3 this week" />
     </div>
   ),
+};
+
+function Filterable() {
+  const [selected, setSelected] = useState('vencidos');
+  return (
+    <StatToggleGroup label="Estado de recibos" columns={3} style={{ width: 560 }}>
+      {[
+        { key: 'pendientes', label: 'Pendientes', value: 24, tone: 'warn' as const },
+        { key: 'vencidos', label: 'Vencidos', value: 30, tone: 'error' as const },
+        { key: 'pagados', label: 'Pagados', value: 0, tone: 'ok' as const },
+      ].map((s) => (
+        <StatToggle
+          key={s.key}
+          label={s.label}
+          value={s.value}
+          tone={s.tone}
+          active={selected === s.key}
+          onClick={() => setSelected(s.key)}
+        />
+      ))}
+    </StatToggleGroup>
+  );
+}
+
+/** Estados: seleccionado, normal y en cero. Click selecciona un solo bucket. */
+export const Selection: Story = {
+  render: () => <Filterable />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const pendientes = canvas.getByRole('button', { name: /Pendientes/ });
+    await expect(canvas.getByRole('button', { name: /Vencidos/ })).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(pendientes);
+    await expect(pendientes).toHaveAttribute('aria-pressed', 'true');
+    await expect(canvas.getByRole('button', { name: /Vencidos/ })).toHaveAttribute('aria-pressed', 'false');
+  },
 };

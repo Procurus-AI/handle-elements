@@ -1,9 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { Tabs, type TabItem } from './Tabs';
 
+/**
+ * Selects a view inside an area. Sits under the page title, never in a top bar.
+ * The active tab is a soft fill, never a border. `variant="underline"` and `"pills"` are
+ * still accepted so 0.x code compiles, and both render this same Figma style.
+ * Keyboard: Left/Right move and select, Home/End jump to the ends; only the selected tab
+ * is a tab stop.
+ */
 const meta = {
-  title: 'Elements/Tabs',
+  title: 'Molecules/Tabs',
   component: Tabs,
   argTypes: {
     variant: { control: 'select', options: ['underline', 'pills'] },
@@ -14,93 +22,92 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const NAV_ITEMS = [
-  { value: 'connectors', label: 'Connectors' },
-  { value: 'skills', label: 'Skills' },
-  { value: 'workflows', label: 'Workflows' },
-  { value: 'memory', label: 'Memory', disabled: true },
+const VIEWS: TabItem[] = [
+  { value: 'todos', label: 'Todos', count: '1,234' },
+  { value: 'pendientes', label: 'Pendientes', count: 24 },
+  { value: 'pagados', label: 'Pagados' },
+  { value: 'archivados', label: 'Archivados', disabled: true },
 ];
 
-const FILTER_ITEMS = [
-  { value: 'discover', label: 'Discover' },
-  { value: 'all', label: 'All' },
-  { value: 'connected', label: 'Connected' },
-  { value: 'available', label: 'Available' },
+const RECORD_ITEMS: TabItem[] = [
+  { value: 'inicio', label: 'Inicio' },
+  { value: 'recibos', label: 'Recibos', count: '14,639' },
+  { value: 'clientes', label: 'Clientes', count: '2,201', dividerLabel: 'Beta' },
+  { value: 'polizas', label: 'Pólizas', count: '4,592' },
+  { value: 'capturas', label: 'Capturas' },
 ];
 
-const RAIL_ITEMS = [
-  { value: 'renewals', label: 'Renewals', count: 270, countTone: 'warn' as const },
-  { value: 'important', label: 'Important', count: 12 },
-  { value: 'collections', label: 'Collections', count: 8 },
-  { value: 'commissions', label: 'Commissions', count: 4, countTone: 'error' as const },
-];
-
-function Controlled({ variant, size }: { variant?: 'underline' | 'pills'; size?: 'sm' | 'md' }) {
-  const items = variant === 'pills' ? FILTER_ITEMS : NAV_ITEMS;
+function Controlled({ items = VIEWS, ...props }: Partial<React.ComponentProps<typeof Tabs>>) {
   const [value, setValue] = useState(items[0].value);
-  return <Tabs items={items} value={value} onChange={setValue} variant={variant} size={size} />;
+  return <Tabs {...props} items={items} value={value} onChange={setValue} />;
 }
 
-/** The app's record-object strip: everything from Customers on is still beta. */
-const RECORD_ITEMS: TabItem[] = [
-  { value: 'home', label: 'Home' },
-  { value: 'receipts', label: 'Receipts', count: '14,639' },
-  { value: 'customers', label: 'Customers', count: '2,201', dividerLabel: 'Beta' },
-  { value: 'policies', label: 'Policies', count: '4,592' },
-  { value: 'invoices', label: 'Invoices', count: 0 },
-  { value: 'captures', label: 'Captures' },
-];
-
-export const Underline: Story = {
-  args: { items: NAV_ITEMS, value: 'connectors' },
-  render: (args) => <Controlled variant={args.variant ?? 'underline'} size={args.size} />,
-};
-
-export const Pills: Story = {
-  args: { items: FILTER_ITEMS, value: 'discover', variant: 'pills' },
-  render: () => <Controlled variant="pills" />,
-};
-
-export const Together: Story = {
-  args: { items: NAV_ITEMS, value: 'connectors' },
+/** The Figma board: default and active, with and without a count. */
+export const Figma: Story = {
+  args: { items: VIEWS, value: 'todos' },
   render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <Controlled variant="underline" />
-      <Controlled variant="pills" />
-      <Controlled variant="pills" size="sm" />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 16, width: 'fit-content' }}>
+      <Tabs
+        aria-label="Con conteo"
+        items={[{ value: 'a', label: 'Vista', count: '1,234' }, { value: 'b', label: 'Vista', count: '1,234' }]}
+        value="b"
+      />
+      <Tabs
+        aria-label="Sin conteo"
+        items={[{ value: 'a', label: 'Vista' }, { value: 'b', label: 'Vista' }]}
+        value="b"
+      />
     </div>
   ),
 };
 
-/** In a narrow rail the default scroll container hides the last tab with no
- * affordance; `wrap` flows it onto a second line instead. */
-export const Wrap: Story = {
-  args: { items: RAIL_ITEMS, value: 'renewals', variant: 'pills', size: 'sm' },
-  render: () => {
-    const [value, setValue] = useState('renewals');
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, width: 334 }}>
-        <Tabs variant="pills" size="sm" items={RAIL_ITEMS} value={value} onChange={setValue} />
-        <Tabs variant="pills" size="sm" wrap items={RAIL_ITEMS} value={value} onChange={setValue} />
-      </div>
-    );
-  },
+export const States: Story = {
+  args: { items: VIEWS, value: 'todos' },
+  render: () => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <Controlled aria-label="Vistas" />
+      <Controlled aria-label="Vistas, compacto" size="sm" />
+      <Controlled aria-label="Vistas, variante pills" variant="pills" />
+    </div>
+  ),
 };
 
-/** `dividerLabel` splits the strip into groups and captions the break with a
- * Borealis marker — the record objects that are still in beta. The marker
- * describes every tab after it, so screen readers announce the group too.
- * `divider` alone gives the hairline with no caption. */
+/** In a narrow rail `wrap` flows the last tab onto a second line instead of scrolling. */
+export const Wrap: Story = {
+  args: { items: VIEWS, value: 'todos' },
+  render: () => (
+    <div style={{ width: 240 }}>
+      <Controlled aria-label="Vistas en una columna angosta" wrap />
+    </div>
+  ),
+};
+
+/** `dividerLabel` splits the strip into groups and captions the break; the marker describes
+ * every tab after it. `divider` alone gives the hairline with no caption. */
 export const GroupDivider: Story = {
-  args: { items: RECORD_ITEMS, value: 'home', variant: 'pills', size: 'sm' },
-  render: () => {
-    const [value, setValue] = useState('receipts');
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-        <Tabs variant="pills" size="sm" items={RECORD_ITEMS} value={value} onChange={setValue} />
-        <Tabs variant="pills" items={RECORD_ITEMS} value={value} onChange={setValue} />
-        <Tabs variant="underline" items={RECORD_ITEMS} value={value} onChange={setValue} />
-      </div>
-    );
+  args: { items: RECORD_ITEMS, value: 'inicio' },
+  render: () => <Controlled aria-label="Objetos" items={RECORD_ITEMS} />,
+};
+
+export const KeyboardNavigation: Story = {
+  args: { items: VIEWS, value: 'todos' },
+  render: () => <Controlled aria-label="Vistas" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const todos = canvas.getByRole('tab', { name: /Todos/ });
+    todos.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(canvas.getByRole('tab', { name: /Pendientes/ })).toHaveAttribute('aria-selected', 'true');
+    await expect(canvas.getByRole('tab', { name: /Pendientes/ })).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(canvas.getByRole('tab', { name: /Pagados/ })).toHaveAttribute('aria-selected', 'true');
+    // Archivados is disabled: ArrowRight wraps to the first tab.
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(todos).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{End}');
+    await expect(canvas.getByRole('tab', { name: /Pagados/ })).toHaveFocus();
+    await userEvent.keyboard('{Home}');
+    await expect(todos).toHaveFocus();
+    await expect(canvas.getByRole('tab', { name: /Pendientes/ })).toHaveAttribute('tabindex', '-1');
   },
 };

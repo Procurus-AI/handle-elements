@@ -3,7 +3,7 @@ import { Card } from '../Card/Card';
 import { Container, Divider, Grid, Stack } from './Layout';
 
 const meta = {
-  title: 'Elements/Layout',
+  title: 'Atoms/Layout',
 } satisfies Meta;
 
 export default meta;
