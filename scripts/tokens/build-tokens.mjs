@@ -83,8 +83,8 @@ for (const rows of Object.values(figma.semantic_from_fills))
 
 // Text tokens and the surfaces each must read on. Disabled text is exempt (WCAG 1.4.3).
 const AA_RULES = [
-  { token: '--he-text-tertiary', on: ['--he-bg-surface', '--he-bg-panel'], toward: '--he-text-primary' },
-  { token: '--he-text-secondary', on: ['--he-bg-surface', '--he-bg-panel', '--he-bg-app'], toward: '--he-text-primary' },
+  { token: '--he-text-tertiary', on: ['--he-bg-surface', '--he-bg-panel', '--he-bg-subtle', '--he-bg-app'], toward: '--he-text-primary' },
+  { token: '--he-text-secondary', on: ['--he-bg-surface', '--he-bg-panel', '--he-bg-subtle', '--he-bg-app', '--he-bg-hover'], toward: '--he-text-primary' },
   ...['success', 'warning', 'danger', 'idle'].map((t) => ({
     token: `--he-status-${t}-text`,
     on: [`--he-status-${t}-surface`, '--he-bg-surface'],
@@ -103,6 +103,7 @@ for (const mode of ['light', 'dark']) {
     let t = 0;
     while (t < 1 && worst(mix(original, target, t)) < 4.5) t += 0.01;
     const adjusted = mix(original, target, t);
+    if (worst(adjusted) < 4.5) throw new Error(`${rule.token} (${mode}) cannot reach 4.5:1 on ${rule.on.join(', ')}`);
     s[mode] = adjusted;
     s[`${mode}_ref`] = null;
     aa.push({
@@ -258,6 +259,7 @@ ${semLines('dark').join('\n')}
 ${chart('dark').join('\n')}
   --he-icon-stroke: var(--he-text-secondary);
 ${elev('0 0 0').join('\n')}
+${block(LEGACY_COMMON).join('\n')}
 ${block(LEGACY_DARK).join('\n')}
 }
 
