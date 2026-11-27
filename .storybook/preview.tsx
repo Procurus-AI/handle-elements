@@ -6,7 +6,9 @@ import '../src/styles/fonts.css';
 import '../src/styles/styles.css';
 
 const preview: Preview = {
+  tags: ['autodocs'],
   globalTypes: {
+    // Also settable from the URL (`&globals=theme:dark`); scripts/storybook-run.mjs uses that.
     theme: {
       description: 'Handle theme',
       toolbar: {
@@ -28,13 +30,14 @@ const preview: Preview = {
       useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
       }, [theme]);
+      const surface = { background: 'var(--he-bg-app)', color: 'var(--he-text-primary)' };
       return (
         <div
           className="he-root"
           style={
             fullscreen
-              ? { minHeight: '100vh' }
-              : { minHeight: '100vh', margin: -16, padding: 24 }
+              ? { ...surface, minHeight: '100vh' }
+              : { ...surface, minHeight: '100vh', margin: -16, padding: 24 }
           }
         >
           <Story />
@@ -44,6 +47,22 @@ const preview: Preview = {
   ],
   parameters: {
     layout: 'padded',
+    a11y: { test: 'error' },
+    options: {
+      storySort: {
+        order: [
+          'Introduction',
+          ['Overview', 'Benchmarks', 'Atomic Design', 'Changelog'],
+          'Foundations',
+          'Atoms',
+          'Molecules',
+          'Organisms',
+          'Templates',
+          'Pages',
+          '*',
+        ],
+      },
+    },
   },
 };
 

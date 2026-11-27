@@ -33,7 +33,13 @@
   "scripts": {
     "build": "tsup && node scripts/build-css.mjs",
     "typecheck": "tsc --noEmit",
-    "check:tokens": "node scripts/check-no-hex.mjs",
+    "tokens": "node scripts/tokens/build-tokens.mjs",
+    "check:tokens": "node scripts/check-no-hex.mjs && node scripts/tokens/build-tokens.mjs --check",
+    "check:levels": "node scripts/check-levels.mjs",
+    "check:compat": "node scripts/check-compat.mjs",
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "capture": "node scripts/capture.mjs",
+    "check": "npm run typecheck && npm run check:tokens && npm run check:levels && npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
@@ -49,10 +55,14 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "10.5.9",
+    "@storybook/addon-docs": "10.5.9",
     "@storybook/react-vite": "^10.5.9",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "axe-core": "4.14.1",
     "lightningcss": "^1.33.0",
+    "playwright-core": "1.65.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "storybook": "^10.5.9",
