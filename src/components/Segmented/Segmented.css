@@ -129,6 +129,11 @@
 }
 
 .he-segmented__toggle-text {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  /* The whole label, not an abbreviation: the accessible name must contain the visible
+   * text as whole words. Longer labels clip to the 28px box. */
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: 0;
 }

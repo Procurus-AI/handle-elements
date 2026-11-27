@@ -135,6 +135,7 @@ export function SidebarItem({
         'he-nav-item',
         'he-sidebar-item',
         active && 'he-nav-item--active',
+        active && 'he-sidebar-item--active',
         revealEndOnHover && 'he-sidebar-item--reveal-end',
         className,
       ),
@@ -299,9 +300,10 @@ export function SidebarFooterItem({
 }: SidebarFooterItemProps) {
   const { collapsed } = useContext(SidebarContext);
   const named = typeof label === 'string';
-  /* Only the collapsed rail needs a borrowed name: on the expanded rail an
-   * aria-label would REPLACE the visible text, dropping the sublabel — the org and
-   * role that are the only thing telling two identically named accounts apart. */
+  /* Only the collapsed rail shows a tooltip. The button keeps its name from its own
+   * text (label + sublabel, visually hidden when collapsed): an aria-label would
+   * replace it and drop the sublabel, the part that tells two identically named
+   * accounts apart. */
   const labelled = collapsed && named;
   const trailing =
     end ??
@@ -316,7 +318,6 @@ export function SidebarFooterItem({
       type="button"
       className={cx('he-sidebar-account', open && 'he-sidebar-account--open', className)}
       aria-expanded={open}
-      aria-label={labelled ? (label as string) : undefined}
       {...rest}
     >
       {media != null && <span className="he-sidebar-account__media">{media}</span>}

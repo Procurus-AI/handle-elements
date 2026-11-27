@@ -37,8 +37,11 @@
   line-height: var(--he-type-metric-lg-line);
   font-weight: var(--he-type-metric-lg-weight);
   letter-spacing: var(--he-type-metric-lg-tracking);
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
+  /* Proportional digits, as in Figma: a lone figure needs no column alignment and
+   * tabular digits push long amounts ($112,601,918.79) past the 233px cell. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .he-stat-cell__detail {

@@ -144,7 +144,8 @@
   line-height: var(--he-type-body-sm-emphasis-line);
   font-weight: var(--he-type-body-sm-emphasis-weight);
   letter-spacing: var(--he-type-body-sm-emphasis-tracking);
-  color: var(--he-review-field-tone);
+  /* The raw tone text misses 4.5:1 on the neutral surface for warning and danger. */
+  color: color-mix(in srgb, var(--he-review-field-tone) 70%, var(--he-text-primary));
   cursor: pointer;
   list-style: none;
 }

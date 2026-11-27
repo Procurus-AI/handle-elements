@@ -109,7 +109,7 @@ export function Drawer({
   companionLabel = 'Connected workspace',
   companionVariant = 'panel',
   onCompanionClose,
-  closeLabel = 'Close',
+  closeLabel = 'Cerrar',
   expandLabel = 'Expand panel',
   collapseLabel = 'Collapse panel',
   width = '420px',

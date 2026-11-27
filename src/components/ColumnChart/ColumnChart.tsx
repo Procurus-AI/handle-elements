@@ -223,6 +223,8 @@ export function ColumnChart({
                       </span>
                     )}
                   </div>
+                  {/* The space keeps the visible text "311 O", matching the button name. */}
+                  {showXLabels && ' '}
                   {showXLabels && <span className="he-columnchart__xlabel">{d.label}</span>}
                 </>
               );

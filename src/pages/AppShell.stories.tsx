@@ -23,6 +23,14 @@ export const Light: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('heading', { name: 'Recibos' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Registros' })).toHaveAttribute('aria-current', 'page');
+  },
+};
+
+/** Search filters the table. Kept apart from `Light` so the reference capture shows the full page. */
+export const Search: Story = {
+  render: () => page,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
     await userEvent.type(canvas.getByRole('searchbox', { name: 'Buscar recibo o cliente' }), 'Ofelia');
     await expect(canvas.getByText('Ofelia Murillo Rubial')).toBeVisible();
   },

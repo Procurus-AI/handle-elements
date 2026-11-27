@@ -53,7 +53,7 @@
 }
 
 .pg-notice__more {
-  color: var(--he-text-tertiary);
+  color: var(--he-text-secondary);
   font-size: var(--he-type-caption-size);
   line-height: var(--he-type-caption-line);
 }

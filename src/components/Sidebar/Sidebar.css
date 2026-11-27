@@ -132,6 +132,11 @@
   opacity: 1;
 }
 
+/* Tertiary text misses 4.5:1 on the active row's fill. */
+.he-nav-item--active .he-sidebar-item__end {
+  color: var(--he-text-secondary);
+}
+
 /* ---- sections ----
  * Section: column, gap 1, 16px above. Label: Caption, tertiary, pad 4/8. */
 .he-sidebar-section {

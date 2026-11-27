@@ -54,7 +54,7 @@ export function Modal({
   closeOnScrim = true,
   closeOnEsc = true,
   ariaLabel,
-  closeLabel = 'Close',
+  closeLabel = 'Cerrar',
   scrimClassName,
   className,
   onKeyDown,

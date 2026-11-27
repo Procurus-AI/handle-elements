@@ -108,7 +108,7 @@ export function Segmented<T extends string = string>({
           onClick={() => next && onChange(next.value)}
           className={cx('he-segmented__toggle', className)}
         >
-          {current?.icon ?? <span className="he-segmented__toggle-text">{textOf(current?.label).slice(0, 3)}</span>}
+          {current?.icon ?? <span className="he-segmented__toggle-text">{textOf(current?.label)}</span>}
         </button>
       </Tooltip>
     );

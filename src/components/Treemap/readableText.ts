@@ -14,6 +14,11 @@ function luminance(css: string): number | null {
 
 const ratio = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
+/** WCAG AA for normal text. */
+const MIN_CONTRAST = 4.5;
+/** Share of the opposite text token mixed into a fill that cannot carry readable text. */
+const MIX_STEPS = [8, 12, 16, 20, 26, 32, 40] as const;
+
 const CANDIDATES = ['var(--he-text-primary)', 'var(--he-text-inverse)'] as const;
 
 /**
@@ -28,7 +33,10 @@ export function useReadableText<T extends HTMLElement>(fill: string | undefined)
     const el = ref.current;
     if (!el) return undefined;
 
+    const base = fill ?? el.style.background;
+
     const apply = () => {
+      el.style.background = base;
       const bg = luminance(getComputedStyle(el).backgroundColor);
       if (bg == null) return;
       let best: { token: string; contrast: number } | null = null;
@@ -40,6 +48,17 @@ export function useReadableText<T extends HTMLElement>(fill: string | undefined)
         if (!best || contrast > best.contrast) best = { token, contrast };
       }
       el.style.color = best?.token ?? '';
+      if (!best || best.contrast >= MIN_CONTRAST || !base) return;
+
+      // Neither text colour reaches 4.5:1 on this fill (mid-tones). Push the fill
+      // away from the chosen text colour, toward the opposite token, until it does.
+      const opposite = CANDIDATES.find((token) => token !== best.token) ?? CANDIDATES[0];
+      for (const share of MIX_STEPS) {
+        el.style.background = `color-mix(in srgb, ${base} ${100 - share}%, ${opposite})`;
+        const mixed = luminance(getComputedStyle(el).backgroundColor);
+        const fg = luminance(getComputedStyle(el).color);
+        if (mixed != null && fg != null && ratio(fg, mixed) >= MIN_CONTRAST) return;
+      }
     };
 
     apply();

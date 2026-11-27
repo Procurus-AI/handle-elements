@@ -39,7 +39,7 @@ export interface ToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   onClose?: () => void;
   /** Visible word that names the tone, so tone never relies on colour alone. */
   toneLabel?: ReactNode;
-  /** Accessible name of the close button. Default `Close`, in English; give the screen's own language. */
+  /** Accessible name of the close button. Default `Cerrar`. */
   closeLabel?: string;
 }
 
@@ -51,7 +51,7 @@ export interface ToastProviderProps {
   duration?: number;
   /** Most toasts shown at once; the oldest is dropped past it. Default 5. */
   limit?: number;
-  /** Words shown beside each tone icon. Defaults are English; give the screen's own language. */
+  /** Words shown beside each tone icon. Defaults are Spanish: Aviso, Listo, Atención, Error. */
   toneLabels?: Partial<ToastToneLabels>;
   closeLabel?: string;
   /** Accessible name of the region that holds the stack. */
@@ -66,9 +66,9 @@ export interface ToastApi {
 }
 
 const DEFAULT_LABELS: ToastToneLabels = {
-  neutral: 'Notice',
-  success: 'Success',
-  warning: 'Warning',
+  neutral: 'Aviso',
+  success: 'Listo',
+  warning: 'Atención',
   danger: 'Error',
 };
 
@@ -87,7 +87,7 @@ export function Toast({
   action,
   onClose,
   toneLabel = DEFAULT_LABELS[tone],
-  closeLabel = 'Close',
+  closeLabel = 'Cerrar',
   className,
   ...rest
 }: ToastProps) {
@@ -215,8 +215,8 @@ export function ToastProvider({
   duration = 5000,
   limit = 5,
   toneLabels,
-  closeLabel = 'Close',
-  regionLabel = 'Notifications',
+  closeLabel = 'Cerrar',
+  regionLabel = 'Notificaciones',
 }: ToastProviderProps) {
   const [entries, setEntries] = useState<ToastEntry[]>([]);
   const [mounted, setMounted] = useState(false);

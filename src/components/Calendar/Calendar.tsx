@@ -77,7 +77,7 @@ export function Calendar({
   markers,
   renderDay,
   showOutsideDays = false,
-  todayLabel = 'Today',
+  todayLabel = 'Hoy',
   actions,
   hideHeader = false,
   className,
@@ -142,7 +142,7 @@ export function Calendar({
               <button
                 type="button"
                 className="he-cal__arrow"
-                aria-label="Previous month"
+                aria-label="Mes anterior"
                 onClick={() => changeMonth(addMonths(viewMonth, -1))}
               >
                 <Icon name="chevron-left" />
@@ -150,7 +150,7 @@ export function Calendar({
               <button
                 type="button"
                 className="he-cal__arrow"
-                aria-label="Next month"
+                aria-label="Mes siguiente"
                 onClick={() => changeMonth(addMonths(viewMonth, 1))}
               >
                 <Icon name="chevron-right" />
@@ -223,7 +223,7 @@ export function CalendarPanel({
   title,
   subtitle,
   onClose,
-  closeLabel = 'Close',
+  closeLabel = 'Cerrar',
   footer,
   className,
   children,
