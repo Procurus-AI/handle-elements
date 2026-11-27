@@ -80,6 +80,13 @@ npm run check:a11y       # axe on every story, light and dark (needs a local Chr
 npm run capture          # screenshots of the Figma components next to Kevin's renders
 ```
 
+## Hosted Storybook
+
+https://handle-elements-storybook-695023505931.us-central1.run.app — sign in with a
+usehandle.ai Google account (Cloud Run behind IAP, project `handle-v2-development`).
+`.github/workflows/storybook.yml` redeploys it on every push to `main`; the one-time GCP
+setup is `deploy/storybook/setup-gcp.sh` (needs `roles/iap.admin` for the access binding).
+
 ## Publishing
 
 Bump + tag: `npm version minor && git push --follow-tags`. CI publishes tags matching `v*`

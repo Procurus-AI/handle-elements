@@ -1,0 +1,54 @@
+name: Storybook
+
+# Deploys the Storybook to Cloud Run (handle-v2-development, behind IAP: usehandle.ai accounts
+# only). One-time GCP setup: deploy/storybook/setup-gcp.sh. The workload identity provider
+# accepts only this file on main, triggered by push or workflow_dispatch.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: storybook-deploy
+  cancel-in-progress: true
+
+env:
+  PROJECT: handle-v2-development
+  REGION: us-central1
+  SERVICE: handle-elements-storybook
+  IMAGE: us-central1-docker.pkg.dev/handle-v2-development/design-system/storybook
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build-storybook
+
+      - uses: google-github-actions/auth@v2
+        with:
+          project_id: handle-v2-development
+          workload_identity_provider: projects/695023505931/locations/global/workloadIdentityPools/github-actions/providers/handle-elements-storybook
+          service_account: storybook-deploy@handle-v2-development.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push image
+        run: |
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker build -f deploy/storybook/Dockerfile -t "${IMAGE}:${GITHUB_SHA::7}" .
+          docker push "${IMAGE}:${GITHUB_SHA::7}"
+
+      - name: Deploy
+        run: |
+          gcloud run deploy "$SERVICE" --project="$PROJECT" --region="$REGION" \
+            --image="${IMAGE}:${GITHUB_SHA::7}" --quiet
+          echo "Storybook: $(gcloud run services describe "$SERVICE" --project="$PROJECT" --region="$REGION" --format='value(status.url)')" >> "$GITHUB_STEP_SUMMARY"
