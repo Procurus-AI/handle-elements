@@ -59,3 +59,8 @@
   letter-spacing: var(--he-type-caption-tracking);
   font-variant-numeric: tabular-nums;
 }
+
+/* Tertiary fails AA on the active fill (dark theme), so the count steps up to secondary. */
+.he-filter-chip--active .he-filter-chip__count {
+  color: var(--he-text-secondary);
+}

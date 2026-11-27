@@ -264,7 +264,7 @@ export const CustomTiles: Story = {
               >
                 {acc.label}
               </span>
-              <span style={{ fontFamily: 'var(--he-font-sans)', fontVariantNumeric: 'tabular-nums', fontSize: 11, opacity: 0.82 }}>
+              <span style={{ fontFamily: 'var(--he-font-sans)', fontVariantNumeric: 'tabular-nums', fontSize: 11 }}>
                 {asUsd(acc.value)}
               </span>
               {/* Bottom band: compact motion chip on the left, owners pinned right. */}

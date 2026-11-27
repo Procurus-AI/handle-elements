@@ -118,6 +118,6 @@
 }
 
 /* In the Calendar grid the grid's 1px gap draws the hairlines, so the cell's own inset line goes. */
-.he-cal__grid > .he-calendar-day {
+.he-cal__cell > .he-calendar-day {
   box-shadow: none;
 }

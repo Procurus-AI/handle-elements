@@ -38,20 +38,30 @@ export function CalendarDay({
   type = 'button',
   ...rest
 }: CalendarDayProps) {
+  /* A blank cell has no date and nothing to press: a disabled nameless button
+   * fails button-name, so it renders as a hidden placeholder instead. */
+  if (empty) {
+    return (
+      <div
+        className={cx('he-calendar-day', 'he-calendar-day--empty', className)}
+        style={rest.style}
+        aria-hidden="true"
+      />
+    );
+  }
+
   return (
     <button
       type={type}
       className={cx(
         'he-calendar-day',
         today && 'he-calendar-day--today',
-        empty && 'he-calendar-day--empty',
         outside && 'he-calendar-day--outside',
         selected && 'he-calendar-day--selected',
         className,
       )}
-      aria-pressed={empty ? undefined : selected}
+      aria-pressed={selected}
       aria-current={today ? 'date' : undefined}
-      disabled={empty || undefined}
       {...rest}
     >
       {children ?? (

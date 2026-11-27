@@ -109,11 +109,11 @@
 }
 
 .he-trendgrid__delta--up {
-  color: var(--he-status-success-solid);
+  color: var(--he-status-success-text);
 }
 
 .he-trendgrid__delta--down {
-  color: var(--he-status-danger-solid);
+  color: var(--he-status-danger-text);
 }
 
 .he-trendgrid__arrow {

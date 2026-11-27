@@ -52,12 +52,12 @@ export const CobranzaControls: Story = {
             placeholder="Buscar cliente u org…"
             style={{ maxWidth: 260 }}
           />
-          <Select defaultValue="signal">
+          <Select aria-label="Señal" defaultValue="signal">
             <option value="signal">Cualquier señal</option>
             <option value="risk">En riesgo</option>
             <option value="healthy">Saludable</option>
           </Select>
-          <Select defaultValue="health">
+          <Select aria-label="Ordenar por" defaultValue="health">
             <option value="health">Salud (peor primero)</option>
             <option value="mrr">MRR (mayor primero)</option>
           </Select>

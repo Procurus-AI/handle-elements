@@ -1,0 +1,274 @@
+/* Page-only styles (Storybook, never shipped). Tokens only. Each block is a gap that a library
+ * component cannot express yet; the list is in the pages worker notes. */
+
+/* Page 07: a rule under the page header (Figma "Registros · Recibos"). */
+.pg-divided .he-pagehead {
+  border-bottom: var(--he-border-width) solid var(--he-border-default);
+}
+
+/* Page 04: sync status notice in warning tones. */
+.pg-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-3);
+  padding: 14px var(--he-spacing-4);
+  border: var(--he-border-width) solid var(--he-status-warning-border);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-status-warning-surface);
+}
+
+.pg-notice__body {
+  flex: 1 1 auto;
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pg-notice__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--he-text-primary);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+}
+
+.pg-notice__dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-status-warning-text);
+}
+
+.pg-notice__carriers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.pg-notice__more {
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+}
+
+/* Page 04: progress line inside the first stat cell. */
+.pg-progress {
+  display: block;
+  width: 100%;
+  height: 4px;
+  margin: 2px 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-active);
+  overflow: hidden;
+}
+
+.pg-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--he-status-success-text);
+}
+
+/* Page 04: aging filter cards (three toggle buttons, the first one selected). */
+.pg-aging {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--he-spacing-3);
+}
+
+.pg-aging__card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--he-spacing-2);
+  min-height: 134px;
+  box-sizing: border-box;
+  padding: var(--he-spacing-4);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-surface);
+  color: var(--he-text-primary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background var(--he-motion-fast);
+}
+
+.pg-aging__card:hover {
+  background: var(--he-bg-hover);
+}
+
+.pg-aging__card[aria-pressed='true'],
+.pg-aging__card[aria-pressed='true']:hover {
+  border-color: var(--he-bg-inverse);
+  background: var(--he-bg-inverse);
+  color: var(--he-bg-surface);
+}
+
+.pg-aging__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+}
+
+.pg-aging__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--he-corner-full);
+  background: var(--he-text-tertiary);
+}
+
+.pg-aging__dot--warning {
+  background: var(--he-status-warning-text);
+}
+
+.pg-aging__dot--danger {
+  background: var(--he-status-danger-text);
+}
+
+.pg-aging__amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--he-spacing-2);
+  font-family: var(--he-type-metric-lg-family);
+  font-size: var(--he-type-metric-lg-size);
+  line-height: var(--he-type-metric-lg-line);
+  font-weight: var(--he-type-metric-lg-weight);
+  letter-spacing: var(--he-type-metric-lg-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.pg-aging__amount--usd {
+  font-family: var(--he-type-metric-md-family);
+  font-size: var(--he-type-metric-md-size);
+  line-height: var(--he-type-metric-md-line);
+  font-weight: var(--he-type-metric-md-weight);
+  letter-spacing: var(--he-type-metric-md-tracking);
+}
+
+.pg-aging__unit,
+.pg-aging__count {
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+}
+
+.pg-aging__card[aria-pressed='true'] .pg-aging__label,
+.pg-aging__card[aria-pressed='true'] .pg-aging__unit,
+.pg-aging__card[aria-pressed='true'] .pg-aging__count {
+  color: var(--he-bg-surface);
+  opacity: 0.75;
+}
+
+/* Page 04: detail row under a customer with several receipts. */
+.pg-detail {
+  display: grid;
+  gap: var(--he-spacing-1);
+  margin: 0;
+  padding: var(--he-spacing-2) 0;
+  list-style: none;
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+}
+
+/* Proposal: Configuración · Aseguradoras. */
+.pg-settings {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--he-spacing-6);
+  padding: 20px var(--he-spacing-6) var(--he-spacing-6);
+}
+
+.pg-settings__index {
+  display: grid;
+  align-content: start;
+  gap: 1px;
+}
+
+.pg-settings__main {
+  display: grid;
+  gap: var(--he-spacing-6);
+  min-width: 0;
+}
+
+.pg-settings__intro {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-body-md-size);
+  line-height: var(--he-type-body-md-line);
+}
+
+.pg-group {
+  display: grid;
+  gap: var(--he-spacing-3);
+}
+
+.pg-group__head {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+  margin: 0;
+  color: var(--he-text-primary);
+  font-family: var(--he-type-heading-sm-family);
+  font-size: var(--he-type-heading-sm-size);
+  line-height: var(--he-type-heading-sm-line);
+  font-weight: var(--he-type-heading-sm-weight);
+  letter-spacing: var(--he-type-heading-sm-tracking);
+}
+
+.pg-group__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--he-spacing-3);
+}
+
+.pg-flow {
+  display: grid;
+  gap: var(--he-spacing-3);
+}
+
+.pg-flow__note {
+  margin: 0;
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+}
+
+.pg-flow__status {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+  margin: 0;
+  padding: var(--he-spacing-3);
+  border: var(--he-border-width) solid var(--he-status-warning-border);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-status-warning-surface);
+  color: var(--he-text-primary);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+}
+
+.pg-flow__fields {
+  display: grid;
+  gap: var(--he-spacing-3);
+}
+
+.pg-flow__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--he-spacing-2);
+  width: 100%;
+}

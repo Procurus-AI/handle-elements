@@ -73,9 +73,9 @@ const KpiRail = ({ columns }: { columns?: number }) => (
       tone="ok"
       label="Overdue receivable"
       value="0"
-      visual={<Sparkline data={[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} tone="ok" height={20} />}
+      visual={<Sparkline data={[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} tone="ok" height={20} aria-label="Cobranza vencida, sin cambios en 12 semanas" />}
     />
-    <StatCard tone="ok" label="Collections" value="46%" visual={<Meter size="sm" tone="ok" value={46} />} />
+    <StatCard tone="ok" label="Collections" value="46%" visual={<Meter size="sm" tone="ok" value={46} aria-label="Cobranza" />} />
     <StatCard
       tone="warn"
       label="Commissions"
@@ -110,7 +110,7 @@ export const Visual: Story = {
         label="Collections"
         value="46%"
         delta={{ value: '6 pts', direction: 'up' }}
-        visual={<Sparkline data={[28, 31, 30, 35, 39, 38, 42, 46]} variant="area" tone="ok" width={228} height={32} />}
+        visual={<Sparkline data={[28, 31, 30, 35, 39, 38, 42, 46]} variant="area" tone="ok" width={228} height={32} aria-label="Cobranza, últimas 8 semanas" />}
         footer="Trailing 8 weeks"
       />
     </div>

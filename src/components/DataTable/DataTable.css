@@ -1,15 +1,20 @@
-/* DataTable — a quiet bordered surface wrapping a sortable table.
- * Colors/sizes come from --he-* tokens; status/color lives in cell renderers. */
+/* DataTable (Figma "Panel — Table"): rows 40 (--he-row-height), header 36 (--he-row-header-height).
+ * Header cells Label/sm in tertiary ink, cells Body/sm, numbers right-aligned with tabular
+ * numerals, header rule border-default, row dividers border-subtle, hover bg-hover.
+ * Row actions are always visible. */
 .he-table {
   width: 100%;
-  font-family: var(--he-font-sans);
-  color: var(--he-text);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-primary);
 }
 
 .he-table--card {
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-md);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
   overflow: hidden;
 }
 
@@ -17,9 +22,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--he-space-3);
-  padding: var(--he-space-3) var(--he-space-4);
-  border-bottom: 1px solid var(--he-border);
+  gap: var(--he-spacing-2);
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border-bottom: var(--he-border-width) solid var(--he-border-default);
 }
 
 .he-table__scroll {
@@ -27,21 +32,26 @@
   overflow-x: auto;
 }
 
+.he-table__scroll:focus-visible {
+  outline: 2px solid var(--he-border-focus);
+  outline-offset: -2px;
+}
+
 .he-table__el {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--he-body-sm);
 }
 
 .he-table__caption {
-  padding: var(--he-space-3) var(--he-space-4);
+  padding: var(--he-spacing-3) var(--he-spacing-4);
   text-align: left;
-  font-size: var(--he-body-sm);
-  font-weight: 600;
-  color: var(--he-text);
+  font-family: var(--he-type-body-sm-emphasis-family);
+  font-weight: var(--he-type-body-sm-emphasis-weight);
+  color: var(--he-text-primary);
 }
 
-.he-table__caption--hidden {
+.he-table__caption--hidden,
+.he-table__sr {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -54,29 +64,31 @@
 }
 
 /* ---- head ---- */
-/* Quiet sentence-case sans headers (Perplexity/Handle app convention) — not the
- * mono all-caps caption motif, which reads too heavy in a dense table. */
 .he-table__th {
-  padding: var(--he-space-3) var(--he-space-4);
+  box-sizing: border-box;
+  height: var(--he-row-header-height);
+  padding: 0 var(--he-spacing-4);
   text-align: left;
   vertical-align: middle;
-  font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  font-weight: 500;
-  color: var(--he-text-dim);
+  font-family: var(--he-type-label-sm-family);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
+  color: var(--he-text-tertiary);
   white-space: nowrap;
-  border-bottom: 1px solid var(--he-border);
-  background: var(--he-surface);
+  border-bottom: var(--he-border-width) solid var(--he-border-default);
+  background: var(--he-bg-surface);
 }
 
 .he-table__th--active {
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 .he-table__sort {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-1);
   margin: 0;
   padding: 0;
   border: 0;
@@ -84,72 +96,84 @@
   cursor: pointer;
   font: inherit;
   letter-spacing: inherit;
-  text-transform: inherit;
   color: inherit;
-  transition: color var(--he-transition-fast);
+  transition: color var(--he-motion-fast);
 }
 
 .he-table__sort:hover {
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 .he-table__sort:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
 }
 
+/* The direction glyph reserves its width so a header does not shift when sorted. */
 .he-table__sort-glyph {
-  font-size: 10px;
-  opacity: 0.7;
+  opacity: 0;
+  transition: opacity var(--he-motion-fast);
 }
+
+.he-table__th--active .he-table__sort-glyph,
+.he-table__sort:hover .he-table__sort-glyph,
+.he-table__sort:focus-visible .he-table__sort-glyph {
+  opacity: 1;
+}
+
 
 /* ---- body ---- */
 .he-table__td {
-  padding: var(--he-space-3) var(--he-space-4);
+  box-sizing: border-box;
+  height: var(--he-row-height);
+  padding: 0 var(--he-spacing-4);
   vertical-align: middle;
-  border-bottom: 1px solid var(--he-border);
-  color: var(--he-text);
+  border-bottom: var(--he-border-width) solid var(--he-border-subtle);
+  color: var(--he-text-primary);
 }
 
 .he-table__row:last-child .he-table__td {
   border-bottom: 0;
 }
 
-.he-table__row--clickable {
-  cursor: pointer;
-  transition: background var(--he-transition-fast);
+.he-table__row:hover {
+  background: var(--he-bg-hover);
 }
 
-.he-table__row--clickable:hover {
-  background: var(--he-surface-2);
+.he-table__row--clickable {
+  cursor: pointer;
+  transition: background var(--he-motion-fast);
 }
 
 .he-table__row--clickable:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: -2px;
-  background: var(--he-surface-2);
 }
 
-/* Selected row — the row backing an open drawer. A fill plus weight, the same
- * doctrine as .he-sidebar-item--active and .he-list__item--active. Never an
- * edge bar: an accent spine on a selected row is a rejected pattern here, and a
- * raw Borealis hairline measures 1.11:1 on --he-surface. Declared after the
- * hover rule so pointing at a selected row keeps the same fill instead of
- * flickering. */
+/* Selected row: the row backing an open detail view, or a checked row. A fill plus weight on
+ * the first data cell; never an edge bar. */
 .he-table__row--selected {
-  background: var(--he-surface-2);
+  background: var(--he-bg-subtle);
+}
+
+.he-table__row--selected:hover {
+  background: var(--he-bg-hover);
 }
 
 .he-table__row--selected .he-table__td:first-child {
-  font-weight: 500;
+  font-weight: var(--he-type-body-sm-emphasis-weight);
 }
 
-/* ---- composite (nested) cell — media + stacked label + trailing ---- */
+.he-table__row--loading:hover {
+  background: transparent;
+}
+
+/* ---- composite (nested) cell: media + stacked label + trailing ---- */
 .he-table__cell {
   display: flex;
   align-items: center;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-2);
   min-width: 0;
 }
 
@@ -170,7 +194,6 @@
 .he-table__cell-body {
   display: flex;
   flex-direction: column;
-  gap: 1px;
   min-width: 0;
 }
 
@@ -178,11 +201,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 .he-table__cell--mono .he-table__cell-primary {
-  font-family: var(--he-font-mono);
   font-variant-numeric: tabular-nums;
 }
 
@@ -190,8 +212,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--he-caption);
-  color: var(--he-text-dim);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
 }
 
 .he-table__cell-trailing {
@@ -199,7 +223,7 @@
   align-items: center;
   flex: 0 0 auto;
   margin-left: auto;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
 /* ---- alignment ---- */
@@ -213,136 +237,142 @@
   text-align: right;
 }
 
+/* numbers: right-aligned, tabular numerals */
+.he-table__cell--numeric {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---- density ---- */
 .he-table--dense .he-table__th,
 .he-table--dense .he-table__td {
-  padding: var(--he-space-2) var(--he-space-3);
+  height: calc(var(--he-row-height) - var(--he-spacing-2));
 }
 
-/* ---- empty ---- */
+/* ---- empty: replaces the whole table, headers included ---- */
 .he-table__empty {
-  padding: var(--he-space-6) var(--he-space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--he-spacing-12) var(--he-spacing-4);
   text-align: center;
-  color: var(--he-text-faint);
-  font-size: var(--he-body-sm);
+  color: var(--he-text-tertiary);
 }
 
-/* ---- footer (mirrors .he-table__toolbar, with the rule on top) ---- */
+/* ---- footer ---- */
 .he-table__footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--he-space-3);
-  padding: var(--he-space-3) var(--he-space-4);
-  border-top: 1px solid var(--he-border);
+  gap: var(--he-spacing-3);
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border-top: var(--he-border-width) solid var(--he-border-default);
 }
 
 .he-table--dense .he-table__footer {
-  padding: var(--he-space-2) var(--he-space-3);
+  padding: var(--he-spacing-2) var(--he-spacing-3);
 }
 
 /* ---- pinned header ----
- * `.he-table__th` already carries `background: var(--he-surface)`, which is the
- * opaque backing a sticky header needs — only `position` was missing.
  * The border-bottom is swapped for an inset shadow because `.he-table__el` is
- * `border-collapse: collapse`: the collapsed border belongs to the table layer
- * and scrolls out from under the pinned header, letting rows clip against the
- * header text. Verified in-browser both ways. */
+ * `border-collapse: collapse`: the collapsed border belongs to the table layer and
+ * scrolls out from under the pinned header. */
 .he-table--sticky .he-table__th {
   position: sticky;
   top: 0;
   z-index: 1;
   border-bottom: 0;
-  box-shadow: inset 0 -1px 0 var(--he-border);
+  box-shadow: inset 0 calc(-1 * var(--he-border-width)) 0 var(--he-border-default);
 }
 
-/* ---- footer totals row (<tfoot>) ----
- * A quiet summary line closing the table: a single top hairline, medium weight,
- * dim label ink. Cells reuse the column alignment classes so a total lands
- * directly under its column. */
+/* ---- totals row (<tfoot>) ---- */
 .he-table__tf {
-  padding: var(--he-space-3) var(--he-space-4);
+  height: var(--he-row-height);
+  padding: 0 var(--he-spacing-4);
   vertical-align: middle;
-  border-top: 1px solid var(--he-border);
-  font-weight: 500;
-  color: var(--he-text);
+  border-top: var(--he-border-width) solid var(--he-border-default);
+  font-family: var(--he-type-body-sm-emphasis-family);
+  font-weight: var(--he-type-body-sm-emphasis-weight);
+  color: var(--he-text-primary);
   white-space: nowrap;
 }
 
 .he-table--dense .he-table__tf {
-  padding: var(--he-space-2) var(--he-space-3);
+  height: calc(var(--he-row-height) - var(--he-spacing-2));
 }
 
-/* ---- expander column ----
- * A narrow leading cell holding a rotating chevron. `width: 1%` collapses the
- * column to its content so the data columns keep their space. */
+/* ---- selection + expander columns: narrow, collapse to content ---- */
+.he-table__select-cell,
 .he-table__expander-cell {
   width: 1%;
   white-space: nowrap;
-  padding-right: var(--he-space-2);
+}
+
+.he-table__select-cell {
+  padding-right: 0;
+}
+
+.he-table__expander-cell {
+  padding-right: var(--he-spacing-2);
 }
 
 .he-table__expander {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   margin: 0;
   padding: 0;
   border: 0;
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
   background: none;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   cursor: pointer;
   transition:
-    color var(--he-transition-fast),
-    background var(--he-transition-fast);
+    color var(--he-motion-fast),
+    background var(--he-motion-fast);
 }
 
 .he-table__expander:hover {
-  color: var(--he-text);
-  background: var(--he-surface-2);
+  color: var(--he-text-primary);
+  background: var(--he-bg-active);
 }
 
 .he-table__expander:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 1px;
 }
 
 .he-table__expander svg {
-  transition: transform var(--he-transition-fast);
+  transition: transform var(--he-motion-fast);
 }
 
 .he-table__expander--open svg {
   transform: rotate(90deg);
 }
 
-/* The expanded parent row keeps a faint fill so the detail reads as attached. */
+/* The expanded parent row keeps the subtle fill so the detail reads as attached. */
 .he-table__row--expanded {
-  background: var(--he-surface-2);
+  background: var(--he-bg-subtle);
 }
 
-/* ---- expansion (detail) row ----
- * A full-span recessed panel under its row. The td carries no default cell
- * padding (it is not `.he-table__td`); the inner wrapper owns the inset. */
+/* ---- expansion (detail) row (Figma "Row expansion"): bg-subtle, content in a bordered
+ * surface sub-panel supplied by the caller. */
 .he-table__expansion {
   padding: 0;
-  background: var(--he-surface-2);
-  border-bottom: 1px solid var(--he-border);
+  background: var(--he-bg-subtle);
+  border-bottom: var(--he-border-width) solid var(--he-border-subtle);
 }
 
 .he-table__expansion-inner {
-  padding: var(--he-space-2) var(--he-space-4) var(--he-space-4);
+  padding: 10px var(--he-spacing-4) 14px var(--he-spacing-12);
 }
 
 .he-table--dense .he-table__expansion-inner {
-  padding: var(--he-space-1) var(--he-space-3) var(--he-space-3);
+  padding-block: var(--he-spacing-2);
 }
 
-/* ---- quiet trailing row actions ----
- * Pinned to the row's end, collapsed to content width, and revealed only on
- * row hover / focus-within so the resting row stays free of chrome. */
+/* ---- row actions: ALWAYS visible (hover-only actions are invisible to touch and keyboard users) ---- */
 .he-table__actions-cell {
   width: 1%;
   white-space: nowrap;
@@ -353,28 +383,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--he-space-1);
-  opacity: 0;
-  transition: opacity var(--he-transition-fast);
-}
-
-.he-table__row:hover .he-table__actions,
-.he-table__row:focus-within .he-table__actions,
-.he-table__row--selected .he-table__actions,
-.he-table__row--expanded .he-table__actions {
-  opacity: 1;
-}
-
-/* Touch devices have no hover — keep the actions visible there. */
-@media (hover: none) {
-  .he-table__actions {
-    opacity: 1;
-  }
+  gap: var(--he-spacing-1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .he-table__expander svg,
-  .he-table__actions {
+  .he-table__expander svg {
     transition: none;
   }
 }

@@ -9,10 +9,14 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../lib/cx';
+import { Icon } from '../Icon/Icon';
+import { Brandmark, Wordmark } from '../Logo/Logo';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 /* Rows need to know the rail is 56px wide: collapsed rows hide their text, so
- * they borrow the label for an aria-label and a right-placed tooltip. */
+ * they borrow the label for an aria-label and a right-placed tooltip. Below 960px the
+ * App shell collapses the rail with CSS alone; there the text stays in the accessibility
+ * tree (visually hidden) and no tooltip is added. */
 const SidebarContext = createContext<{ collapsed: boolean }>({ collapsed: false });
 
 /* ---------------------------------- shell ---------------------------------- */
@@ -24,19 +28,22 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
    * landmark whose name contradicts its role.
    */
   as?: 'aside' | 'nav' | 'div';
-  /** Any valid CSS width (default 250px). Ignored while `collapsed`. */
+  /** Any valid CSS width (default 208px, the Figma sidebar). Ignored while `collapsed`. */
   width?: string;
   /** Icon-only rail: hides labels, ends, and sections; footer keeps only its media. */
   collapsed?: boolean;
-  /** Pinned block above the footer (settings rows, theme, environment), separated by a hairline. */
+  /**
+   * Pinned block above the footer, separated by a rule: the Configuración item and a
+   * `ThemeSwitch` (a ThemeSwitch placed directly in this slot is inset to line up with the items).
+   */
   utility?: ReactNode;
-  /** Sticky bottom slot (account row…), separated by a hairline. */
+  /** Sticky bottom slot (Profile row), separated by a rule. */
   footer?: ReactNode;
 }
 
 export function Sidebar({
   as: Element = 'aside',
-  width = '250px',
+  width,
   collapsed = false,
   utility,
   footer,
@@ -65,11 +72,28 @@ export function Sidebar({
 
 export interface SidebarHeaderProps extends HTMLAttributes<HTMLDivElement> {}
 
-export function SidebarHeader({ className, ...rest }: SidebarHeaderProps) {
-  return <div className={cx('he-sidebar__header', className)} {...rest} />;
+/**
+ * Logo row (pad 12/8). Without children it renders the Wordmark, and the Brandmark in the
+ * collapsed rail. With children it is a plain flex row.
+ */
+export function SidebarHeader({ className, children, ...rest }: SidebarHeaderProps) {
+  return (
+    <div className={cx('he-sidebar__header', className)} {...rest}>
+      {children ?? (
+        <>
+          <Wordmark className="he-sidebar__wordmark" />
+          <Brandmark className="he-sidebar__brandmark" />
+        </>
+      )}
+    </div>
+  );
 }
 
 /* ----------------------------------- item ---------------------------------- */
+
+/* A SidebarItem is a NavItem (Figma "Nav item"): it carries the `he-nav-item` classes, so the
+ * look lives in one place. `icon` here is any node (use `<Icon name="…" />`); `end` and
+ * `depth` are the Sidebar-only additions. */
 
 type ItemBaseProps = {
   icon?: ReactNode;
@@ -108,22 +132,24 @@ export function SidebarItem({
     {
       ...(isLink ? {} : { type: 'button' }),
       className: cx(
+        'he-nav-item',
         'he-sidebar-item',
-        active && 'he-sidebar-item--active',
+        active && 'he-nav-item--active',
         revealEndOnHover && 'he-sidebar-item--reveal-end',
         className,
       ),
       'aria-current': active ? 'page' : undefined,
       'aria-label': named ? (label as string) : undefined,
-      style: depth > 0 ? { paddingLeft: `calc(var(--he-space-2) + ${depth} * 18px)`, ...style } : style,
+      style:
+        depth > 0 ? { paddingLeft: `calc(var(--he-spacing-2) + ${depth} * var(--he-spacing-4))`, ...style } : style,
       ...rest,
     },
     icon != null && (
-      <span key="i" className="he-sidebar-item__icon" aria-hidden>
+      <span key="i" className="he-nav-item__icon he-sidebar-item__icon" aria-hidden>
         {icon}
       </span>
     ),
-    <span key="l" className="he-sidebar-item__label">
+    <span key="l" className="he-nav-item__label he-sidebar-item__label">
       {label}
     </span>,
     end != null && (
@@ -148,7 +174,7 @@ export type SidebarSectionActionVisibility = 'hover' | 'always';
 
 export interface SidebarSectionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onToggle'> {
   label: ReactNode;
-  /** Collapsible via the header chevron (default true). */
+  /** Collapsible via the header chevron (default true). The Figma sidebar uses static labels: pass `false`. */
   collapsible?: boolean;
   defaultOpen?: boolean;
   /** Controlled open state. */
@@ -191,16 +217,11 @@ export function SidebarSection({
         {collapsible ? (
           <button type="button" className="he-sidebar-section__head" onClick={toggle} aria-expanded={open}>
             <span className="he-sidebar-section__label">{label}</span>
-            <svg
+            <Icon
+              name="chevron-down"
+              size={12}
               className={cx('he-sidebar-section__chevron', !open && 'he-sidebar-section__chevron--closed')}
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              aria-hidden
-            >
-              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            />
           </button>
         ) : (
           <div className="he-sidebar-section__head he-sidebar-section__head--static">
@@ -258,7 +279,8 @@ export interface SidebarFooterItemProps extends ButtonHTMLAttributes<HTMLButtonE
   open?: boolean;
   /**
    * Trailing affordance when `end` is not supplied (default false).
-   * `true` = the single chevron that rotates on open ("this expands").
+   * `true` = the single chevron (up when closed, since the Profile menu opens upward; it
+   * turns down while open).
    * `'updown'` = the stacked glyph, which does not rotate ("this opens a list of
    * alternatives") — the honest glyph for a row backed by seven accounts.
    */
@@ -281,7 +303,13 @@ export function SidebarFooterItem({
    * aria-label would REPLACE the visible text, dropping the sublabel — the org and
    * role that are the only thing telling two identically named accounts apart. */
   const labelled = collapsed && named;
-  const trailing = end ?? (chevron === 'updown' ? <UpDownGlyph /> : chevron ? <ChevronGlyph /> : null);
+  const trailing =
+    end ??
+    (chevron === 'updown' ? (
+      <UpDownGlyph />
+    ) : chevron ? (
+      <Icon name="chevron-up" size={14} className="he-sidebar-account__chevron" />
+    ) : null);
 
   const button = (
     <button
@@ -333,15 +361,6 @@ function UpDownGlyph() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-  );
-}
-
-/* Same path as the section chevron above and Select's — one glyph weight per rail. */
-function ChevronGlyph() {
-  return (
-    <svg className="he-sidebar-account__chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

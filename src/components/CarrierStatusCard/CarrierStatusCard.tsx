@@ -45,10 +45,10 @@ export function CarrierStatusCard({
       <span className="he-carrier-card__head">
         <Icon name="building-2" size={20} className="he-carrier-card__icon" />
         <span className="he-carrier-card__name">{name}</span>
-        <Badge tone={tone} dot>
-          {status}
-        </Badge>
       </span>
+      <Badge tone={tone} dot className="he-carrier-card__badge">
+        {status}
+      </Badge>
       <span className="he-carrier-card__fields">
         <span className="he-carrier-card__field">
           <span className="he-carrier-card__field-label">Credenciales</span>

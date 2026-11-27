@@ -1,4 +1,4 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import { useId, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 
 export type MeterTone = 'default' | 'accent' | 'ok' | 'warn' | 'error' | 'neutral' | 'success' | 'warning' | 'danger' | 'idle';
@@ -35,8 +35,11 @@ export function Meter({
   indeterminate = false,
   className,
   style,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   ...rest
 }: MeterProps) {
+  const labelId = useId();
   const safeMax = max > min ? max : min + 1;
   const boundedValue = clamp(value, min, safeMax);
   const percent = ((boundedValue - min) / (safeMax - min)) * 100;
@@ -46,13 +49,20 @@ export function Meter({
     <div className={cx('he-meter', `he-meter--${size}`, `he-meter--${tone}`, className)} style={style} {...rest}>
       {(label != null || showValue) && (
         <div className="he-meter__header">
-          {label != null && <span className="he-meter__label">{label}</span>}
+          {label != null && (
+            <span id={labelId} className="he-meter__label">
+              {label}
+            </span>
+          )}
           {showValue && <span className="he-meter__value">{labelText}</span>}
         </div>
       )}
       <div
         className={cx('he-meter__track', indeterminate && 'he-meter__track--indeterminate')}
         role="progressbar"
+        /* A progressbar needs a name: the caller's, else the visible label, else a generic one. */
+        aria-label={ariaLabelledBy ? undefined : (ariaLabel ?? (label == null ? 'Progreso' : undefined))}
+        aria-labelledby={ariaLabelledBy ?? (ariaLabel == null && label != null ? labelId : undefined)}
         aria-valuemin={indeterminate ? undefined : min}
         aria-valuemax={indeterminate ? undefined : max}
         aria-valuenow={indeterminate ? undefined : boundedValue}

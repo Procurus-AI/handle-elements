@@ -1,7 +1,8 @@
-import { useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
+import { useState, type Ref, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 import { heatColor, maxValue, seriesColor, squarify, sum, type TreemapRect } from '../../lib/chart';
 import { Tooltip } from '../Tooltip/Tooltip';
+import { useReadableText } from './readableText';
 
 /** Fixed tones map a tile to a semantic chart color instead of the series cycle. */
 export type TreemapTone = 'series' | 'heat' | 'pos' | 'neg' | 'ink' | 'accent';
@@ -214,23 +215,42 @@ function renderTiles(
     // tooltip hides via the wrapper anchor's own pointerleave.
     const onPointerEnter = onHover ? () => onHover(datum, index) : undefined;
 
-    return onSelect ? (
-      <button
+    return (
+      <TreemapTile
         key={datum.id ?? index}
-        type="button"
         className={cls}
         style={posStyle}
-        onClick={() => onSelect(datum, index)}
+        fill={fill}
+        onClick={onSelect ? () => onSelect(datum, index) : undefined}
         onPointerEnter={onPointerEnter}
       >
         {inner}
-      </button>
-    ) : (
-      <div key={datum.id ?? index} className={cls} style={posStyle} onPointerEnter={onPointerEnter}>
-        {inner}
-      </div>
+      </TreemapTile>
     );
   });
+}
+
+interface TreemapTileProps {
+  className: string;
+  style: CSSProperties;
+  fill: string;
+  onClick?: () => void;
+  onPointerEnter?: () => void;
+  children: ReactNode;
+}
+
+/** One tile: a button when clickable. Its text colour is picked from the resolved fill. */
+function TreemapTile({ fill, onClick, children, ...props }: TreemapTileProps) {
+  const ref = useReadableText<HTMLElement>(fill);
+  return onClick ? (
+    <button ref={ref as Ref<HTMLButtonElement>} type="button" onClick={onClick} {...props}>
+      {children}
+    </button>
+  ) : (
+    <div ref={ref as Ref<HTMLDivElement>} {...props}>
+      {children}
+    </div>
+  );
 }
 
 export function Treemap({

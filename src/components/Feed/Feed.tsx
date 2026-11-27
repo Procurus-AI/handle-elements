@@ -103,7 +103,7 @@ export function Feed({
           // A flat sibling, not a wrapper: the heading carries the same rail
           // ::before, so the line runs unbroken through every date boundary.
           out.push(
-            <li key={`day-${key}`} className="he-feed__day" role="presentation">
+            <li key={`day-${key}`} className="he-feed__day">
               <h4 className="he-feed__day-label">
                 {key === todayKey ? (
                   es ? 'Hoy' : 'Today'

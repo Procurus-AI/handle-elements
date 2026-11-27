@@ -164,9 +164,26 @@
   position: absolute;
   top: 0;
   bottom: 0;
+  border-radius: var(--he-corner-lg);
+}
+
+/* The default band's wash is faded on its own layer so the zone label stays
+ * at full strength (a faded label failed 4.5:1). */
+.he-timeline__band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background: var(--he-bg-subtle);
   opacity: 0.55;
-  border-radius: var(--he-corner-lg);
+}
+
+.he-timeline__band--warn::before,
+.he-timeline__band--error::before,
+.he-timeline__band--ok::before,
+.he-timeline__band--neutral::before,
+.he-timeline__band--accent::before {
+  content: none;
 }
 
 .he-timeline__band--warn {

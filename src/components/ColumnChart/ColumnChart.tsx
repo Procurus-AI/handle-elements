@@ -241,9 +241,14 @@ export function ColumnChart({
                   )}
                   onClick={() => onSelectColumn(d, i)}
                   aria-pressed={selectedIndex === i}
-                  aria-label={`${textOf(d.label) ?? `Column ${i + 1}`}${
-                    magnitude != null ? `, ${textOf(formatValue(magnitude)) ?? ''}` : ''
-                  }`}
+                  // Same order as the visible text (value above, label below), so the
+                  // accessible name contains it (WCAG 2.5.3).
+                  aria-label={[
+                    magnitude != null ? textOf(formatValue(magnitude)) : undefined,
+                    textOf(d.label) ?? `Column ${i + 1}`,
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   style={{ gap: `${barGap}px` }}
                 >
                   {body}

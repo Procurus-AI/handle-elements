@@ -1,53 +1,56 @@
-/* Panel — Card + section PageHeader. The head lays the title block against an
- * optional aside; the body follows below. Spacing via --he-* tokens only. */
+/* Panel — a Card with an optional section head.
+ * `content` is the Card surface (bg-surface, border-default, corner lg).
+ * `inset` is the App shell main panel (Figma "Main panel — inset"). */
 
-/* A Panel is a bleedable surface, so it republishes the shared bleed hook at its
- * own boundary. --he-bleed-pad inherits; without this line a Section `flush`
- * inside a Panel inside a Drawer would resolve the DRAWER's inset and overhang
- * the card's border. Nearest surface wins because the nearest surface writes it. */
+/* A Panel is a bleedable surface, so it republishes the shared bleed hook at its own
+ * boundary: the nearest surface wins because the nearest surface writes it. */
 .he-panel {
-  --he-bleed-pad: var(--he-panel-pad, var(--he-space-5));
+  --he-bleed-pad: var(--he-panel-pad, var(--he-spacing-6));
+}
+
+.he-card.he-panel--inset {
+  background: var(--he-bg-panel);
+  border-color: var(--he-bg-subtle);
+  border-radius: var(--he-corner-xl);
+  box-shadow: var(--he-elevation-panel);
 }
 
 .he-panel__head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--he-space-4);
-  margin-bottom: var(--he-space-5);
+  gap: var(--he-spacing-4);
+  margin-bottom: var(--he-spacing-4);
 }
 
 .he-panel__aside {
   display: flex;
   align-items: center;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .he-panel__body {
   min-width: 0;
 }
 
-/* Flush — the body bleeds to the card edges so dividers span the full width and
- * a List reads as one table. Rows get their inset back through the List's own
- * --he-list-row-pad-inline hook (no cross-component selectors).
- *
- * Because the body reaches the card's padding box and its rows are squared, the
- * CARD has to do the clipping — otherwise the last row's hover fill paints
- * straight over the 12px corner arc. Menus and tooltips portal to <body>, so
- * nothing that must escape the panel is affected. */
+/* Flush — the body bleeds to the panel edges so dividers span the full width and a List
+ * or table reads as one. The panel clips, so the last row's hover fill never paints over
+ * the corner arc. Menus and tooltips portal to <body>, so nothing that must escape is
+ * affected. */
 .he-panel--flush {
   overflow: hidden;
 }
 
 .he-panel--flush > .he-panel__head {
-  margin-bottom: var(--he-space-4);
+  margin-bottom: var(--he-spacing-4);
 }
 
 .he-panel--flush > .he-panel__body {
-  --he-list-row-pad-inline: var(--he-panel-pad, var(--he-space-5));
+  --he-list-row-pad-inline: var(--he-panel-pad, var(--he-spacing-6));
   --he-list-row-radius: 0;
-  margin-inline: calc(-1 * var(--he-panel-pad, var(--he-space-5)));
-  margin-bottom: calc(-1 * var(--he-panel-pad, var(--he-space-5)));
-  border-top: 1px solid var(--he-border);
+  margin-inline: calc(-1 * var(--he-panel-pad, var(--he-spacing-6)));
+  margin-bottom: calc(-1 * var(--he-panel-pad, var(--he-spacing-6)));
+  border-top: var(--he-border-width) solid var(--he-border-default);
 }

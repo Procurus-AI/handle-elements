@@ -125,7 +125,7 @@ function EvidenceValue({ label, value }: { label: string; value: string }) {
     <div style={{ display: 'grid', gap: 'var(--he-spacing-1)' }}>
       <span
         style={{
-          color: 'var(--he-text-tertiary)',
+          color: 'var(--he-text-secondary)',
           fontFamily: 'var(--he-font-sans)',
           fontSize: 'var(--he-type-caption-size)',
           lineHeight: 'var(--he-type-caption-line)',

@@ -80,6 +80,12 @@
   color: var(--he-text-tertiary);
 }
 
+/* Tertiary fails AA on the active fill (dark theme): small text steps up to secondary. */
+.he-stattoggle--active .he-stattoggle__label,
+.he-stattoggle--active.he-stattoggle--zero .he-stattoggle__value {
+  color: var(--he-text-secondary);
+}
+
 .he-stattoggle--accent {
   --he-stattoggle-dot: var(--he-accent-default);
 }

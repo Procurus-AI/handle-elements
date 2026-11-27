@@ -41,7 +41,7 @@ export interface PaginationLabels {
   previousText?: string;
   /** Visible text of the next button. Default `Siguiente`. */
   nextText?: string;
-  /** aria-label of a page button. Default `Página 3`. */
+  /** aria-label of a page button. Default `Página 3`. It must contain the visible number (grouped, e.g. `1,079`). */
   pageButton?: (page: number) => string;
 }
 
@@ -177,7 +177,7 @@ export function Pagination({
                   <button
                     type="button"
                     className={cx('he-pagination__num', n === current && 'he-pagination__num--current')}
-                    aria-label={labels?.pageButton ? labels.pageButton(n) : `Página ${n}`}
+                    aria-label={labels?.pageButton ? labels.pageButton(n) : `Página ${nf(n)}`}
                     aria-current={n === current ? 'page' : undefined}
                     disabled={disabled}
                     onClick={() => {

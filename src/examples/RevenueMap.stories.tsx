@@ -436,7 +436,7 @@ function RevenueMapView() {
           <Text as="label" size="sm" tone="dim">
             Product
           </Text>
-          <Select value={product} onChange={(e) => setProduct(e.target.value)}>
+          <Select aria-label="Product" value={product} onChange={(e) => setProduct(e.target.value)}>
             <option value="all">All products</option>
             <option value="broker">Broker Suite</option>
             <option value="claims">Claims</option>
@@ -444,7 +444,7 @@ function RevenueMapView() {
           <Text as="label" size="sm" tone="dim">
             Owner
           </Text>
-          <Select value={owner} onChange={(e) => setOwner(e.target.value)}>
+          <Select aria-label="Owner" value={owner} onChange={(e) => setOwner(e.target.value)}>
             <option value="all">All owners</option>
             <option value="lucia">Lucía</option>
             <option value="marco">Marco</option>

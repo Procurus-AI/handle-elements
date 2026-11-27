@@ -24,7 +24,7 @@ export const Playground: Story = {
 
 export const States: Story = {
   render: () => (
-    <div style={{ display: 'grid', gap: 20, maxWidth: 360 }}>
+    <div style={{ display: 'grid', gap: 20, maxWidth: 360, padding: 16, background: 'var(--he-bg-surface)' }}>
       <Field label="Correo para códigos" hint="Usamos este correo para recibir los códigos de la aseguradora">
         <Input placeholder="nombre@empresa.com" type="email" />
       </Field>
@@ -72,6 +72,14 @@ export const Form: Story = {
 };
 
 export const ErrorLinked: Story = {
+  /* Danger text meets AA on a surface, not on the app background. */
+  decorators: [
+    (Story) => (
+      <div style={{ padding: 16, background: 'var(--he-bg-surface)' }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     label: 'Correo para códigos',
     error: 'Escribe un correo válido',

@@ -117,6 +117,12 @@ export function Calendar({
     return { cells: out, gridStart: start };
   }, [viewMonth, weekStartsOn]);
 
+  const weeks = useMemo(() => {
+    const out: Date[][] = [];
+    for (let i = 0; i < cells.length; i += 7) out.push(cells.slice(i, i + 7));
+    return out;
+  }, [cells]);
+
   const weekdayLabels = useMemo(() => {
     const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
     return Array.from({ length: 7 }, (_, i) => fmt.format(addDays(gridStart, i)).replace(/\.$/, ''));
@@ -164,31 +170,39 @@ export function Calendar({
         ))}
       </div>
 
-      <div className="he-cal__grid" role="grid">
-        {cells.map((date) => {
-          const inMonth = date.getMonth() === viewMonth.getMonth();
-          if (!inMonth && !showOutsideDays) {
-            return <CalendarDay key={date.toISOString()} empty role="gridcell" />;
-          }
+      <div className="he-cal__grid" role="grid" aria-label={monthTitle}>
+        {weeks.map((week) => (
+          <div key={week[0].toISOString()} className="he-cal__row" role="row">
+            {week.map((date) => {
+              const inMonth = date.getMonth() === viewMonth.getMonth();
+              if (!inMonth && !showOutsideDays) {
+                return (
+                  <div key={date.toISOString()} className="he-cal__cell" role="gridcell">
+                    <CalendarDay empty />
+                  </div>
+                );
+              }
 
-          const isToday = isSameDay(date, todayDate);
-          const isSelected = selectedDate != null && isSameDay(date, selectedDate);
+              const isToday = isSameDay(date, todayDate);
+              const isSelected = selectedDate != null && isSameDay(date, selectedDate);
 
-          return (
-            <CalendarDay
-              key={date.toISOString()}
-              role="gridcell"
-              day={date.getDate()}
-              today={isToday}
-              outside={!inMonth}
-              selected={isSelected}
-              events={markers?.(date)}
-              onClick={() => selectDay(date)}
-            >
-              {renderDay ? renderDay({ date, inMonth, isToday, isSelected }) : undefined}
-            </CalendarDay>
-          );
-        })}
+              return (
+                <div key={date.toISOString()} className="he-cal__cell" role="gridcell">
+                  <CalendarDay
+                    day={date.getDate()}
+                    today={isToday}
+                    outside={!inMonth}
+                    selected={isSelected}
+                    events={markers?.(date)}
+                    onClick={() => selectDay(date)}
+                  >
+                    {renderDay ? renderDay({ date, inMonth, isToday, isSelected }) : undefined}
+                  </CalendarDay>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -95,7 +95,8 @@
   line-height: var(--he-type-label-sm-line);
   font-weight: var(--he-type-label-sm-weight);
   letter-spacing: var(--he-type-label-sm-tracking);
-  color: var(--he-review-field-tone);
+  /* Pulled toward the primary text colour so the 12px status word keeps 4.5:1 on tinted rows. */
+  color: color-mix(in srgb, var(--he-review-field-tone) 70%, var(--he-text-primary));
   white-space: nowrap;
 }
 

@@ -43,12 +43,16 @@
 
 .he-carrier-card__name {
   min-width: 0;
-  margin-right: auto;
   font-family: var(--he-type-heading-sm-family);
   font-size: var(--he-type-heading-sm-size);
   line-height: var(--he-type-heading-sm-line);
   font-weight: var(--he-type-heading-sm-weight);
   letter-spacing: var(--he-type-heading-sm-tracking);
+}
+
+/* Figma: the badge sits on its own line under icon + name, hugging its content. */
+.he-carrier-card__badge {
+  align-self: flex-start;
 }
 
 .he-carrier-card__fields {

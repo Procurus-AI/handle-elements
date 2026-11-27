@@ -124,16 +124,34 @@
 .he-cal__grid {
   flex: 1 1 auto;
   min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  display: flex;
+  flex-direction: column;
   /* Rows share the height equally with a sensible floor, so the whole grid
    * fills its container and bottom-aligns with anything beside it. */
-  grid-auto-rows: minmax(96px, 1fr);
   gap: 1px;
   background: var(--he-bg-subtle);
   border: var(--he-border-width) solid var(--he-bg-subtle);
   border-radius: var(--he-corner-xl);
   overflow: hidden;
+}
+
+/* One week: seven gridcells. */
+.he-cal__row {
+  flex: 1 1 96px;
+  min-height: 96px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+/* The gridcell wraps one CalendarDay (CalendarDay.css) and lets it fill the cell. */
+.he-cal__cell {
+  display: flex;
+  min-width: 0;
+}
+
+.he-cal__cell > .he-calendar-day {
+  flex: 1 1 auto;
 }
 
 /* Day cells are CalendarDay (CalendarDay.css). The grid supplies the hairlines. */

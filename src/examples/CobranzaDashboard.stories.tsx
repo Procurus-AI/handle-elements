@@ -398,13 +398,13 @@ function CobranzaView() {
               value={query}
               onValueChange={setQuery}
             />
-            <Select value={signal} onChange={(e) => setSignal(e.target.value)}>
+            <Select aria-label="Señal" value={signal} onChange={(e) => setSignal(e.target.value)}>
               <option value="">Cualquier señal</option>
               <option value="atorada">Corrida atorada</option>
               <option value="verificar">Pagos por verificar</option>
               <option value="contacto">Sin a quién contactar</option>
             </Select>
-            <Select defaultValue="salud">
+            <Select aria-label="Ordenar por" defaultValue="salud">
               <option value="salud">Salud (peor primero)</option>
               <option value="recuperado">Más recuperado</option>
               <option value="cartera">Mayor cartera</option>
