@@ -1,0 +1,89 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Foundations/Spacing, corners & density" />
+
+# Spacing, corners & density
+
+Layout runs on a scale of 4. Corners have five steps. Density is a short list of fixed heights.
+
+## Spacing
+
+`--he-spacing-{step}`. The step is a name, not a multiplier: step 6 is 24px.
+
+export const spacing = [
+  ['1', '4px'], ['2', '8px'], ['3', '12px'], ['4', '16px'],
+  ['6', '24px'], ['8', '32px'], ['12', '48px'], ['16', '64px'],
+];
+
+<DocTable
+  head={['Token', 'Value', 'Sample']}
+  rows={spacing.map(([n, px]) => [
+    <code>{`--he-spacing-${n}`}</code>,
+    px,
+    <div
+      style={{
+        width: `var(--he-spacing-${n})`,
+        height: 'var(--he-spacing-4)',
+        background: 'var(--he-text-secondary)',
+        borderRadius: 'var(--he-corner-sm)',
+      }}
+    />,
+  ])}
+/>
+
+There is no step 5, 7 or 10. If a layout needs a value between two steps, use the nearer step.
+
+## Corners
+
+`--he-corner-{size}`.
+
+export const corners = [
+  ['sm', '4px', 'Badges, small controls'],
+  ['md', '6px', 'Buttons, inputs'],
+  ['lg', '8px', 'Panels, cards'],
+  ['xl', '12px', 'Modals, large containers'],
+  ['full', '999px', 'Pills, avatars, dots'],
+];
+
+<DocTable
+  head={['Token', 'Value', 'Use', 'Sample']}
+  rows={corners.map(([n, px, use]) => [
+    <code>{`--he-corner-${n}`}</code>,
+    px,
+    use,
+    <div
+      style={{
+        width: 72,
+        height: 40,
+        background: 'var(--he-bg-subtle)',
+        border: 'var(--he-border-width) solid var(--he-border-strong)',
+        borderRadius: `var(--he-corner-${n})`,
+      }}
+    />,
+  ])}
+/>
+
+## Density
+
+Density is fixed. There is one border width and one set of heights.
+
+<DocTable
+  head={['Token', 'Value', 'Where']}
+  rows={[
+    [<code>--he-row-height</code>, '40px', 'Table rows. This equals the default row size in IBM Carbon and "normal" in GitHub Primer.'],
+    [<code>--he-row-header-height</code>, '36px', 'Table header row.'],
+    [<code>--he-stat-height</code>, '88px', 'Stat strip: the row of summary numbers above a table.'],
+    [<code>--he-border-width</code>, '1px', 'Every border in the system.'],
+  ]}
+/>
+
+A compact row of 32px is not part of 1.0.0. Add it only when a screen needs it, as a prop and not as a new token set.
+
+<Rule title="Names that kept their old values">
+  The 0.x scales `--he-space-*` and `--he-radius-*` are still defined with their old values, so
+  existing code does not move. They are deprecated. New code uses `--he-spacing-*` and
+  `--he-corner-*`. The two scales have different values under similar names (for example
+  `--he-radius-sm` is 8px and `--he-corner-sm` is 4px), so do not swap one for the other without
+  checking.
+</Rule>

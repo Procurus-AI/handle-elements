@@ -1,0 +1,87 @@
+.he-carrier-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-surface);
+  color: var(--he-text-primary);
+  font: inherit;
+  text-align: left;
+}
+
+.he-carrier-card--clickable {
+  cursor: pointer;
+  transition: background var(--he-motion-fast);
+}
+
+.he-carrier-card--clickable:hover {
+  background: var(--he-bg-hover);
+}
+
+/* Selection is a border here because the card is a container (Figma: border/focus, 1.5px inside). */
+.he-carrier-card--selected,
+.he-carrier-card--selected:hover {
+  border-color: var(--he-border-focus);
+  box-shadow: inset 0 0 0 0.5px var(--he-border-focus);
+}
+
+.he-carrier-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+}
+
+.he-carrier-card__icon {
+  flex-shrink: 0;
+  color: var(--he-text-tertiary);
+}
+
+.he-carrier-card__name {
+  min-width: 0;
+  font-family: var(--he-type-heading-sm-family);
+  font-size: var(--he-type-heading-sm-size);
+  line-height: var(--he-type-heading-sm-line);
+  font-weight: var(--he-type-heading-sm-weight);
+  letter-spacing: var(--he-type-heading-sm-tracking);
+}
+
+/* Figma: the badge sits on its own line under icon + name, hugging its content. */
+.he-carrier-card__badge {
+  align-self: flex-start;
+}
+
+.he-carrier-card__fields {
+  display: flex;
+  gap: var(--he-spacing-3);
+  padding-top: var(--he-spacing-1);
+}
+
+.he-carrier-card__field {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.he-carrier-card__field-label {
+  color: var(--he-text-tertiary);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+}
+
+.he-carrier-card__field-value {
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+}

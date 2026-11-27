@@ -4,7 +4,7 @@ import { Money } from './Money';
 import { assertSingleCurrency, formatCurrency, sumMoney, type MoneyValue } from '../../format';
 
 const meta = {
-  title: 'Elements/Money',
+  title: 'Atoms/Money',
   component: Money,
   args: { value: 128400, currency: 'MXN' },
 } satisfies Meta<typeof Money>;
@@ -65,7 +65,7 @@ export const FinanceRows: Story = {
 
 export const Formats: Story = {
   render: () => (
-    <div style={{ display: 'grid', gap: 12, maxWidth: 320 }}>
+    <div style={{ display: 'grid', gap: 12, maxWidth: 320, padding: 16, background: 'var(--he-bg-surface)' }}>
       <Money value={128400} currency="MXN" showCurrencyCode />
       <Money value={128400} currency="USD" locale="en-US" showCurrencyCode />
       <Money value={1284000} currency="MXN" compact />

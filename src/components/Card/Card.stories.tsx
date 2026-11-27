@@ -1,126 +1,68 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Grid, Stack } from '../Layout/Layout';
-import { StatusPill } from '../StatusPill/StatusPill';
-import { Card, type CardStatus, type CardStatusVariant } from './Card';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { Badge } from '../Badge/Badge';
+import { Card, type CardStatus } from './Card';
 
 /**
- * `statusVariant` defaults to `edge`: `status` recolors the card's own 1px
- * border instead of drawing a bar. There is no spine variant. A status bar at
- * the edge of a surface is a rejected pattern here; `edge` recolours the card's
- * own 1px border, and `none` exposes `data-status` so a child dot or StatusPill
- * carries the meaning.
+ * Flat outlined surface: bg-surface, 1px border, corner lg, no shadow. Hover on a clickable card
+ * only strengthens the border. `status` recolours the card's own border.
  */
 const meta = {
-  title: 'Elements/Card',
+  title: 'Organisms/Card',
   component: Card,
+  args: { padding: 'md' },
   argTypes: {
     variant: { control: 'inline-radio', options: ['outline', 'soft', 'plain'] },
-    padding: { control: 'select', options: ['none', 'sm', 'md', 'lg'] },
-    as: { control: 'select', options: ['div', 'article', 'section', 'a'] },
-    status: { control: 'select', options: [undefined, 'ok', 'warn', 'error', 'accent', 'neutral'] },
-    statusVariant: { control: 'inline-radio', options: ['edge', 'none'] },
-    selected: { control: 'boolean' },
+    padding: { control: 'inline-radio', options: ['none', 'sm', 'md', 'lg'] },
   },
 } satisfies Meta<typeof Card>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const STATUSES: readonly (readonly [CardStatus, string, string])[] = [
-  ['ok', 'Al día', 'Recovery on track'],
-  ['warn', 'Necesita atención', '24 cuentas en riesgo'],
-  ['error', 'Atorado', 'Escalación abierta'],
-  ['accent', 'Destacado', 'Mejor recuperación del mes'],
-  ['neutral', 'Sin señal', 'Nunca corrió'],
-];
+const body = (
+  <>
+    <div style={{ fontWeight: 500 }}>Seguros Afirme</div>
+    <div style={{ color: 'var(--he-text-secondary)', marginTop: 4 }}>3 recibos por confirmar hoy</div>
+  </>
+);
 
-export const Playground: Story = {
-  args: {
-    children: 'A quiet surface for grouped content.',
-    padding: 'md',
-  },
+/** The reference card, with the three surfaces side by side. */
+export const Figma: Story = {
+  render: () => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--he-spacing-3)', padding: 'var(--he-spacing-4)' }}>
+      <Card variant="outline">{body}</Card>
+      <Card variant="soft">{body}</Card>
+      <Card variant="plain">{body}</Card>
+    </div>
+  ),
 };
 
-export const Status: Story = {
+const statuses: CardStatus[] = ['ok', 'warn', 'error', 'neutral', 'accent'];
+
+export const States: Story = {
   render: () => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
-      {STATUSES.map(([status, title, sub]) => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--he-spacing-3)', padding: 'var(--he-spacing-4)' }}>
+      <Card>{body}</Card>
+      <Card clickable>{body}</Card>
+      <Card selected>{body}</Card>
+      {statuses.map((status) => (
         <Card key={status} status={status}>
-          <strong>{title}</strong>
-          <p style={{ margin: '6px 0 0', color: 'var(--he-text-dim)', fontSize: 13 }}>{sub}</p>
+          <Badge tone={status === 'accent' ? 'accent' : status}>{status}</Badge>
+          <div style={{ marginTop: 8 }}>Borde con estado</div>
         </Card>
       ))}
-      <Card status="warn" selected clickable tabIndex={0}>
-        <strong>Selected + warn</strong>
-        <p style={{ margin: '6px 0 0', color: 'var(--he-text-dim)', fontSize: 13 }}>
-          Ink border wins over the status edge.
-        </p>
-      </Card>
     </div>
   ),
 };
-Status.storyName = 'Status — edge (default)';
 
-// Both treatments side by side. `none` is the pattern the attention rows want:
-// the pill already states the status, so the card stays quiet.
-export const StatusVariants: Story = {
-  render: () => (
-    <Grid columns={2} gap={4}>
-      {(['edge', 'none'] as const).map((variant: CardStatusVariant) => (
-        <Stack key={variant} gap={3}>
-          <span
-            style={{
-              fontFamily: 'var(--he-font-mono)',
-              fontSize: 11,
-              textTransform: 'uppercase',
-              letterSpacing: 'var(--he-tracking-caps)',
-              color: 'var(--he-text-faint)',
-            }}
-          >
-            {variant}
-          </span>
-          {STATUSES.map(([status, title]) => (
-            <Card key={status} status={status} statusVariant={variant} padding="sm">
-              {variant === 'none' ? (
-                <Stack direction="row" gap={2} align="center" justify="between">
-                  <strong style={{ fontSize: 13 }}>{title}</strong>
-                  <StatusPill status={status} label={status} />
-                </Stack>
-              ) : (
-                <strong style={{ fontSize: 13 }}>{title}</strong>
-              )}
-            </Card>
-          ))}
-        </Stack>
-      ))}
-    </Grid>
-  ),
-};
-
+/** A link card: Enter and click both activate it. */
 export const Clickable: Story = {
-  render: () => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-      <Card clickable tabIndex={0}>
-        <strong>Hover me</strong>
-        <p style={{ margin: '8px 0 0', color: 'var(--he-text-dim)', fontSize: 13 }}>
-          Lifts on hover — never darkens.
-        </p>
-      </Card>
-      <Card as="a" href="#" clickable>
-        <strong>Link card</strong>
-        <p style={{ margin: '8px 0 0', color: 'var(--he-text-dim)', fontSize: 13 }}>
-          Rendered as an anchor.
-        </p>
-      </Card>
-    </div>
-  ),
-};
-
-export const QuietSurfaces: Story = {
-  render: () => (
-    <Grid columns={2} gap={4}>
-      <Card variant="soft">Supporting context on a soft surface.</Card>
-      <Card variant="plain">Borderless grouping when the page already provides structure.</Card>
-    </Grid>
-  ),
+  args: { clickable: true, role: 'button', tabIndex: 0, onClick: fn() },
+  render: (args) => <Card {...args}>{body}</Card>,
+  play: async ({ canvasElement, args }) => {
+    const card = within(canvasElement).getByRole('button');
+    await userEvent.click(card);
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
 };

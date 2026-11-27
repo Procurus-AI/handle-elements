@@ -46,7 +46,7 @@ const invoiceAmounts = [
 ];
 
 const meta = {
-  title: 'Charts/Histogram',
+  title: 'Organisms/Histogram',
   component: Histogram,
   args: {
     bins: callsByHour,

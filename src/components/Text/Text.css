@@ -1,35 +1,151 @@
-/* Text — token-scaled typography for captions, notes, mini-headings. */
+/* Text: the 16 Figma type styles, one class per style. */
 .he-text {
   margin: 0;
-  font-family: var(--he-font-sans);
-  color: var(--he-text);
-  line-height: 1.55;
+  color: var(--he-text-primary);
+}
+
+.he-text--display {
+  font-family: var(--he-type-display-page-title-family);
+  font-size: var(--he-type-display-page-title-size);
+  line-height: var(--he-type-display-page-title-line);
+  font-weight: var(--he-type-display-page-title-weight);
+  letter-spacing: var(--he-type-display-page-title-tracking);
+}
+
+.he-text--display-sm {
+  font-family: var(--he-type-display-page-title-sm-family);
+  font-size: var(--he-type-display-page-title-sm-size);
+  line-height: var(--he-type-display-page-title-sm-line);
+  font-weight: var(--he-type-display-page-title-sm-weight);
+  letter-spacing: var(--he-type-display-page-title-sm-tracking);
+}
+
+.he-text--heading-lg {
+  font-family: var(--he-type-heading-lg-family);
+  font-size: var(--he-type-heading-lg-size);
+  line-height: var(--he-type-heading-lg-line);
+  font-weight: var(--he-type-heading-lg-weight);
+  letter-spacing: var(--he-type-heading-lg-tracking);
+}
+
+.he-text--heading-md {
+  font-family: var(--he-type-heading-md-family);
+  font-size: var(--he-type-heading-md-size);
+  line-height: var(--he-type-heading-md-line);
+  font-weight: var(--he-type-heading-md-weight);
+  letter-spacing: var(--he-type-heading-md-tracking);
+}
+
+.he-text--heading-sm {
+  font-family: var(--he-type-heading-sm-family);
+  font-size: var(--he-type-heading-sm-size);
+  line-height: var(--he-type-heading-sm-line);
+  font-weight: var(--he-type-heading-sm-weight);
+  letter-spacing: var(--he-type-heading-sm-tracking);
+}
+
+.he-text--body-md {
+  font-family: var(--he-type-body-md-family);
+  font-size: var(--he-type-body-md-size);
+  line-height: var(--he-type-body-md-line);
+  font-weight: var(--he-type-body-md-weight);
+  letter-spacing: var(--he-type-body-md-tracking);
+}
+
+.he-text--body-md-emphasis {
+  font-family: var(--he-type-body-md-emphasis-family);
+  font-size: var(--he-type-body-md-emphasis-size);
+  line-height: var(--he-type-body-md-emphasis-line);
+  font-weight: var(--he-type-body-md-emphasis-weight);
+  letter-spacing: var(--he-type-body-md-emphasis-tracking);
+}
+
+.he-text--body-sm {
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+}
+
+.he-text--body-sm-emphasis {
+  font-family: var(--he-type-body-sm-emphasis-family);
+  font-size: var(--he-type-body-sm-emphasis-size);
+  line-height: var(--he-type-body-sm-emphasis-line);
+  font-weight: var(--he-type-body-sm-emphasis-weight);
+  letter-spacing: var(--he-type-body-sm-emphasis-tracking);
+}
+
+.he-text--label-md {
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+}
+
+.he-text--label-sm {
+  font-family: var(--he-type-label-sm-family);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
 }
 
 .he-text--caption {
-  font-size: var(--he-caption);
-}
-.he-text--sm {
-  font-size: var(--he-body-sm);
-}
-.he-text--body {
-  font-size: var(--he-body);
-}
-.he-text--heading {
-  font-size: var(--he-heading);
-  line-height: 1.2;
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
 }
 
-.he-text--dim {
-  color: var(--he-text-dim);
+.he-text--metric-xl {
+  font-family: var(--he-type-metric-xl-family);
+  font-size: var(--he-type-metric-xl-size);
+  line-height: var(--he-type-metric-xl-line);
+  font-weight: var(--he-type-metric-xl-weight);
+  letter-spacing: var(--he-type-metric-xl-tracking);
 }
-.he-text--faint {
-  color: var(--he-text-faint);
+
+.he-text--metric-lg {
+  font-family: var(--he-type-metric-lg-family);
+  font-size: var(--he-type-metric-lg-size);
+  line-height: var(--he-type-metric-lg-line);
+  font-weight: var(--he-type-metric-lg-weight);
+  letter-spacing: var(--he-type-metric-lg-tracking);
+}
+
+.he-text--metric-md {
+  font-family: var(--he-type-metric-md-family);
+  font-size: var(--he-type-metric-md-size);
+  line-height: var(--he-type-metric-md-line);
+  font-weight: var(--he-type-metric-md-weight);
+  letter-spacing: var(--he-type-metric-md-tracking);
+}
+
+.he-text--mono-sm {
+  font-family: var(--he-type-mono-sm-family);
+  font-size: var(--he-type-mono-sm-size);
+  line-height: var(--he-type-mono-sm-line);
+  font-weight: var(--he-type-mono-sm-weight);
+  letter-spacing: var(--he-type-mono-sm-tracking);
+}
+
+.he-text--dim,
+.he-text--secondary {
+  color: var(--he-text-secondary);
+}
+
+.he-text--faint,
+.he-text--tertiary {
+  color: var(--he-text-tertiary);
 }
 
 .he-text--medium {
   font-weight: 500;
 }
+
 .he-text--mono {
   font-family: var(--he-font-mono);
 }

@@ -34,7 +34,7 @@ import { Toolbar, ToolbarGroup, ResultCount } from '../components/Toolbar/Toolba
  * when a segment has no live clients.
  */
 const meta = {
-  title: 'Examples/Cobranza Dashboard',
+  title: 'Pages/Examples/Cobranza Dashboard',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
@@ -259,6 +259,7 @@ function CobranzaView() {
         <Grid columns={2}>
           <Panel eyebrow="Contacto" title="Resultados de contacto · 90 días">
             <BarChart
+              aria-label="Resultados de contacto en 90 días"
               data={[
                 { label: 'Atendidas', value: 742, tone: 'ok' },
                 { label: 'Sin respuesta', value: 531, tone: 'neutral' },
@@ -273,6 +274,7 @@ function CobranzaView() {
           </Panel>
           <Panel eyebrow="Cartera" title="Cartera por antigüedad · USD (actual)">
             <BarChart
+              aria-label="Cartera por antigüedad en dólares"
               data={[
                 { label: 'Por vencer', value: 254_000, tone: 'ok' },
                 { label: '0–14 días', value: 198_000, tone: 'neutral' },
@@ -322,7 +324,7 @@ function CobranzaView() {
                 </Text>
               </Stack>
               <Stack gap={2}>
-                <BarChart data={outcomeRows} barSize="sm" formatValue={int} />
+                <BarChart aria-label="Resultados de contacto" data={outcomeRows} barSize="sm" formatValue={int} />
                 {hiddenOutcomes > 0 && (
                   <Button variant="link" size="sm" onClick={() => setShowAllOutcomes((v) => !v)}>
                     {showAllOutcomes ? 'Ver menos' : `Ver más (${hiddenOutcomes})`}
@@ -398,13 +400,13 @@ function CobranzaView() {
               value={query}
               onValueChange={setQuery}
             />
-            <Select value={signal} onChange={(e) => setSignal(e.target.value)}>
+            <Select aria-label="Señal" value={signal} onChange={(e) => setSignal(e.target.value)}>
               <option value="">Cualquier señal</option>
               <option value="atorada">Corrida atorada</option>
               <option value="verificar">Pagos por verificar</option>
               <option value="contacto">Sin a quién contactar</option>
             </Select>
-            <Select defaultValue="salud">
+            <Select aria-label="Ordenar por" defaultValue="salud">
               <option value="salud">Salud (peor primero)</option>
               <option value="recuperado">Más recuperado</option>
               <option value="cartera">Mayor cartera</option>

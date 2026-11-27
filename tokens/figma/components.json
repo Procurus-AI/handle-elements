@@ -1,0 +1,530 @@
+[
+ {
+  "id": "23:19",
+  "name": "Badge",
+  "type": "COMPONENT_SET",
+  "description": "Status pill. Fill + text, no border. The 500 mid-tone paints both label and dot, so the pill reads as one hue. Dot=false makes it a plain label pill for non-status metadata such as counts or tags. For bare numbers use Count instead.",
+  "properties": {
+   "Label": {
+    "type": "TEXT",
+    "default": "Estado",
+    "options": null
+   },
+   "Dot": {
+    "type": "BOOLEAN",
+    "default": true,
+    "options": null
+   },
+   "Tone": {
+    "type": "VARIANT",
+    "default": "success",
+    "options": [
+     "success",
+     "warning",
+     "danger",
+     "idle"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=success",
+   "Tone=warning",
+   "Tone=danger",
+   "Tone=idle"
+  ]
+ },
+ {
+  "id": "23:41",
+  "name": "Button",
+  "type": "COMPONENT_SET",
+  "description": "Primary is Verde and means the main action on the page — one per view. Secondary is a bordered surface. Ghost carries no container.",
+  "properties": {
+   "Label": {
+    "type": "TEXT",
+    "default": "Etiqueta",
+    "options": null
+   },
+   "Variant": {
+    "type": "VARIANT",
+    "default": "primary",
+    "options": [
+     "primary",
+     "secondary",
+     "ghost"
+    ]
+   },
+   "Icon": {
+    "type": "VARIANT",
+    "default": "true",
+    "options": [
+     "true",
+     "false"
+    ]
+   }
+  },
+  "variants": [
+   "Variant=primary, Icon=true",
+   "Variant=primary, Icon=false",
+   "Variant=secondary, Icon=true",
+   "Variant=secondary, Icon=false",
+   "Variant=ghost, Icon=true",
+   "Variant=ghost, Icon=false"
+  ]
+ },
+ {
+  "id": "23:56",
+  "name": "Tab",
+  "type": "COMPONENT_SET",
+  "description": "Selects a View inside an Area. Lives under the page title, never in a top bar. Active state is a soft fill — never a border.",
+  "properties": {
+   "Label": {
+    "type": "TEXT",
+    "default": "Vista",
+    "options": null
+   },
+   "State": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "active"
+    ]
+   },
+   "Count": {
+    "type": "VARIANT",
+    "default": "true",
+    "options": [
+     "true",
+     "false"
+    ]
+   }
+  },
+  "variants": [
+   "State=default, Count=true",
+   "State=default, Count=false",
+   "State=active, Count=true",
+   "State=active, Count=false"
+  ]
+ },
+ {
+  "id": "23:65",
+  "name": "Nav item",
+  "type": "COMPONENT_SET",
+  "description": "Sidebar Area link. Sits flat on bg/app — no border, ever. Active is a soft fill pill.",
+  "properties": {
+   "Label": {
+    "type": "TEXT",
+    "default": "Área",
+    "options": null
+   },
+   "State": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "active"
+    ]
+   }
+  },
+  "variants": [
+   "State=default",
+   "State=active"
+  ]
+ },
+ {
+  "id": "24:10",
+  "name": "Input",
+  "type": "COMPONENT_SET",
+  "description": "Text field. bg/subtle so it reads as recessed against a white panel. Focus is a heavier border/focus ring.",
+  "properties": {
+   "Placeholder": {
+    "type": "TEXT",
+    "default": "Buscar…",
+    "options": null
+   },
+   "State": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "focus"
+    ]
+   }
+  },
+  "variants": [
+   "State=default",
+   "State=focus"
+  ]
+ },
+ {
+  "id": "24:16",
+  "name": "Segmented control",
+  "type": "COMPONENT",
+  "description": "Switches how the same data renders. A content control — lives in the toolbar, never on the tab row.",
+  "properties": {},
+  "variants": []
+ },
+ {
+  "id": "24:37",
+  "name": "Carrier chip",
+  "type": "COMPONENT_SET",
+  "description": "Names a carrier and its connection state. Borderless pill — it's a label, not a control. Reads as a soft white chip on tinted banners and on plain panels alike.",
+  "properties": {
+   "Carrier": {
+    "type": "TEXT",
+    "default": "Aseguradora",
+    "options": null
+   },
+   "State": {
+    "type": "VARIANT",
+    "default": "ok",
+    "options": [
+     "ok",
+     "warning",
+     "error",
+     "idle"
+    ]
+   }
+  },
+  "variants": [
+   "State=ok",
+   "State=warning",
+   "State=error",
+   "State=idle"
+  ]
+ },
+ {
+  "id": "24:66",
+  "name": "Stat cell",
+  "type": "COMPONENT_SET",
+  "description": "One metric in a stat panel. 88px tall, borderless — the panel supplies the border, dividers separate the cells.",
+  "properties": {
+   "Label": {
+    "type": "TEXT",
+    "default": "Etiqueta",
+    "options": null
+   },
+   "Value": {
+    "type": "TEXT",
+    "default": "$0.00",
+    "options": null
+   },
+   "Detail": {
+    "type": "TEXT",
+    "default": "Detalle",
+    "options": null
+   },
+   "Tone": {
+    "type": "VARIANT",
+    "default": "neutral",
+    "options": [
+     "neutral",
+     "success",
+     "warning",
+     "danger"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=neutral",
+   "Tone=success",
+   "Tone=warning",
+   "Tone=danger"
+  ]
+ },
+ {
+  "id": "26:35",
+  "name": "Logo / Wordmark",
+  "type": "COMPONENT_SET",
+  "description": "Handle wordmark. Fill is token-bound, so Tone=default inverts automatically between light and dark. Use inverse only on a solid dark fill, accent only on Midnight.",
+  "properties": {
+   "Tone": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "inverse",
+     "accent"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=default",
+   "Tone=inverse",
+   "Tone=accent"
+  ]
+ },
+ {
+  "id": "26:51",
+  "name": "Logo / Brandmark",
+  "type": "COMPONENT_SET",
+  "description": "Icon-only mark for the collapsed sidebar, avatars and favicons. Never pair it with the word 'handle' set in type — use the Wordmark instead.",
+  "properties": {
+   "Tone": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "inverse",
+     "accent"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=default",
+   "Tone=inverse",
+   "Tone=accent"
+  ]
+ },
+ {
+  "id": "27:20",
+  "name": "Pagination",
+  "type": "COMPONENT",
+  "description": "Sits inside the table panel, below the last row, above the panel's bottom padding. Range text left, controls right.",
+  "properties": {
+   "Range": {
+    "type": "TEXT",
+    "default": "1–10 de 143",
+    "options": null
+   }
+  },
+  "variants": []
+ },
+ {
+  "id": "27:25",
+  "name": "Empty state",
+  "type": "COMPONENT",
+  "description": "Shown inside a table panel when filters return nothing. Title states the fact, body states the fix.",
+  "properties": {
+   "Title": {
+    "type": "TEXT",
+    "default": "Sin recibos que coincidan",
+    "options": null
+   },
+   "Body": {
+    "type": "TEXT",
+    "default": "Ajusta los filtros o el término de búsqueda para ver resultados.",
+    "options": null
+   }
+  },
+  "variants": []
+ },
+ {
+  "id": "27:49",
+  "name": "Calendar day",
+  "type": "COMPONENT_SET",
+  "description": "One cell in the month grid. Today is a filled circle on the date, never a filled cell. Event lines reuse the status dot colours.",
+  "properties": {
+   "State": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "today",
+     "empty"
+    ]
+   }
+  },
+  "variants": [
+   "State=default",
+   "State=today",
+   "State=empty"
+  ]
+ },
+ {
+  "id": "42:41",
+  "name": "Filter chip",
+  "type": "COMPONENT_SET",
+  "description": "Filters a set by status and shows how many match. Distinct from Segmented control, which switches how one set is rendered.",
+  "properties": {
+   "Label": {
+    "type": "TEXT",
+    "default": "Todas",
+    "options": null
+   },
+   "Count": {
+    "type": "TEXT",
+    "default": "12",
+    "options": null
+   },
+   "Tone": {
+    "type": "VARIANT",
+    "default": "neutral",
+    "options": [
+     "neutral",
+     "success",
+     "warning",
+     "idle"
+    ]
+   },
+   "State": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "active"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=neutral, State=default",
+   "Tone=neutral, State=active",
+   "Tone=success, State=default",
+   "Tone=success, State=active",
+   "Tone=warning, State=default",
+   "Tone=warning, State=active",
+   "Tone=idle, State=default",
+   "Tone=idle, State=active"
+  ]
+ },
+ {
+  "id": "42:132",
+  "name": "Carrier status card",
+  "type": "COMPONENT_SET",
+  "description": "A carrier's connection health in the portal-status modal. Selected uses border/focus — selection is a border here because the card IS a container.",
+  "properties": {
+   "Carrier": {
+    "type": "TEXT",
+    "default": "Aseguradora",
+    "options": null
+   },
+   "Status": {
+    "type": "TEXT",
+    "default": "Al día",
+    "options": null
+   },
+   "Credenciales": {
+    "type": "TEXT",
+    "default": "OK · hace 7h",
+    "options": null
+   },
+   "Último sync": {
+    "type": "TEXT",
+    "default": "hace 7h",
+    "options": null
+   },
+   "Tone": {
+    "type": "VARIANT",
+    "default": "success",
+    "options": [
+     "success",
+     "warning",
+     "idle"
+    ]
+   },
+   "State": {
+    "type": "VARIANT",
+    "default": "default",
+    "options": [
+     "default",
+     "selected"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=success, State=default",
+   "Tone=success, State=selected",
+   "Tone=warning, State=default",
+   "Tone=warning, State=selected",
+   "Tone=idle, State=default",
+   "Tone=idle, State=selected"
+  ]
+ },
+ {
+  "id": "68:109",
+  "name": "Icon",
+  "type": "COMPONENT_SET",
+  "description": "Lucide (ISC). 24px grid rescaled to 16, 1.5px stroke. Stroke is bound to text/secondary — override per context (text/primary when active, accent/on-accent on a Verde button).",
+  "properties": {
+   "Name": {
+    "type": "VARIANT",
+    "default": "database",
+    "options": [
+     "database",
+     "shield-check",
+     "message-square-text",
+     "file-text",
+     "git-compare-arrows",
+     "phone",
+     "zap",
+     "search",
+     "sliders-horizontal",
+     "download",
+     "settings",
+     "history",
+     "play",
+     "x",
+     "chevron-right",
+     "chevron-left",
+     "chevron-down",
+     "calendar",
+     "inbox",
+     "building-2",
+     "upload",
+     "plus",
+     "sun",
+     "monitor",
+     "moon",
+     "chevron-up"
+    ]
+   }
+  },
+  "variants": [
+   "Name=database",
+   "Name=shield-check",
+   "Name=message-square-text",
+   "Name=file-text",
+   "Name=git-compare-arrows",
+   "Name=phone",
+   "Name=zap",
+   "Name=search",
+   "Name=sliders-horizontal",
+   "Name=download",
+   "Name=settings",
+   "Name=history",
+   "Name=play",
+   "Name=x",
+   "Name=chevron-right",
+   "Name=chevron-left",
+   "Name=chevron-down",
+   "Name=calendar",
+   "Name=inbox",
+   "Name=building-2",
+   "Name=upload",
+   "Name=plus",
+   "Name=sun",
+   "Name=monitor",
+   "Name=moon",
+   "Name=chevron-up"
+  ]
+ },
+ {
+  "id": "84:84",
+  "name": "Count",
+  "type": "COMPONENT_SET",
+  "description": "How many of something. No dot — a count has no state to indicate. Distinct from Badge, which says what something IS. Neutral is the default; tones only when the quantity itself is the alarm.",
+  "properties": {
+   "Value": {
+    "type": "TEXT",
+    "default": "3",
+    "options": null
+   },
+   "Tone": {
+    "type": "VARIANT",
+    "default": "neutral",
+    "options": [
+     "neutral",
+     "warning",
+     "danger",
+     "success"
+    ]
+   }
+  },
+  "variants": [
+   "Tone=neutral",
+   "Tone=warning",
+   "Tone=danger",
+   "Tone=success"
+  ]
+ }
+]

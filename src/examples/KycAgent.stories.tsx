@@ -41,7 +41,7 @@ import { Tabs } from '../components/Tabs/Tabs';
 import { Text } from '../components/Text/Text';
 
 const meta = {
-  title: 'Examples/KYC Agent',
+  title: 'Pages/Examples/KYC Agent',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
@@ -865,43 +865,43 @@ function IneFacsimile({ resolved }: { resolved: boolean }) {
       role="img"
       aria-label="Vista de la credencial INE de Rafael Alvarez con la vigencia resaltada"
     >
-      <rect width="760" height="470" fill="var(--he-surface)" />
-      <rect width="760" height="76" fill="var(--he-surface-2)" />
-      <path d="M42 38h18m-9-9v18" stroke="var(--he-text)" strokeWidth="2" strokeLinecap="round" />
-      <text x="72" y="43" fill="var(--he-text)" fontFamily="var(--he-font-sans)" fontSize="17" fontWeight="600">
+      <rect width="760" height="470" fill="var(--he-bg-surface)" />
+      <rect width="760" height="76" fill="var(--he-bg-subtle)" />
+      <path d="M42 38h18m-9-9v18" stroke="var(--he-text-primary)" strokeWidth="2" strokeLinecap="round" />
+      <text x="72" y="43" fill="var(--he-text-primary)" fontFamily="var(--he-font-sans)" fontSize="17" fontWeight="600">
         INSTITUTO NACIONAL ELECTORAL
       </text>
-      <text x="718" y="42" fill="var(--he-text-faint)" fontFamily="var(--he-font-mono)" fontSize="11" textAnchor="end">
+      <text x="718" y="42" fill="var(--he-text-tertiary)" fontFamily="var(--he-font-mono)" fontSize="11" textAnchor="end">
         CREDENCIAL PARA VOTAR
       </text>
 
-      <rect x="42" y="112" width="166" height="208" rx="10" fill="var(--he-neutral-bg)" />
+      <rect x="42" y="112" width="166" height="208" rx="10" fill="var(--he-status-idle-surface)" />
       <circle cx="125" cy="177" r="38" fill="var(--he-border-strong)" />
       <path d="M71 287c5-52 28-78 54-78s49 26 54 78" fill="var(--he-border-strong)" />
-      <rect x="58" y="337" width="134" height="8" rx="4" fill="var(--he-border)" />
-      <rect x="75" y="357" width="100" height="7" rx="3.5" fill="var(--he-border)" />
+      <rect x="58" y="337" width="134" height="8" rx="4" fill="var(--he-border-default)" />
+      <rect x="75" y="357" width="100" height="7" rx="3.5" fill="var(--he-border-default)" />
 
-      <text x="244" y="120" fill="var(--he-text-faint)" fontFamily="var(--he-font-mono)" fontSize="11" letterSpacing="2">
+      <text x="244" y="120" fill="var(--he-text-tertiary)" fontFamily="var(--he-font-mono)" fontSize="11" letterSpacing="2">
         NOMBRE
       </text>
-      <text x="244" y="149" fill="var(--he-text)" fontFamily="var(--he-font-sans)" fontSize="22" fontWeight="600">
+      <text x="244" y="149" fill="var(--he-text-primary)" fontFamily="var(--he-font-sans)" fontSize="22" fontWeight="600">
         ALVAREZ BALLESTEROS
       </text>
-      <text x="244" y="176" fill="var(--he-text)" fontFamily="var(--he-font-sans)" fontSize="22" fontWeight="600">
+      <text x="244" y="176" fill="var(--he-text-primary)" fontFamily="var(--he-font-sans)" fontSize="22" fontWeight="600">
         RAFAEL
       </text>
 
-      <text x="244" y="221" fill="var(--he-text-faint)" fontFamily="var(--he-font-mono)" fontSize="11" letterSpacing="2">
+      <text x="244" y="221" fill="var(--he-text-tertiary)" fontFamily="var(--he-font-mono)" fontSize="11" letterSpacing="2">
         CURP
       </text>
-      <text x="244" y="247" fill="var(--he-text)" fontFamily="var(--he-font-sans)" fontSize="17">
+      <text x="244" y="247" fill="var(--he-text-primary)" fontFamily="var(--he-font-sans)" fontSize="17">
         AABR980618HVZLLF06
       </text>
 
-      <text x="244" y="286" fill="var(--he-text-faint)" fontFamily="var(--he-font-mono)" fontSize="11" letterSpacing="2">
+      <text x="244" y="286" fill="var(--he-text-tertiary)" fontFamily="var(--he-font-mono)" fontSize="11" letterSpacing="2">
         CLAVE DE ELECTOR
       </text>
-      <text x="244" y="312" fill="var(--he-text)" fontFamily="var(--he-font-sans)" fontSize="17">
+      <text x="244" y="312" fill="var(--he-text-primary)" fontFamily="var(--he-font-sans)" fontSize="17">
         ALBLRF98061830H400
       </text>
 
@@ -911,24 +911,24 @@ function IneFacsimile({ resolved }: { resolved: boolean }) {
         width="247"
         height="76"
         rx="10"
-        fill={resolved ? 'var(--he-ok-bg)' : 'var(--he-error-bg)'}
+        fill={resolved ? 'var(--he-status-success-surface)' : 'var(--he-status-danger-surface)'}
       />
-      <circle cx="485" cy="363" r="4" fill={resolved ? 'var(--he-ok)' : 'var(--he-error)'} />
+      <circle cx="485" cy="363" r="4" fill={resolved ? 'var(--he-status-success-text)' : 'var(--he-status-danger-text)'} />
       <text
         x="499"
         y="367"
-        fill={resolved ? 'var(--he-ok)' : 'var(--he-error)'}
+        fill={resolved ? 'var(--he-status-success-text)' : 'var(--he-status-danger-text)'}
         fontFamily="var(--he-font-mono)"
         fontSize="11"
         letterSpacing="1.4"
       >
         {resolved ? 'VIGENCIA CONFIRMADA' : 'VIGENCIA POR CONFIRMAR'}
       </text>
-      <text x="484" y="399" fill="var(--he-text)" fontFamily="var(--he-font-sans)" fontSize="20" fontWeight="600">
+      <text x="484" y="399" fill="var(--he-text-primary)" fontFamily="var(--he-font-sans)" fontSize="20" fontWeight="600">
         2020 – 2030
       </text>
 
-      <g fill="var(--he-text)" opacity="0.78">
+      <g fill="var(--he-text-primary)" opacity="0.78">
         <rect x="620" y="112" width="18" height="18" />
         <rect x="642" y="112" width="8" height="8" />
         <rect x="655" y="112" width="18" height="18" />
@@ -946,8 +946,8 @@ function IneFacsimile({ resolved }: { resolved: boolean }) {
         <rect x="690" y="156" width="20" height="8" />
       </g>
 
-      <path d="M42 438h668" stroke="var(--he-border)" />
-      <text x="42" y="455" fill="var(--he-text-faint)" fontFamily="var(--he-font-mono)" fontSize="10" letterSpacing="1.2">
+      <path d="M42 438h668" stroke="var(--he-border-default)" />
+      <text x="42" y="455" fill="var(--he-text-tertiary)" fontFamily="var(--he-font-mono)" fontSize="10" letterSpacing="1.2">
         MUESTRA DIGITAL · DATOS FICTICIOS PARA REVISIÓN
       </text>
     </svg>

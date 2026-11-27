@@ -10,6 +10,10 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../lib/cx';
+import { useIsomorphicLayoutEffect } from '../../lib/useIsomorphicLayoutEffect';
+import { Checkbox } from '../Checkbox/Checkbox';
+import { Icon } from '../Icon/Icon';
+import { Skeleton } from '../Loading/Skeleton';
 
 export type DataTableAlign = 'start' | 'center' | 'end';
 
@@ -47,6 +51,8 @@ export interface DataTableColumn<T> {
    */
   nulls?: DataTableNulls;
   align?: DataTableAlign;
+  /** Amounts and counts: right-aligned (unless `align` says otherwise) with tabular numerals. */
+  numeric?: boolean;
   /** Any valid CSS width (e.g. '120px', '20%'). */
   width?: string;
   /**
@@ -74,7 +80,10 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   caption?: ReactNode;
   /** Keeps `caption` available to assistive technology without adding a visible table title. */
   captionHidden?: boolean;
-  /** Stable React key per row. Defaults to the row index. */
+  /**
+   * Stable key per row, used for selection and expansion. `index` is the row's position in the
+   * original `data` array (not its position after filter, sort or paging). Defaults to that index.
+   */
   rowKey?: (row: T, index: number) => string | number;
   onRowClick?: (row: T, index: number) => void;
   /**
@@ -91,7 +100,10 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   card?: boolean;
   /** Tighter row padding. */
   dense?: boolean;
-  /** Shown in the tbody when `data` is empty. */
+  /**
+   * Shown when there is nothing to list. It REPLACES the whole table, headers included
+   * (an empty table with column titles reads as a broken one). Pass an `EmptyState`.
+   */
   emptyState?: ReactNode;
   /** Optional heading row above the table (title, actions…). */
   toolbar?: ReactNode;
@@ -130,14 +142,31 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   onExpandedChange?: (keys: Array<string | number>) => void;
   /** Initially expanded keys for uncontrolled mode. */
   defaultExpandedKeys?: Array<string | number>;
-  /** Accessible label for the expander toggle. Default 'Toggle row details'. */
+  /** Accessible label for the expander toggle. Default 'Mostrar detalle'. */
   expandLabel?: string;
   /**
-   * Quiet trailing actions for a row — icon buttons, a menu. Rendered in a
-   * pinned end column that stays hidden until the row is hovered or holds focus,
-   * so the affordance is discoverable without adding chrome to every row.
+   * Trailing actions for a row: icon buttons, a menu. Rendered in a pinned end column and
+   * ALWAYS visible: an action that appears on hover is invisible to touch and keyboard
+   * users, and the team reported not finding it.
    */
   rowActions?: (row: T, index: number) => ReactNode;
+  /** Hidden header text of the row-actions column. Default 'Acciones'. */
+  actionsLabel?: string;
+  /** Adds a leading checkbox column. The header checkbox selects every row on the current page. */
+  selectable?: boolean;
+  /** Controlled set of selected row keys (values from `rowKey`). Omit for uncontrolled. */
+  selectedKeys?: Array<string | number>;
+  /** Initially selected keys for uncontrolled mode. */
+  defaultSelectedKeys?: Array<string | number>;
+  onSelectionChange?: (keys: Array<string | number>) => void;
+  /** Accessible label of each row checkbox (default 'Seleccionar fila'). */
+  selectLabel?: string;
+  /** Accessible label of the header checkbox (default 'Seleccionar todas las filas'). */
+  selectAllLabel?: string;
+  /** Shows skeleton rows in place of the data and sets `aria-busy`. Headers stay. */
+  loading?: boolean;
+  /** How many skeleton rows to show while `loading` (default 5). */
+  loadingRows?: number;
   /** `fixed` makes every `column.width` binding; slack goes to the unset columns. */
   layout?: DataTableLayout;
   /** Optional minimum width for the table canvas; narrower containers scroll instead of crushing cells. */
@@ -175,7 +204,7 @@ export function DataTable<T>({
   defaultSort = null,
   card = true,
   dense = false,
-  emptyState = 'No data',
+  emptyState = 'Sin datos',
   toolbar,
   globalFilter,
   filterKeys,
@@ -188,8 +217,17 @@ export function DataTable<T>({
   expandedKeys,
   onExpandedChange,
   defaultExpandedKeys,
-  expandLabel = 'Toggle row details',
+  expandLabel = 'Mostrar detalle',
+  actionsLabel = 'Acciones',
   rowActions,
+  selectable = false,
+  selectedKeys,
+  defaultSelectedKeys,
+  onSelectionChange,
+  selectLabel = 'Seleccionar fila',
+  selectAllLabel = 'Seleccionar todas las filas',
+  loading = false,
+  loadingRows = 5,
   layout = 'auto',
   minTableWidth,
   page = 1,
@@ -209,8 +247,10 @@ export function DataTable<T>({
     () => new Set(isExpandControlled ? expandedKeys : internalExpanded),
     [isExpandControlled, expandedKeys, internalExpanded],
   );
-  const keyOf = (row: T, index: number): string | number =>
-    rowKey ? rowKey(row, index) : index;
+  // Keys follow the record: `origin` is the row's index in the original `data`, carried through
+  // filter, sort and paging, so selection never moves to another record.
+  const keyOf = (row: T, origin: number): string | number =>
+    rowKey ? rowKey(row, origin) : origin;
   const toggleExpand = (key: string | number) => {
     const next = new Set(expandedSet);
     if (next.has(key)) next.delete(key);
@@ -218,10 +258,25 @@ export function DataTable<T>({
     if (!isExpandControlled) setInternalExpanded(next);
     onExpandedChange?.([...next]);
   };
+
+  const [internalChecked, setInternalChecked] = useState<Set<string | number>>(
+    () => new Set(defaultSelectedKeys ?? []),
+  );
+  const isCheckControlled = selectedKeys !== undefined;
+  const checkedSet = useMemo(
+    () => new Set(isCheckControlled ? selectedKeys : internalChecked),
+    [isCheckControlled, selectedKeys, internalChecked],
+  );
+  const commitChecked = (next: Set<string | number>) => {
+    if (!isCheckControlled) setInternalChecked(next);
+    onSelectionChange?.([...next]);
+  };
+
   const hasExpander = renderExpanded != null;
   const hasActions = rowActions != null;
   const hasFooterRow = columns.some((c) => c.footer != null);
-  const totalCols = columns.length + (hasExpander ? 1 : 0) + (hasActions ? 1 : 0);
+  const totalCols =
+    columns.length + (hasExpander ? 1 : 0) + (hasActions ? 1 : 0) + (selectable ? 1 : 0);
 
   const columnByKey = useMemo(() => {
     const map = new Map<string, DataTableColumn<T>>();
@@ -229,11 +284,12 @@ export function DataTable<T>({
     return map;
   }, [columns]);
 
-  const filteredData = useMemo(() => {
+  const filteredEntries = useMemo(() => {
+    const entries = data.map((row, origin) => ({ row, origin }));
     const query = (globalFilter ?? '').trim().toLowerCase();
-    if (!query) return data;
+    if (!query) return entries;
     const keys = filterKeys ?? columns.map((c) => c.key);
-    return data.filter((row) => {
+    return entries.filter(({ row }) => {
       if (filterFn) return filterFn(row, query);
       return keys.some((k) => {
         const value = (row as Record<string, unknown>)[k];
@@ -241,6 +297,14 @@ export function DataTable<T>({
       });
     });
   }, [data, globalFilter, filterKeys, filterFn, columns]);
+
+  // With no query the filtered rows ARE `data`: keep its identity so onFilteredChange does not
+  // fire on every render when a caller passes inline columns (0.4.5 behaviour).
+  const hasQuery = (globalFilter ?? '').trim() !== '';
+  const filteredData = useMemo(
+    () => (hasQuery ? filteredEntries.map((e) => e.row) : data),
+    [hasQuery, filteredEntries, data],
+  );
 
   // The callback is held in a ref and kept out of the dep array on purpose: an
   // inline arrow is a new identity every render, so depending on it turns any
@@ -251,16 +315,16 @@ export function DataTable<T>({
     filteredCb.current?.(filteredData);
   }, [filteredData]);
 
-  const sortedData = useMemo(() => {
-    if (!sort) return filteredData;
+  const sortedEntries = useMemo(() => {
+    if (!sort) return filteredEntries;
     const col = columnByKey.get(sort.key);
-    if (!col) return filteredData;
+    if (!col) return filteredEntries;
     const accessor = col.sortValue ?? ((row: T) => (row as Record<string, unknown>)[col.key] as never);
     const dir = sort.direction === 'asc' ? 1 : -1;
     const nulls = col.nulls ?? 'auto';
-    return [...filteredData].sort((a, b) => {
-      const av = accessor(a);
-      const bv = accessor(b);
+    return [...filteredEntries].sort((ea, eb) => {
+      const av = accessor(ea.row);
+      const bv = accessor(eb.row);
       if (nulls !== 'auto') {
         // Deliberately NOT multiplied by `dir`: the whole point is that empty /
         // suspect values keep their side of the table across an asc↔desc flip.
@@ -272,13 +336,33 @@ export function DataTable<T>({
       }
       return defaultCompare(av, bv) * dir;
     });
-  }, [filteredData, sort, columnByKey]);
+  }, [filteredEntries, sort, columnByKey]);
 
-  const pagedData = useMemo(() => {
-    if (!pageSize || pageSize <= 0) return sortedData;
+  const sortedData = useMemo(() => sortedEntries.map((e) => e.row), [sortedEntries]);
+
+  const pagedEntries = useMemo(() => {
+    if (!pageSize || pageSize <= 0) return sortedEntries;
     const start = (Math.max(1, Math.floor(page) || 1) - 1) * pageSize;
-    return sortedData.slice(start, start + pageSize);
-  }, [sortedData, page, pageSize]);
+    return sortedEntries.slice(start, start + pageSize);
+  }, [sortedEntries, page, pageSize]);
+
+  const pageKeys = pagedEntries.map(({ row, origin }) => keyOf(row, origin));
+  const checkedOnPage = pageKeys.filter((k) => checkedSet.has(k)).length;
+  const allChecked = pageKeys.length > 0 && checkedOnPage === pageKeys.length;
+  const toggleAll = () => {
+    const next = new Set(checkedSet);
+    for (const k of pageKeys) {
+      if (allChecked) next.delete(k);
+      else next.add(k);
+    }
+    commitChecked(next);
+  };
+  const toggleChecked = (key: string | number) => {
+    const next = new Set(checkedSet);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    commitChecked(next);
+  };
 
   const toggleSort = (col: DataTableColumn<T>) => {
     if (!col.sortable) return;
@@ -290,6 +374,27 @@ export function DataTable<T>({
     onSortChange?.(next);
   };
 
+  // A scroll region needs keyboard access (axe: scrollable-region-focusable). Only a region
+  // that actually overflows becomes a tab stop, so a table that fits adds none.
+  const isEmpty = !loading && pagedEntries.length === 0;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollable, setScrollable] = useState(false);
+  useIsomorphicLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const measure = () =>
+      setScrollable(el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    if (el.firstElementChild) observer.observe(el.firstElementChild);
+    return () => observer.disconnect();
+    // Re-measure when the content that sizes the region changes; the observer covers resizes.
+  }, [pagedEntries, loading, columns, dense, layout, minTableWidth, maxHeight, isEmpty]);
+
+  const regionName = typeof caption === 'string' ? caption : 'Tabla de datos';
+
   return (
     <div
       className={cx(
@@ -300,237 +405,261 @@ export function DataTable<T>({
         layout === 'fixed' && 'he-table--fixed',
         className,
       )}
+      aria-busy={loading || undefined}
       {...rest}
     >
       {toolbar != null && <div className="he-table__toolbar">{toolbar}</div>}
-      <div
-        className="he-table__scroll"
-        style={maxHeight != null ? { maxHeight, overflowY: 'auto' } : undefined}
-      >
-        <table
-          className="he-table__el"
-          style={
-            minTableWidth == null
-              ? undefined
-              : ({
-                  minWidth:
-                    typeof minTableWidth === 'number' ? `${minTableWidth}px` : minTableWidth,
-                } as CSSProperties)
-          }
+      {isEmpty ? (
+        <div className="he-table__empty">{emptyState}</div>
+      ) : (
+        <div
+          ref={scrollRef}
+          className="he-table__scroll"
+          style={maxHeight != null ? { maxHeight, overflowY: 'auto' } : undefined}
+          {...(scrollable ? { tabIndex: 0, role: 'region', 'aria-label': regionName } : {})}
         >
-          {caption != null && (
-            <caption
-              className={cx(
-                'he-table__caption',
-                captionHidden && 'he-table__caption--hidden',
-              )}
-            >
-              {caption}
-            </caption>
-          )}
-          <thead className="he-table__head">
-            <tr>
-              {hasExpander && (
-                <th
-                  scope="col"
-                  className="he-table__th he-table__expander-cell"
-                  aria-label={expandLabel}
-                />
-              )}
-              {columns.map((col) => {
-                const active = sort?.key === col.key;
-                const ariaSort = !col.sortable
-                  ? undefined
-                  : active
-                    ? sort!.direction === 'asc'
-                      ? 'ascending'
-                      : 'descending'
-                    : 'none';
-                return (
-                  <th
-                    key={col.key}
-                    scope="col"
-                    aria-sort={ariaSort}
-                    style={col.width ? { width: col.width } : undefined}
-                    className={cx(
-                      'he-table__th',
-                      col.align && `he-table__cell--${col.align}`,
-                      col.sortable && 'he-table__th--sortable',
-                      active && 'he-table__th--active',
-                      col.truncate && 'he-table__th--truncate',
-                      col.className,
-                    )}
-                  >
-                    {col.sortable ? (
-                      <button type="button" className="he-table__sort" onClick={() => toggleSort(col)}>
-                        <span>{col.header}</span>
-                        <span aria-hidden className="he-table__sort-glyph">
-                          {active ? (sort!.direction === 'asc' ? '↑' : '↓') : '↕'}
-                        </span>
-                      </button>
-                    ) : (
-                      col.header
-                    )}
+          <table
+            className="he-table__el"
+            style={
+              minTableWidth == null
+                ? undefined
+                : ({
+                    minWidth:
+                      typeof minTableWidth === 'number' ? `${minTableWidth}px` : minTableWidth,
+                  } as CSSProperties)
+            }
+          >
+            {caption != null && (
+              <caption
+                className={cx(
+                  'he-table__caption',
+                  captionHidden && 'he-table__caption--hidden',
+                )}
+              >
+                {caption}
+              </caption>
+            )}
+            <thead className="he-table__head">
+              <tr>
+                {selectable && (
+                  <th scope="col" className="he-table__th he-table__select-cell">
+                    <Checkbox
+                      aria-label={selectAllLabel}
+                      checked={allChecked}
+                      indeterminate={checkedOnPage > 0 && !allChecked}
+                      disabled={loading || pageKeys.length === 0}
+                      onChange={toggleAll}
+                    />
                   </th>
-                );
-              })}
-              {hasActions && (
-                <th
-                  scope="col"
-                  className="he-table__th he-table__actions-cell"
-                  aria-label="Actions"
-                />
-              )}
-            </tr>
-          </thead>
-          <tbody className="he-table__body">
-            {pagedData.length === 0 ? (
-              <tr className="he-table__empty-row">
-                <td className="he-table__empty" colSpan={totalCols}>
-                  {emptyState}
-                </td>
-              </tr>
-            ) : (
-              pagedData.map((row, index) => {
-                const selected = isRowSelected?.(row, index) ?? false;
-                const key = keyOf(row, index);
-                const expandedContent = hasExpander ? renderExpanded!(row, index) : null;
-                const canExpand = expandedContent != null;
-                const isExpanded = canExpand && expandedSet.has(key);
-                // Row-level activation: onRowClick wins; otherwise an expandable
-                // row toggles its own detail. A row with neither stays inert.
-                const activate = onRowClick
-                  ? () => onRowClick(row, index)
-                  : canExpand
-                    ? () => toggleExpand(key)
-                    : undefined;
-                return (
-                  <Fragment key={key}>
-                    <tr
+                )}
+                {hasExpander && (
+                  <th scope="col" className="he-table__th he-table__expander-cell">
+                    <span className="he-table__sr">{expandLabel}</span>
+                  </th>
+                )}
+                {columns.map((col) => {
+                  const active = sort?.key === col.key;
+                  const align = col.align ?? (col.numeric ? 'end' : undefined);
+                  const ariaSort = !col.sortable
+                    ? undefined
+                    : active
+                      ? sort!.direction === 'asc'
+                        ? 'ascending'
+                        : 'descending'
+                      : 'none';
+                  return (
+                    <th
+                      key={col.key}
+                      scope="col"
+                      aria-sort={ariaSort}
+                      style={col.width ? { width: col.width } : undefined}
                       className={cx(
-                        'he-table__row',
-                        activate && 'he-table__row--clickable',
-                        selected && 'he-table__row--selected',
-                        isExpanded && 'he-table__row--expanded',
+                        'he-table__th',
+                        align && `he-table__cell--${align}`,
+                        col.sortable && 'he-table__th--sortable',
+                        active && 'he-table__th--active',
+                        col.truncate && 'he-table__th--truncate',
+                        col.className,
                       )}
-                      // aria-current, not aria-selected: the row already carries
-                      // role="button" when activatable, and aria-selected is not
-                      // valid there.
-                      aria-current={selected ? 'true' : undefined}
-                      onClick={activate}
-                      // Keyboard access for row activation: focusable rows that
-                      // fire on Enter/Space, so the pattern is not mouse-only.
-                      tabIndex={activate ? 0 : undefined}
-                      role={activate ? 'button' : undefined}
-                      onKeyDown={
-                        activate
-                          ? (e: KeyboardEvent<HTMLTableRowElement>) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                activate();
-                              }
-                            }
-                          : undefined
-                      }
                     >
-                      {hasExpander && (
-                        <td className="he-table__td he-table__expander-cell">
-                          {canExpand && (
-                            <button
-                              type="button"
-                              className={cx(
-                                'he-table__expander',
-                                isExpanded && 'he-table__expander--open',
-                              )}
-                              aria-expanded={isExpanded}
-                              aria-label={expandLabel}
-                              // Stop the row handler from double-firing.
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleExpand(key);
-                              }}
-                            >
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                                aria-hidden
-                              >
-                                <path
-                                  d="M4.5 2.5 8 6l-3.5 3.5"
-                                  stroke="currentColor"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          )}
-                        </td>
+                      {col.sortable ? (
+                        <button type="button" className="he-table__sort" onClick={() => toggleSort(col)}>
+                          <span>{col.header}</span>
+                          <Icon
+                            name={active && sort!.direction === 'desc' ? 'chevron-down' : 'chevron-up'}
+                            size={12}
+                            className="he-table__sort-glyph"
+                          />
+                        </button>
+                      ) : (
+                        col.header
                       )}
-                      {columns.map((col) => (
-                        <td
-                          key={col.key}
-                          className={cx(
-                            'he-table__td',
-                            col.align && `he-table__cell--${col.align}`,
-                            col.truncate && 'he-table__td--truncate',
-                            col.className,
-                          )}
-                        >
-                          {col.render
-                            ? col.render(row, index)
-                            : ((row as Record<string, unknown>)[col.key] as ReactNode) ?? null}
+                    </th>
+                  );
+                })}
+                {hasActions && (
+                  <th scope="col" className="he-table__th he-table__actions-cell">
+                    <span className="he-table__sr">{actionsLabel}</span>
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody className="he-table__body">
+              {loading
+                ? Array.from({ length: Math.max(1, loadingRows) }, (_, r) => (
+                    <tr key={r} className="he-table__row he-table__row--loading">
+                      {Array.from({ length: totalCols }, (_, c) => (
+                        <td key={c} className="he-table__td">
+                          <Skeleton width={c === 0 ? '60%' : '80%'} aria-hidden />
                         </td>
                       ))}
-                      {hasActions && (
-                        <td className="he-table__td he-table__actions-cell">
-                          {/* Stop the row handler firing when an action is used. */}
-                          <div
-                            className="he-table__actions"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {rowActions!(row, index)}
-                          </div>
-                        </td>
-                      )}
                     </tr>
-                    {isExpanded && (
-                      <tr className="he-table__expansion-row">
-                        <td className="he-table__expansion" colSpan={totalCols}>
-                          <div className="he-table__expansion-inner">{expandedContent}</div>
-                        </td>
-                      </tr>
-                    )}
-                  </Fragment>
-                );
-              })
+                  ))
+                : pagedEntries.map(({ row, origin }, index) => {
+                    const detailOpen = isRowSelected?.(row, index) ?? false;
+                    const key = keyOf(row, origin);
+                    const checked = selectable && checkedSet.has(key);
+                    const expandedContent = hasExpander ? renderExpanded!(row, index) : null;
+                    const canExpand = expandedContent != null;
+                    const isExpanded = canExpand && expandedSet.has(key);
+                    // Row-level activation: onRowClick wins; otherwise an expandable
+                    // row toggles its own detail. A row with neither stays inert.
+                    const activate = onRowClick
+                      ? () => onRowClick(row, index)
+                      : canExpand
+                        ? () => toggleExpand(key)
+                        : undefined;
+                    return (
+                      <Fragment key={key}>
+                        <tr
+                          className={cx(
+                            'he-table__row',
+                            activate && 'he-table__row--clickable',
+                            (detailOpen || checked) && 'he-table__row--selected',
+                            isExpanded && 'he-table__row--expanded',
+                          )}
+                          // aria-current, not aria-selected: the row is not in a grid.
+                          aria-current={detailOpen ? 'true' : undefined}
+                          onClick={activate}
+                          // Keyboard access for row activation. The row keeps its table-row
+                          // role: a role="button" row cannot contain the checkbox, expander
+                          // and action buttons (axe: nested-interactive). Keys that bubble
+                          // up from those controls are ignored.
+                          tabIndex={activate ? 0 : undefined}
+                          onKeyDown={
+                            activate
+                              ? (e: KeyboardEvent<HTMLTableRowElement>) => {
+                                  if (e.target !== e.currentTarget) return;
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    activate();
+                                  }
+                                }
+                              : undefined
+                          }
+                        >
+                          {selectable && (
+                            <td className="he-table__td he-table__select-cell" onClick={(e) => e.stopPropagation()}>
+                              <Checkbox
+                                aria-label={selectLabel}
+                                checked={checked}
+                                onChange={() => toggleChecked(key)}
+                              />
+                            </td>
+                          )}
+                          {hasExpander && (
+                            <td className="he-table__td he-table__expander-cell">
+                              {canExpand && (
+                                <button
+                                  type="button"
+                                  className={cx(
+                                    'he-table__expander',
+                                    isExpanded && 'he-table__expander--open',
+                                  )}
+                                  aria-expanded={isExpanded}
+                                  aria-label={expandLabel}
+                                  // Stop the row handler from double-firing.
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleExpand(key);
+                                  }}
+                                >
+                                  <Icon name="chevron-right" size={12} />
+                                </button>
+                              )}
+                            </td>
+                          )}
+                          {columns.map((col) => {
+                            const align = col.align ?? (col.numeric ? 'end' : undefined);
+                            return (
+                              <td
+                                key={col.key}
+                                className={cx(
+                                  'he-table__td',
+                                  align && `he-table__cell--${align}`,
+                                  col.numeric && 'he-table__cell--numeric',
+                                  col.truncate && 'he-table__td--truncate',
+                                  col.className,
+                                )}
+                              >
+                                {col.render
+                                  ? col.render(row, index)
+                                  : ((row as Record<string, unknown>)[col.key] as ReactNode) ?? null}
+                              </td>
+                            );
+                          })}
+                          {hasActions && (
+                            <td className="he-table__td he-table__actions-cell">
+                              {/* Stop the row handler firing when an action is used. */}
+                              <div
+                                className="he-table__actions"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {rowActions!(row, index)}
+                              </div>
+                            </td>
+                          )}
+                        </tr>
+                        {isExpanded && (
+                          <tr className="he-table__expansion-row">
+                            <td className="he-table__expansion" colSpan={totalCols}>
+                              <div className="he-table__expansion-inner">{expandedContent}</div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+            </tbody>
+            {hasFooterRow && !loading && (
+              <tfoot className="he-table__foot">
+                <tr>
+                  {selectable && <td className="he-table__tf he-table__select-cell" />}
+                  {hasExpander && <td className="he-table__tf he-table__expander-cell" />}
+                  {columns.map((col) => {
+                    const align = col.align ?? (col.numeric ? 'end' : undefined);
+                    return (
+                      <td
+                        key={col.key}
+                        className={cx(
+                          'he-table__tf',
+                          align && `he-table__cell--${align}`,
+                          col.numeric && 'he-table__cell--numeric',
+                          col.truncate && 'he-table__td--truncate',
+                          col.className,
+                        )}
+                      >
+                        {col.footer ? col.footer(sortedData) : null}
+                      </td>
+                    );
+                  })}
+                  {hasActions && <td className="he-table__tf he-table__actions-cell" />}
+                </tr>
+              </tfoot>
             )}
-          </tbody>
-          {hasFooterRow && pagedData.length > 0 && (
-            <tfoot className="he-table__foot">
-              <tr>
-                {hasExpander && <td className="he-table__tf he-table__expander-cell" />}
-                {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    className={cx(
-                      'he-table__tf',
-                      col.align && `he-table__cell--${col.align}`,
-                      col.truncate && 'he-table__td--truncate',
-                      col.className,
-                    )}
-                  >
-                    {col.footer ? col.footer(sortedData) : null}
-                  </td>
-                ))}
-                {hasActions && <td className="he-table__tf he-table__actions-cell" />}
-              </tr>
-            </tfoot>
-          )}
-        </table>
-      </div>
+          </table>
+        </div>
+      )}
       {/* Sibling of the scroller, not a child: it stays visible while the body scrolls. */}
       {footer != null && <div className="he-table__footer">{footer}</div>}
     </div>

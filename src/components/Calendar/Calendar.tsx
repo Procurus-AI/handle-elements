@@ -6,9 +6,26 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../lib/cx';
+import { CalendarDay } from '../CalendarDay/CalendarDay';
+import { Icon } from '../Icon/Icon';
 
-/** Status vocabulary shared by day markers and panel rows (mirrors StatusPill). */
+/**
+ * Status vocabulary shared by day markers and panel rows (mirrors StatusPill).
+ * `accent` is the 0.4.5 value: still accepted, rendered as `neutral` because the
+ * brand colour is never a status.
+ */
 export type CalendarStatus = 'ok' | 'warn' | 'error' | 'neutral' | 'accent';
+
+/** Visible status after the legacy `accent` value is folded into `neutral`. */
+const presentedStatus = (status: CalendarStatus): Exclude<CalendarStatus, 'accent'> =>
+  status === 'accent' ? 'neutral' : status;
+
+/** Accessible names of the header controls. Defaults are Spanish. */
+export interface CalendarLabels {
+  previousMonth?: string;
+  nextMonth?: string;
+  today?: string;
+}
 
 export interface CalendarMarker {
   status: CalendarStatus;
@@ -47,8 +64,10 @@ export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onS
   renderDay?: (ctx: CalendarDayContext) => ReactNode;
   /** Render leading/trailing days from adjacent months (default false → blanks). */
   showOutsideDays?: boolean;
-  /** Label for the "jump to today" button. Default "Today". */
+  /** Label for the "jump to today" button. Default "Hoy". Wins over `labels.today`. */
   todayLabel?: string;
+  /** Header control labels: `previousMonth` "Mes anterior", `nextMonth` "Mes siguiente", `today` "Hoy". */
+  labels?: CalendarLabels;
   /** Right-aligned header slot (search, filters, export…). */
   actions?: ReactNode;
   /** Hide the header row entirely. */
@@ -61,16 +80,6 @@ const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), 
 const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
-const ChevronLeft = (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden focusable="false">
-    <path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-const ChevronRight = (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden focusable="false">
-    <path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 export function Calendar({
   month,
@@ -85,7 +94,8 @@ export function Calendar({
   markers,
   renderDay,
   showOutsideDays = false,
-  todayLabel = 'Today',
+  todayLabel,
+  labels,
   actions,
   hideHeader = false,
   className,
@@ -125,6 +135,12 @@ export function Calendar({
     return { cells: out, gridStart: start };
   }, [viewMonth, weekStartsOn]);
 
+  const weeks = useMemo(() => {
+    const out: Date[][] = [];
+    for (let i = 0; i < cells.length; i += 7) out.push(cells.slice(i, i + 7));
+    return out;
+  }, [cells]);
+
   const weekdayLabels = useMemo(() => {
     const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
     return Array.from({ length: 7 }, (_, i) => fmt.format(addDays(gridStart, i)).replace(/\.$/, ''));
@@ -138,24 +154,24 @@ export function Calendar({
         <div className="he-cal__header">
           <div className="he-cal__nav">
             <button type="button" className="he-cal__today" onClick={() => changeMonth(todayDate)}>
-              {todayLabel}
+              {todayLabel ?? labels?.today ?? 'Hoy'}
             </button>
             <div className="he-cal__arrows">
               <button
                 type="button"
                 className="he-cal__arrow"
-                aria-label="Previous month"
+                aria-label={labels?.previousMonth ?? 'Mes anterior'}
                 onClick={() => changeMonth(addMonths(viewMonth, -1))}
               >
-                {ChevronLeft}
+                <Icon name="chevron-left" />
               </button>
               <button
                 type="button"
                 className="he-cal__arrow"
-                aria-label="Next month"
+                aria-label={labels?.nextMonth ?? 'Mes siguiente'}
                 onClick={() => changeMonth(addMonths(viewMonth, 1))}
               >
-                {ChevronRight}
+                <Icon name="chevron-right" />
               </button>
             </div>
             <h2 className="he-cal__title">{monthTitle}</h2>
@@ -172,57 +188,39 @@ export function Calendar({
         ))}
       </div>
 
-      <div className="he-cal__grid" role="grid">
-        {cells.map((date) => {
-          const inMonth = date.getMonth() === viewMonth.getMonth();
-          if (!inMonth && !showOutsideDays) {
-            return <div key={date.toISOString()} className="he-cal__day he-cal__day--blank" role="gridcell" aria-hidden />;
-          }
+      <div className="he-cal__grid" role="grid" aria-label={monthTitle}>
+        {weeks.map((week) => (
+          <div key={week[0].toISOString()} className="he-cal__row" role="row">
+            {week.map((date) => {
+              const inMonth = date.getMonth() === viewMonth.getMonth();
+              if (!inMonth && !showOutsideDays) {
+                return (
+                  <div key={date.toISOString()} className="he-cal__cell" role="gridcell">
+                    <CalendarDay empty />
+                  </div>
+                );
+              }
 
-          const isToday = isSameDay(date, todayDate);
-          const isSelected = selectedDate != null && isSameDay(date, selectedDate);
-          const dayMarkers = markers?.(date) ?? [];
+              const isToday = isSameDay(date, todayDate);
+              const isSelected = selectedDate != null && isSameDay(date, selectedDate);
 
-          return (
-            <button
-              type="button"
-              key={date.toISOString()}
-              role="gridcell"
-              className={cx(
-                'he-cal__day',
-                !inMonth && 'he-cal__day--outside',
-                isToday && 'he-cal__day--today',
-                isSelected && 'he-cal__day--selected',
-              )}
-              aria-pressed={isSelected}
-              aria-current={isToday ? 'date' : undefined}
-              onClick={() => selectDay(date)}
-            >
-              {renderDay ? (
-                renderDay({ date, inMonth, isToday, isSelected })
-              ) : (
-                <>
-                  <span className={cx('he-cal__daynum', isToday && 'he-cal__daynum--today')}>
-                    {date.getDate()}
-                  </span>
-                  {dayMarkers.length > 0 && (
-                    <ul className="he-cal__markers">
-                      {dayMarkers.map((marker, i) => (
-                        <li
-                          key={marker.key ?? i}
-                          className={cx('he-cal__marker', `he-cal__marker--${marker.status}`)}
-                        >
-                          <span className="he-cal__marker-dot" aria-hidden />
-                          <span className="he-cal__marker-label">{marker.label}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </>
-              )}
-            </button>
-          );
-        })}
+              return (
+                <div key={date.toISOString()} className="he-cal__cell" role="gridcell">
+                  <CalendarDay
+                    day={date.getDate()}
+                    today={isToday}
+                    outside={!inMonth}
+                    selected={isSelected}
+                    events={markers?.(date).map((m) => ({ ...m, status: presentedStatus(m.status) }))}
+                    onClick={() => selectDay(date)}
+                  >
+                    {renderDay ? renderDay({ date, inMonth, isToday, isSelected }) : undefined}
+                  </CalendarDay>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -239,17 +237,11 @@ export interface CalendarPanelProps extends Omit<HTMLAttributes<HTMLDivElement>,
   footer?: ReactNode;
 }
 
-const CloseIcon = (
-  <svg viewBox="0 0 16 16" fill="none" aria-hidden focusable="false">
-    <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-  </svg>
-);
-
 export function CalendarPanel({
   title,
   subtitle,
   onClose,
-  closeLabel = 'Close',
+  closeLabel = 'Cerrar',
   footer,
   className,
   children,
@@ -266,7 +258,7 @@ export function CalendarPanel({
           </div>
           {onClose != null && (
             <button type="button" className="he-cal-panel__close" aria-label={closeLabel} onClick={onClose}>
-              {CloseIcon}
+              <Icon name="x" />
             </button>
           )}
         </header>
@@ -319,11 +311,11 @@ export function CalendarPanelRow({
     >
       {expandable && (
         <span className="he-cal-panel__row-chevron" aria-hidden>
-          {ChevronRight}
+          <Icon name="chevron-right" />
         </span>
       )}
       {status != null && (
-        <span className={cx('he-cal-panel__row-dot', `he-cal-panel__row-dot--${status}`)} aria-hidden />
+        <span className={cx('he-cal-panel__row-dot', `he-cal-panel__row-dot--${presentedStatus(status)}`)} aria-hidden />
       )}
       {leading != null && <span className="he-cal-panel__row-leading">{leading}</span>}
       <span className="he-cal-panel__row-main">

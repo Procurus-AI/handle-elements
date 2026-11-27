@@ -7,20 +7,20 @@
 
 /* 32px between top-level sections; 24px between sub-sections nested in one. */
 .he-section + .he-section {
-  margin-top: var(--he-space-6);
+  margin-top: var(--he-spacing-8);
 }
 
 .he-section__head {
   display: flex;
   align-items: baseline;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   min-width: 0;
 }
 
 .he-section__action {
   display: flex;
   align-items: center;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -30,44 +30,41 @@
   margin: 0;
   min-width: 0;
   font-family: var(--he-font-sans);
-  font-size: var(--he-body);
-  font-weight: 600;
-  line-height: 1.3;
-  color: var(--he-text);
+  font-size: var(--he-type-heading-sm-size);
+  font-weight: var(--he-type-heading-sm-weight);
+  line-height: var(--he-type-heading-sm-line);
+  letter-spacing: var(--he-type-heading-sm-tracking);
+  color: var(--he-text-primary);
 }
 
 .he-section__count {
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  font-size: var(--he-type-caption-size);
   font-variant-numeric: tabular-nums;
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
-/* ---- sub tier: the mono-caps sub-head. Values are .he-stat__label's, verbatim,
- * so the system keeps ONE caps tier. ---- */
+/* ---- sub tier: Label/sm, tertiary sub-head ---- */
 .he-section--sub .he-section__title {
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--he-tracking-caps);
-  color: var(--he-text-faint);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
+  color: var(--he-text-tertiary);
 }
 
 .he-section--sub .he-section__count {
-  font-size: 10.5px;
-  letter-spacing: var(--he-tracking-caps);
+  font-size: var(--he-type-caption-size);
 }
 
 /* ---- head -> body rhythm ---- */
 .he-section__head + .he-section__body,
 .he-section__head + .he-section__empty {
-  margin-top: var(--he-space-3);
+  margin-top: var(--he-spacing-3);
 }
 
 .he-section--sub .he-section__head + .he-section__body,
 .he-section--sub .he-section__head + .he-section__empty {
-  margin-top: var(--he-space-2);
+  margin-top: var(--he-spacing-2);
 }
 
 .he-section__body {
@@ -76,11 +73,11 @@
 
 /* Body rhythm: 16px between arbitrary children, 24px between nested sections. */
 .he-section__body > * + * {
-  margin-top: var(--he-space-4);
+  margin-top: var(--he-spacing-4);
 }
 
 .he-section__body > .he-section + .he-section {
-  margin-top: var(--he-space-5);
+  margin-top: var(--he-spacing-6);
 }
 
 /* ---- trailing link — the quiet arrow link a section head takes. Not a Button:
@@ -90,22 +87,22 @@
 .he-section__link {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-1);
+  gap: var(--he-spacing-1);
   padding: 0;
   border: 0;
   background: none;
   font-family: var(--he-font-sans);
-  font-size: var(--he-caption);
+  font-size: var(--he-type-caption-size);
   line-height: 1.3;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: color var(--he-transition-fast);
+  transition: color var(--he-motion-fast);
 }
 
 .he-section__link:not(:disabled):hover {
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 /* A section action that has run out of things to do goes faint and stops
@@ -113,14 +110,14 @@
  * a live one and still brightens on hover — a control that looks live and does
  * nothing. */
 .he-section__link:disabled {
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
   cursor: default;
 }
 
 .he-section__link:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
 }
 
 .he-section__link-glyph {
@@ -132,8 +129,8 @@
  * against a 13px drawer body. ---- */
 .he-section__empty {
   margin: 0;
-  font-size: var(--he-body-sm);
-  color: var(--he-text-dim);
+  font-size: var(--he-type-body-sm-size);
+  color: var(--he-text-secondary);
 }
 
 /* ---- flush: bleed hairline rows to the containing surface's edge. Reads the
@@ -151,11 +148,11 @@
  * never both — measured, two bleeds pull the rows 23px PAST the card's border on
  * each side. ---- */
 .he-section--flush > .he-section__body {
-  --he-section-pad: var(--he-bleed-pad, var(--he-space-5));
+  --he-section-pad: var(--he-bleed-pad, var(--he-spacing-6));
   --he-list-row-pad-inline: var(--he-section-pad);
   --he-list-row-radius: 0;
   margin-inline: calc(-1 * var(--he-section-pad));
-  border-block: 1px solid var(--he-border);
+  border-block: 1px solid var(--he-border-default);
 }
 
 /* Below a flush body the content already reaches the surface edge, so a nested

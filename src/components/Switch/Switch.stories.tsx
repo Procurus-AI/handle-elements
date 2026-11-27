@@ -4,9 +4,9 @@ import { Card } from '../Card/Card';
 import { Switch } from './Switch';
 
 const meta = {
-  title: 'Elements/Switch',
+  title: 'Atoms/Switch',
   component: Switch,
-  args: { label: 'Include realized gains', defaultChecked: true },
+  args: { label: 'Incluir ganancias realizadas', defaultChecked: true },
 } satisfies Meta<typeof Switch>;
 
 export default meta;
@@ -22,11 +22,11 @@ export const Settings: Story = {
         <Switch
           checked={checked}
           onCheckedChange={setChecked}
-          label="Live market data"
-          description="Refresh prices and holdings while the page is open."
+          label="Datos de mercado en vivo"
+          description="Actualiza precios y posiciones mientras la página está abierta."
         />
-        <Switch label="Email summary" description="Send a daily finance digest." />
-        <Switch label="Locked control" disabled defaultChecked />
+        <Switch label="Resumen por correo" description="Envía un resumen diario." />
+        <Switch label="Control bloqueado" disabled defaultChecked />
       </Card>
     );
   },

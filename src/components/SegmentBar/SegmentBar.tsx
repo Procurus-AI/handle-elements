@@ -57,17 +57,17 @@ export interface SegmentBarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'c
 function toneColor(tone: SegmentTone | undefined, index: number, colorIndex?: number): string {
   switch (tone) {
     case 'accent':
-      return 'var(--he-chart-accent)';
+      return 'var(--he-accent-default)';
     case 'ok':
-      return 'var(--he-chart-pos)';
+      return 'var(--he-status-success-solid)';
     case 'warn':
-      return 'var(--he-warn)';
+      return 'var(--he-status-warning-text)';
     case 'error':
-      return 'var(--he-chart-neg)';
+      return 'var(--he-status-danger-solid)';
     case 'neutral':
-      return 'var(--he-neutral)';
+      return 'var(--he-status-idle-text)';
     case 'ink':
-      return 'var(--he-chart-ink)';
+      return 'var(--he-text-primary)';
     default:
       return seriesColor(colorIndex ?? index + 1);
   }

@@ -1,0 +1,87 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Introduction/Overview" />
+
+# Handle Elements
+
+Handle Elements is the design system for every Handle product. It replaces the three or four systems that exist in code today with one set of tokens and components, so a person moving between Registros, Validación de pagos and the agents does not feel they changed product.
+
+Version 1.0.0 is a **draft for team review**. Nothing here is final until the reviewers below have replied.
+
+## Where the look comes from
+
+The visual source is Kevin's Figma file "Handle Platform UI — Foundations", last modified 2026-11-26. Tokens are generated from its variables. Where the code differs from Figma, the difference is listed on [Deviations from Figma](?path=/docs/foundations-deviations-from-figma--docs) for Kevin to approve.
+
+## Install
+
+```bash
+npm install @procurus-ai/handle-elements
+```
+
+The package is published to the GitHub Packages registry. Import the two stylesheets once, in the app root:
+
+```ts
+import '@procurus-ai/handle-elements/fonts.css';
+import '@procurus-ai/handle-elements/styles.css';
+```
+
+Then import components:
+
+```tsx
+import { PageHeader, StatCard, Button, StatusPill } from '@procurus-ai/handle-elements';
+```
+
+If you only need the tokens, import `@procurus-ai/handle-elements/tokens.css`.
+
+## Light and dark
+
+Set `data-theme` on the `<html>` element: `light` or `dark`.
+
+```html
+<html data-theme="dark">
+```
+
+Do not key on `prefers-color-scheme`. The `.he-theme-dark` class also works on a subtree, but it does not reach portalled surfaces such as Menu, Modal, Drawer, Tooltip and Toast. Use the toolbar in this Storybook to switch the theme.
+
+## How the sidebar is organised
+
+The sidebar follows Atomic Design, from the smallest parts to whole screens.
+
+<DocTable
+  head={['Section', 'What is in it']}
+  rows={[
+    ['Introduction', 'This page, Benchmarks, Atomic Design, Migration from 0.x and Changelog.'],
+    ['Foundations', 'Color, Typography, Spacing, corners & density, Elevation, Content, and Deviations from Figma.'],
+    ['Atoms', 'Button, Badge, Input and the other smallest parts.'],
+    ['Molecules', 'Small groups with one job: Pagination, Field, FilterChip.'],
+    ['Organisms', 'Sections of a screen: Sidebar, DataTable, Modal.'],
+    ['Templates', 'Page layouts with no content: AppShell, ListPage.'],
+    ['Pages', 'Templates with Spanish example content. Stories only.'],
+  ]}
+/>
+
+The rules for each level are on [Atomic Design](?path=/docs/introduction-atomic-design--docs). The levels and their check are planned for 1.0.0.
+
+## What to read first
+
+- Building a screen: [Color](?path=/docs/foundations-color--docs), [Typography](?path=/docs/foundations-typography--docs) and [Content](?path=/docs/foundations-content--docs).
+- Upgrading from 0.x: [Migration from 0.x](?path=/docs/introduction-migration-from-0-x--docs).
+- Why a choice was made: [Benchmarks](?path=/docs/introduction-benchmarks--docs).
+
+## Who reviews
+
+<DocTable
+  head={['Area', 'Reviewer']}
+  rows={[
+    ['Design and Figma fidelity', 'Kevin'],
+    ['Engineering', 'Oscar, Omar'],
+    ['UX', 'Eduardo'],
+    ['Product decisions', 'Ricardo'],
+  ]}
+/>
+
+<Rule title="Status of 1.0.0">
+  Draft. Open items: Kevin's sign-off on the deviations, and the checks marked planned on the
+  Benchmarks page.
+</Rule>

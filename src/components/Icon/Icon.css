@@ -1,0 +1,6 @@
+.he-icon {
+  color: var(--he-icon-stroke);
+  flex: none;
+  display: inline-block;
+  vertical-align: middle;
+}

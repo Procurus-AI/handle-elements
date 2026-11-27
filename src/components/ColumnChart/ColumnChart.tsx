@@ -65,12 +65,12 @@ export interface ColumnChartProps extends Omit<HTMLAttributes<HTMLDivElement>, '
 }
 
 const toneVar: Record<Exclude<ColumnTone, 'series'>, string> = {
-  ink: 'var(--he-chart-ink)',
-  accent: 'var(--he-chart-accent)',
-  ok: 'var(--he-chart-pos)',
-  warn: 'var(--he-warn)',
-  error: 'var(--he-chart-neg)',
-  neutral: 'var(--he-neutral)',
+  ink: 'var(--he-text-primary)',
+  accent: 'var(--he-accent-default)',
+  ok: 'var(--he-status-success-solid)',
+  warn: 'var(--he-status-warning-text)',
+  error: 'var(--he-status-danger-solid)',
+  neutral: 'var(--he-status-idle-text)',
 };
 
 function colorFor(meta: ColumnSeries | undefined, index: number): string {
@@ -223,6 +223,8 @@ export function ColumnChart({
                       </span>
                     )}
                   </div>
+                  {/* The space keeps the visible text "311 O", matching the button name. */}
+                  {showXLabels && ' '}
                   {showXLabels && <span className="he-columnchart__xlabel">{d.label}</span>}
                 </>
               );
@@ -241,9 +243,14 @@ export function ColumnChart({
                   )}
                   onClick={() => onSelectColumn(d, i)}
                   aria-pressed={selectedIndex === i}
-                  aria-label={`${textOf(d.label) ?? `Column ${i + 1}`}${
-                    magnitude != null ? `, ${textOf(formatValue(magnitude)) ?? ''}` : ''
-                  }`}
+                  // Same order as the visible text (value above, label below), so the
+                  // accessible name contains it (WCAG 2.5.3).
+                  aria-label={[
+                    magnitude != null ? textOf(formatValue(magnitude)) : undefined,
+                    textOf(d.label) ?? `Column ${i + 1}`,
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                   style={{ gap: `${barGap}px` }}
                 >
                   {body}

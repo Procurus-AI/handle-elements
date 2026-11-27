@@ -1,0 +1,66 @@
+.he-filter-chip {
+  --he-filter-chip-dot: var(--he-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-md);
+  background: var(--he-bg-surface);
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--he-motion-fast);
+}
+
+.he-filter-chip:hover:not(:disabled) {
+  background: var(--he-bg-hover);
+}
+
+.he-filter-chip:disabled {
+  color: var(--he-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Figma "State=active": fill only. The border stays transparent so the chip keeps its size. */
+.he-filter-chip--active,
+.he-filter-chip--active:hover:not(:disabled) {
+  border-color: transparent;
+  background: var(--he-bg-active);
+  color: var(--he-bg-inverse);
+}
+
+.he-filter-chip__dot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-filter-chip-dot);
+}
+
+.he-filter-chip--success {
+  --he-filter-chip-dot: var(--he-status-success-text);
+}
+
+.he-filter-chip--warning {
+  --he-filter-chip-dot: var(--he-status-warning-text);
+}
+
+.he-filter-chip__count {
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tertiary fails AA on the active fill (dark theme), so the count steps up to secondary. */
+.he-filter-chip--active .he-filter-chip__count {
+  color: var(--he-text-secondary);
+}

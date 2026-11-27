@@ -1,71 +1,75 @@
+/* StatCard: the Stat cell look (88px minimum, Metric type, no shadow) on a bordered surface.
+ * `plain` drops the surface so it nests in a panel; StatCardGroup `rail` is the bordered strip. */
 .he-stat {
   display: flex;
   flex-direction: column;
-  gap: var(--he-space-2);
-  /* Container hook, mirroring --he-stat-label-min-height: a rail can retune the
-   * tile's density without a new prop. */
-  padding: var(--he-stat-pad, var(--he-space-4));
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-md);
+  justify-content: center;
+  gap: 6px;
+  box-sizing: border-box;
+  min-height: var(--he-stat-height);
+  padding: var(--he-stat-pad, var(--he-spacing-3) 20px);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  color: var(--he-text-primary);
 }
 
 .he-stat__label {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-2);
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--he-tracking-caps);
-  color: var(--he-text-faint);
-  /* StatCardGroup sets this so labels reserve a shared height and values align.
-   * Standalone cards default to `auto` (no reservation). */
+  gap: 6px;
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
+  /* StatCardGroup sets this so labels reserve a shared height and values align. */
   min-height: var(--he-stat-label-min-height, auto);
 }
 
 .he-stat__row {
   display: flex;
   align-items: baseline;
-  /* A rail cell can be ~190px wide; let the unit/delta wrap under the value
-   * rather than overrun the neighbouring cell's hairline. */
   flex-wrap: wrap;
-  gap: 0 var(--he-space-2);
+  gap: 0 var(--he-spacing-2);
 }
 
 .he-stat__value {
-  /* Flex items default to min-width:auto and refuse to shrink below their
-   * content — without this a long value can never wrap inside the row. */
+  /* Flex items default to min-width:auto and refuse to shrink below their content. */
   min-width: 0;
-  font-family: var(--he-font-display);
-  font-weight: 400;
-  font-size: var(--he-title);
-  line-height: 1.05;
-  color: var(--he-text);
+  font-family: var(--he-type-metric-lg-family);
+  font-size: var(--he-type-metric-lg-size);
+  line-height: var(--he-type-metric-lg-line);
+  font-weight: var(--he-type-metric-lg-weight);
+  letter-spacing: var(--he-type-metric-lg-tracking);
+  color: var(--he-text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .he-stat--lg .he-stat__value {
-  font-size: var(--he-display-2);
-  font-weight: 300;
+  font-size: var(--he-type-metric-xl-size);
+  line-height: var(--he-type-metric-xl-line);
+  font-weight: var(--he-type-metric-xl-weight);
+  letter-spacing: var(--he-type-metric-xl-tracking);
 }
 
-/* Mini stat — for tight clusters (quality / bottleneck counters). */
+/* Mini stat for tight clusters. */
 .he-stat--sm {
-  gap: var(--he-space-1);
+  gap: var(--he-spacing-1);
+  min-height: 0;
 }
 
 .he-stat--sm .he-stat__value {
-  font-size: var(--he-heading);
+  font-size: var(--he-type-metric-md-size);
+  line-height: var(--he-type-metric-md-line);
+  font-weight: var(--he-type-metric-md-weight);
+  letter-spacing: var(--he-type-metric-md-tracking);
 }
 
-.he-stat--sm .he-stat__label {
-  font-size: 10px;
-}
-
-/* Borderless — nest inside a panel Card without cards-in-cards. */
+/* Borderless: nest inside a panel without cards-in-cards. */
 .he-stat--plain {
+  min-height: 0;
   padding: 0;
   background: none;
   border: none;
@@ -73,95 +77,91 @@
 }
 
 .he-stat__unit {
-  font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  color: var(--he-text-dim);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  color: var(--he-text-secondary);
 }
 
 .he-stat__delta {
   display: inline-flex;
   align-items: baseline;
   gap: 3px;
-  font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  font-weight: 500;
+  font-family: var(--he-type-label-sm-family);
+  font-size: var(--he-type-label-sm-size);
+  font-weight: var(--he-type-label-sm-weight);
 }
 
 .he-stat__delta--up {
-  color: var(--he-ok);
+  color: var(--he-status-success-text);
 }
 .he-stat__delta--down {
-  color: var(--he-error);
+  color: var(--he-status-danger-text);
 }
 .he-stat__delta--flat {
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 .he-stat__footer {
-  /* Pin to the bottom so a row of equal-height cards (a KPI grid) aligns its
-   * footers regardless of how many lines the label/value take. No effect when
-   * the card is its intrinsic height. */
+  /* Pin to the bottom so a row of equal-height cards aligns its footers. */
   margin-top: auto;
-  font-size: var(--he-body-sm);
-  color: var(--he-text-dim);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  color: var(--he-text-tertiary);
 }
 
-/* Tone dot — StatusPill's 6px doctrine: 28px² of colour instead of a 180px² spine. */
 .he-stat__dot {
   width: 6px;
   height: 6px;
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
   flex-shrink: 0;
 }
 
 .he-stat__dot--ok {
-  background: var(--he-ok);
+  background: var(--he-status-success-text);
 }
 .he-stat__dot--warn {
-  background: var(--he-warn);
+  background: var(--he-status-warning-text);
 }
 .he-stat__dot--error {
-  background: var(--he-error);
+  background: var(--he-status-danger-text);
 }
 .he-stat__dot--neutral {
-  background: var(--he-text-faint);
+  background: var(--he-text-tertiary);
 }
 .he-stat__dot--accent {
-  background: var(--he-accent);
-  box-shadow: 0 0 0 1px var(--he-accent-line);
+  background: var(--he-accent-default);
+  box-shadow: 0 0 0 var(--he-border-width) var(--he-border-strong);
 }
 
-/* Visual slot — a Sparkline or Meter, between the value row and the footer. */
+/* Visual slot: a Sparkline or Meter, between the value row and the footer. */
 .he-stat__visual {
   display: block;
   min-height: var(--he-stat-visual-min-height, auto);
 }
 
-/* Aligned grid of stat cards — see StatCardGroup. */
 .he-statcard-group {
   display: grid;
-  gap: var(--he-space-4);
+  gap: var(--he-spacing-4);
   align-items: stretch;
 }
 
-/* Rail — one bordered surface with interior hairlines. The 1px grid gap over a
- * --he-border background IS the hairline, so it keeps working when auto-fit
- * tracks wrap to a second row. */
+/* Rail: one bordered surface with interior hairlines. The 1px grid gap over a
+ * border-coloured background IS the hairline, so it survives auto-fit wrapping. */
 .he-statcard-group--rail {
-  gap: 1px;
-  background: var(--he-border);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-md);
+  gap: var(--he-border-width);
+  background: var(--he-border-default);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
   overflow: hidden;
 }
 
-/* Any child flattens automatically — a plain <StatCard> needs no variant="plain". */
 .he-statcard-group--rail > * {
-  background: var(--he-surface);
+  background: var(--he-bg-surface);
   border: 0;
   border-radius: 0;
 }
 
 .he-statcard-group--rail > .he-stat {
-  --he-stat-pad: var(--he-space-4) var(--he-space-5);
+  --he-stat-pad: var(--he-spacing-3) 20px;
 }

@@ -26,7 +26,7 @@ const brokers: BarChartDatum[] = [
 ];
 
 const meta = {
-  title: 'Charts/BarChart',
+  title: 'Organisms/Bar Chart',
   component: BarChart,
   args: {
     data: collections,

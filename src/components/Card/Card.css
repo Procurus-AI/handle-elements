@@ -1,27 +1,25 @@
-/* `display` is the one declaration a consumer legitimately overrides — a Card
- * is a surface whose children belong to the caller, who will often want it to
- * be the flex column or grid its content lays out in. A bare `.he-card` rule
- * has the same specificity as the consumer's single-class module rule, so the
- * winner would depend on stylesheet load order (and Next's production bundle
- * orders it differently from `next dev`). `:where()` gives this rule zero
- * specificity, so any consumer `display` wins deterministically. It is still
- * needed here because `as="a"`/`as="button"` render inline by default. */
+/* Card — flat outlined surface: bg-surface, 1px border-default, corner lg, no shadow.
+ * `display` is the one declaration a consumer legitimately overrides — a Card is a
+ * surface whose children belong to the caller, who will often want it to be the flex
+ * column or grid its content lays out in. A bare `.he-card` rule has the same specificity
+ * as a consumer's single-class rule, so the winner would depend on stylesheet load order.
+ * `:where()` gives this rule zero specificity, so any consumer `display` wins. It is still
+ * needed because `as="a"` renders inline by default. */
 :where(.he-card) {
   display: block;
 }
 
 .he-card {
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-md);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
   color: inherit;
   text-decoration: none;
 }
 
-/* Surface hierarchy. Most pages should use one outlined boundary at most;
- * `soft` groups supporting context and `plain` contributes spacing only. */
+/* `soft` groups supporting context on a quiet fill; `plain` contributes spacing only. */
 .he-card--soft {
-  background: var(--he-surface-2);
+  background: var(--he-bg-subtle);
   border-color: transparent;
 }
 
@@ -34,98 +32,79 @@
   padding: 0;
 }
 .he-card--pad-sm {
-  padding: var(--he-space-3);
+  padding: var(--he-spacing-3);
 }
 .he-card--pad-md {
-  padding: var(--he-space-4);
+  padding: var(--he-spacing-4);
 }
 .he-card--pad-lg {
-  padding: var(--he-space-5);
+  padding: var(--he-spacing-6);
 }
 
 .he-card--clickable {
   cursor: pointer;
   transition:
-    border-color var(--he-transition-fast),
-    box-shadow var(--he-transition-fast);
+    border-color var(--he-motion-fast),
+    background var(--he-motion-fast);
 }
 
+/* Hover marks the card with a stronger border; nothing lifts or casts a shadow. */
 .he-card--clickable:hover {
   border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-card);
 }
 
 .he-card--soft.he-card--clickable:hover {
-  background: var(--he-surface-2);
+  background: var(--he-bg-hover);
   border-color: transparent;
-  box-shadow: var(--he-shadow-card);
 }
 
 .he-card--plain.he-card--clickable:hover {
-  background: var(--he-surface);
+  background: var(--he-bg-hover);
   border-color: transparent;
 }
 
 .he-card--clickable:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
 }
 
 /* ---- status ----
- * Status is carried by the card's own border (`edge`, default) so it can never
- * detach from the 12px corner arc and adds no ink. `--he-card-line` mixes the
- * status color 90% into the border hairline; both operands are tokens, so it
- * re-resolves correctly under [data-theme='dark'] with no second authoring
- * pass. 90% and not less: measured on light, a 45% mix landed at 1.73-1.86:1
- * against a plain --he-border card, i.e. a status card looked identical to
- * statusVariant="none". At 90% every status clears 3:1 against the card
- * surface, the page background AND the plain hairline (light 4.21-4.96:1 vs
- * --he-surface, 3.28-3.86:1 vs --he-border), and the four hues stay far enough
- * apart in lightness to be told from one another. Borealis is the exception —
- * mixing it toward the border makes it vanish on white, so accent uses the
- * authored --he-accent-line. Override --he-card-line to repaint a single card. */
+ * Status is carried by the card's own border (`edge`, default): no added geometry, the
+ * corner arc is respected by construction. Accent is brand action, never a status, so
+ * `accent` keeps the authored accent line and the status hues use the solid tokens. */
 .he-card--status-ok {
-  --he-card-status: var(--he-ok);
-  --he-card-line: color-mix(in oklab, var(--he-ok) 90%, var(--he-border));
+  --he-card-status: var(--he-status-success-solid);
+  --he-card-line: var(--he-status-success-solid);
 }
 .he-card--status-warn {
-  --he-card-status: var(--he-warn);
-  --he-card-line: color-mix(in oklab, var(--he-warn) 90%, var(--he-border));
+  --he-card-status: var(--he-status-warning-solid);
+  --he-card-line: var(--he-status-warning-solid);
 }
 .he-card--status-error {
-  --he-card-status: var(--he-error);
-  --he-card-line: color-mix(in oklab, var(--he-error) 90%, var(--he-border));
+  --he-card-status: var(--he-status-danger-solid);
+  --he-card-line: var(--he-status-danger-solid);
 }
 .he-card--status-neutral {
-  --he-card-status: var(--he-neutral);
-  --he-card-line: color-mix(in oklab, var(--he-neutral) 90%, var(--he-border));
+  --he-card-status: var(--he-status-idle-solid);
+  --he-card-line: var(--he-status-idle-solid);
 }
 .he-card--status-accent {
-  --he-card-status: var(--he-accent);
-  --he-card-line: var(--he-accent-line);
+  --he-card-status: var(--he-accent-default);
+  --he-card-line: var(--he-border-strong);
 }
 
-/* edge — recolor the border. No new box, no radius math, no padding shift. */
 .he-card--statusvar-edge {
   border-color: var(--he-card-line);
 }
 
-/* Hover still LIFTS: the edge keeps its status color and gains the card shadow. */
-.he-card--statusvar-edge.he-card--clickable:hover {
-  border-color: var(--he-card-line);
-  box-shadow: var(--he-shadow-card);
-}
-
-/* none — paints nothing; data-status and --he-card-status stay available. */
+/* `none` paints nothing; data-status and --he-card-status stay available. */
 
 .he-card--selected {
-  border-color: var(--he-text);
+  border-color: var(--he-text-primary);
 }
 
-/* Selection outranks BOTH hover rules above (same specificity, declared later):
- * pointing at a selected card must not revert its ink border to the status edge
- * or to --he-border-strong. The lift still happens. */
-.he-card--selected.he-card--clickable:hover {
-  border-color: var(--he-text);
-  box-shadow: var(--he-shadow-card);
+/* Selection outranks the hover and status rules above (same specificity, declared later). */
+.he-card--selected.he-card--clickable:hover,
+.he-card--selected.he-card--statusvar-edge {
+  border-color: var(--he-text-primary);
 }

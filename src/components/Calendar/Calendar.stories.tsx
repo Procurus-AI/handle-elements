@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { Button } from '../Button/Button';
 import { Chip } from '../Chip/Chip';
 import { Input } from '../Input/Input';
@@ -7,7 +8,7 @@ import { Money } from '../Money/Money';
 import { Calendar, CalendarPanel, CalendarPanelRow, type CalendarMarker } from './Calendar';
 
 const meta = {
-  title: 'Elements/Calendar',
+  title: 'Organisms/Calendar',
   component: Calendar,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Calendar>;
@@ -83,7 +84,7 @@ const HeaderActions = (
 
 export const Playground: Story = {
   render: () => (
-    <div style={{ padding: 24, background: 'var(--he-bg)' }}>
+    <div style={{ padding: 24, background: 'var(--he-bg-app)' }}>
       <Calendar
         locale={LOCALE}
         today={TODAY}
@@ -156,7 +157,7 @@ export const WithDetailPanel: Story = {
           gap: 16,
           alignItems: 'stretch',
           padding: 24,
-          background: 'var(--he-bg)',
+          background: 'var(--he-bg-app)',
           height: 720,
         }}
       >
@@ -288,8 +289,32 @@ export const WithDetailPanel: Story = {
 export const Minimal: Story = {
   name: 'No events / plain month',
   render: () => (
-    <div style={{ padding: 24, background: 'var(--he-bg)', maxWidth: 760 }}>
+    <div style={{ padding: 24, background: 'var(--he-bg-app)', maxWidth: 760 }}>
       <Calendar locale={LOCALE} today={TODAY} defaultMonth={TODAY} todayLabel="Hoy" />
     </div>
   ),
+};
+
+/** Header labels are overridable; the 0.4.5 `accent` marker renders as a neutral dot. */
+export const Labels: Story = {
+  render: () => (
+    <div style={{ padding: 24, background: 'var(--he-bg-app)', maxWidth: 760 }}>
+      <Calendar
+        locale="en-US"
+        today={TODAY}
+        defaultMonth={TODAY}
+        labels={{ previousMonth: 'Previous month', nextMonth: 'Next month', today: 'Today' }}
+        markers={(date) => (date.getDate() === 19 ? [{ status: 'accent', label: 'Legacy accent' }] : [])}
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Previous month' })).toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'Next month' })).toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: 'Today' })).toBeInTheDocument();
+    const marker = canvasElement.querySelector('.he-calendar-day__event');
+    await expect(marker).toHaveClass('he-calendar-day__event--neutral');
+    await expect(canvasElement.querySelector('.he-calendar-day__event--accent')).toBeNull();
+  },
 };

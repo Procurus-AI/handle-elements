@@ -34,7 +34,7 @@ const funnel = [
 ];
 
 const meta = {
-  title: 'Charts/ColumnChart',
+  title: 'Organisms/Column Chart',
   component: ColumnChart,
   args: {
     data: daily,
@@ -147,7 +147,7 @@ export const NextTwelveMonths: Story = {
   },
 };
 
-/** Per-column tone — the accent column carries its --he-accent-line outline. */
+/** Per-column tone — the accent column carries its --he-accent-text outline. */
 export const PerColumnTone: Story = {
   render: () => (
     <Card style={{ width: 640 }}>

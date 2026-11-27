@@ -9,53 +9,54 @@
 }
 
 .he-review-field {
-  --he-review-field-tone: var(--he-neutral);
-  --he-review-field-tone-bg: var(--he-neutral-bg);
+  --he-review-field-tone: var(--he-status-idle-text);
+  --he-review-field-tone-bg: var(--he-status-idle-surface);
   display: grid;
-  grid-template-columns: minmax(calc(var(--he-space-7) * 3), 0.45fr) minmax(0, 1fr);
-  column-gap: var(--he-space-5);
+  grid-template-columns: minmax(calc(var(--he-spacing-12) * 3), 0.45fr) minmax(0, 1fr);
+  column-gap: var(--he-spacing-6);
   align-items: start;
   margin: 0;
-  padding-block: var(--he-space-3);
+  padding-block: var(--he-spacing-3);
   min-width: 0;
 }
 
 .he-review-field + .he-review-field {
-  border-top: 1px solid var(--he-border);
+  border-top: 1px solid var(--he-border-default);
 }
 
 .he-review-field--ok {
-  --he-review-field-tone: var(--he-ok);
-  --he-review-field-tone-bg: var(--he-ok-bg);
-  padding-block: var(--he-space-2);
+  --he-review-field-tone: var(--he-status-success-text);
+  --he-review-field-tone-bg: var(--he-status-success-surface);
+  padding-block: var(--he-spacing-2);
 }
 
 .he-review-field--warn {
-  --he-review-field-tone: var(--he-warn);
-  --he-review-field-tone-bg: var(--he-warn-bg);
+  --he-review-field-tone: var(--he-status-warning-text);
+  --he-review-field-tone-bg: var(--he-status-warning-surface);
 }
 
 .he-review-field--error {
-  --he-review-field-tone: var(--he-error);
-  --he-review-field-tone-bg: var(--he-error-bg);
+  --he-review-field-tone: var(--he-status-danger-text);
+  --he-review-field-tone-bg: var(--he-status-danger-surface);
 }
 
 .he-review-field__term {
   display: flex;
   align-items: baseline;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   min-width: 0;
   font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  font-weight: 500;
-  line-height: 1.4;
-  color: var(--he-text-dim);
+  font-size: var(--he-type-body-sm-emphasis-size);
+  line-height: var(--he-type-body-sm-emphasis-line);
+  font-weight: var(--he-type-body-sm-emphasis-weight);
+  letter-spacing: var(--he-type-body-sm-emphasis-tracking);
+  color: var(--he-text-secondary);
 }
 
 .he-review-field__dot {
   width: 6px;
   height: 6px;
-  border-radius: var(--he-radius-full);
+  border-radius: var(--he-corner-full);
   flex: 0 0 auto;
   background: var(--he-review-field-tone);
   transform: translateY(-1px);
@@ -70,7 +71,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: flex-start;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   min-width: 0;
 }
 
@@ -79,60 +80,72 @@
   flex: 1 1 auto;
   overflow-wrap: anywhere;
   font-family: var(--he-font-sans);
-  font-size: var(--he-body);
-  line-height: 1.4;
-  color: var(--he-text);
+  font-size: var(--he-type-body-md-size);
+  line-height: var(--he-type-body-md-line);
+  font-weight: var(--he-type-body-md-weight);
+  letter-spacing: var(--he-type-body-md-tracking);
+  color: var(--he-text-primary);
   font-variant-numeric: tabular-nums;
 }
 
 .he-review-field__status {
   flex: 0 0 auto;
   font-family: var(--he-font-sans);
-  font-size: var(--he-caption);
-  font-weight: 500;
-  color: var(--he-review-field-tone);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
+  /* Pulled toward the primary text colour so the 12px status word keeps 4.5:1 on tinted rows. */
+  color: color-mix(in srgb, var(--he-review-field-tone) 70%, var(--he-text-primary));
   white-space: nowrap;
 }
 
 .he-review-field__actions {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   flex: 0 0 auto;
 }
 
 .he-review-field__summary {
-  margin: var(--he-space-1) 0 0;
+  margin: var(--he-spacing-1) 0 0;
   font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  line-height: 1.45;
-  color: var(--he-text-dim);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-secondary);
 }
 
 .he-review-field__meta {
   display: block;
-  margin-top: var(--he-space-1);
+  margin-top: var(--he-spacing-1);
   font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
-  line-height: 1.4;
-  color: var(--he-text-faint);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
   overflow-wrap: anywhere;
 }
 
 .he-review-field__evidence {
-  margin-top: var(--he-space-2);
+  margin-top: var(--he-spacing-2);
   min-width: 0;
 }
 
 .he-review-field__evidence-toggle {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-1);
-  border-radius: var(--he-radius-xs);
+  gap: var(--he-spacing-1);
+  border-radius: var(--he-corner-sm);
   font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  font-weight: 500;
-  color: var(--he-review-field-tone);
+  font-size: var(--he-type-body-sm-emphasis-size);
+  line-height: var(--he-type-body-sm-emphasis-line);
+  font-weight: var(--he-type-body-sm-emphasis-weight);
+  letter-spacing: var(--he-type-body-sm-emphasis-tracking);
+  /* The raw tone text misses 4.5:1 on the neutral surface for warning and danger. */
+  color: color-mix(in srgb, var(--he-review-field-tone) 70%, var(--he-text-primary));
   cursor: pointer;
   list-style: none;
 }
@@ -142,13 +155,13 @@
 }
 
 .he-review-field__evidence-toggle:focus-visible {
-  outline: 2px solid var(--he-focus);
-  outline-offset: var(--he-space-1);
+  outline: 2px solid var(--he-border-focus);
+  outline-offset: var(--he-spacing-1);
 }
 
 .he-review-field__chevron {
   flex: 0 0 auto;
-  transition: transform var(--he-transition-fast);
+  transition: transform var(--he-motion-fast);
 }
 
 .he-review-field__evidence[open] .he-review-field__chevron {
@@ -156,25 +169,27 @@
 }
 
 .he-review-field__evidence-body {
-  margin-top: var(--he-space-2);
-  padding: var(--he-space-3) var(--he-space-4);
-  border-radius: var(--he-radius-sm);
+  margin-top: var(--he-spacing-2);
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border-radius: var(--he-corner-lg);
   background: var(--he-review-field-tone-bg);
   font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  line-height: 1.5;
-  color: var(--he-text);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-primary);
   overflow-wrap: anywhere;
 }
 
 @container (max-width: 32rem) {
   .he-review-field {
     grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--he-space-1);
+    row-gap: var(--he-spacing-1);
   }
 
   .he-review-field__definition {
-    padding-left: calc(6px + var(--he-space-2));
+    padding-left: calc(6px + var(--he-spacing-2));
   }
 
   .he-review-field__line {

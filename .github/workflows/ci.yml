@@ -10,15 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # check:compat builds the 0.4.5 API from commit a182a46
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      - run: npm run check:levels
+      - run: npm run check:compat
       - run: npm run check:tokens
       - run: npm run build
       - run: npm run build-storybook
+      # check:a11y and capture stay local: they drive a headless Chromium against
+      # storybook-static (CHROMIUM_PATH or ~/.cache/ms-playwright). Run them before review.
       - name: Pack sanity — dist only, no stories
         run: |
           npm pack --dry-run --json > pack.json

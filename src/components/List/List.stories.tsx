@@ -6,7 +6,7 @@ import { Panel } from '../Panel/Panel';
 import { List, ListItem, type ListItemStatus } from './List';
 
 const meta = {
-  title: 'Elements/List',
+  title: 'Molecules/List',
   component: List,
   argTypes: {
     variant: { control: 'inline-radio', options: ['divided', 'plain'] },
@@ -65,18 +65,6 @@ export const OppList: Story = {
             onSelect={() => {}}
           />
         ))}
-      </List>
-    </Card>
-  ),
-};
-
-export const Plain: Story = {
-  render: () => (
-    <Card style={{ width: 360 }}>
-      <List variant="plain" dense>
-        <ListItem primary="Reconciliations" value="1,284" />
-        <ListItem primary="Overdue receipts" value="37" />
-        <ListItem primary="Avg. days to bind" value="6.1" />
       </List>
     </Card>
   ),

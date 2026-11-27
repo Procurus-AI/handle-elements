@@ -1,6 +1,6 @@
 .he-meter {
   display: grid;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   width: 100%;
   font-family: var(--he-font-sans);
 }
@@ -9,18 +9,20 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--he-space-3);
-  font-size: var(--he-body-sm);
+  gap: var(--he-spacing-3);
+  font-family: var(--he-type-label-sm-family);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
 }
 
 .he-meter__label {
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 .he-meter__value {
-  color: var(--he-text-faint);
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  font-variant-numeric: tabular-nums;
 }
 
 .he-meter__track {
@@ -28,8 +30,8 @@
   width: 100%;
   height: var(--he-meter-height);
   overflow: hidden;
-  border-radius: var(--he-radius-full);
-  background: var(--he-surface-2);
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-subtle);
 }
 
 .he-meter--sm {
@@ -49,28 +51,32 @@
   width: var(--he-meter-value, 0%);
   height: 100%;
   border-radius: inherit;
-  background: var(--he-meter-color, var(--he-text));
-  transition: width var(--he-transition-base);
+  background: var(--he-meter-color, var(--he-bg-inverse));
+  transition: width var(--he-motion-base);
 }
 
 .he-meter--accent {
-  --he-meter-color: var(--he-accent);
+  --he-meter-color: var(--he-accent-default);
 }
 
-.he-meter--ok {
-  --he-meter-color: var(--he-ok);
+.he-meter--ok,
+.he-meter--success {
+  --he-meter-color: var(--he-status-success-solid);
 }
 
-.he-meter--warn {
-  --he-meter-color: var(--he-warn);
+.he-meter--warn,
+.he-meter--warning {
+  --he-meter-color: var(--he-status-warning-solid);
 }
 
-.he-meter--error {
-  --he-meter-color: var(--he-error);
+.he-meter--error,
+.he-meter--danger {
+  --he-meter-color: var(--he-status-danger-solid);
 }
 
-.he-meter--neutral {
-  --he-meter-color: var(--he-neutral);
+.he-meter--neutral,
+.he-meter--idle {
+  --he-meter-color: var(--he-status-idle-solid);
 }
 
 .he-meter__track--indeterminate .he-meter__fill {

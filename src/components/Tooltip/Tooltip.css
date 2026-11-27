@@ -7,13 +7,13 @@
 .he-hover-card {
   position: fixed;
   z-index: 1200;
-  font-family: var(--he-font-sans);
-  color: var(--he-text);
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  box-shadow: var(--he-shadow-card);
-  animation: he-floating-in var(--he-transition-fast);
+  font-family: var(--he-type-body-sm-family);
+  color: var(--he-text-primary);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  box-shadow: var(--he-elevation-popover);
+  animation: he-floating-in var(--he-motion-fast);
 }
 
 /* A tooltip is never a hit target. If it lands over its own anchor (a short
@@ -22,34 +22,36 @@
 .he-tooltip {
   pointer-events: none;
   max-width: 240px;
-  padding: var(--he-space-2) var(--he-space-3);
-  font-size: var(--he-caption);
-  line-height: 1.35;
-  color: var(--he-text-dim);
+  padding: var(--he-spacing-2) var(--he-spacing-3);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-primary);
 }
 
 .he-hover-card {
   min-width: 264px;
   overflow: hidden;
   padding: 0;
-  font-size: var(--he-body-sm);
-  line-height: 1.45;
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
 }
 
 .he-hover-card__header {
   display: grid;
-  gap: var(--he-space-1);
-  padding: var(--he-space-3) var(--he-space-4);
-  border-bottom: 1px solid var(--he-border);
+  gap: var(--he-spacing-1);
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border-bottom: 1px solid var(--he-border-default);
 }
 
 .he-hover-card__eyebrow {
-  font-family: var(--he-font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: var(--he-tracking-caps);
-  text-transform: uppercase;
-  color: var(--he-text-faint);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-label-sm-weight);
+  color: var(--he-text-tertiary);
 }
 
 .he-hover-card__title-row,
@@ -57,7 +59,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
 }
 
 .he-hover-card__title {
@@ -65,37 +67,45 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--he-body-sm);
-  font-weight: 600;
-  line-height: 1.3;
+  font-size: var(--he-type-heading-sm-size);
+  font-weight: var(--he-type-heading-sm-weight);
+  line-height: var(--he-type-heading-sm-line);
+  letter-spacing: var(--he-type-heading-sm-tracking);
 }
 
 .he-hover-card__body {
   display: grid;
-  gap: var(--he-space-3);
-  padding: var(--he-space-3) var(--he-space-4);
+  gap: var(--he-spacing-3);
+  padding: var(--he-spacing-3) var(--he-spacing-4);
 }
 
 .he-hover-card__label {
-  font-size: var(--he-caption);
-  color: var(--he-text-faint);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
 }
 
 .he-hover-card__value {
-  font-size: var(--he-heading);
-  font-weight: 600;
-  line-height: 1.1;
+  font-size: var(--he-type-heading-lg-size);
+  font-weight: var(--he-type-heading-lg-weight);
+  line-height: var(--he-type-heading-lg-line);
+  letter-spacing: var(--he-type-heading-lg-tracking);
 }
 
 .he-hover-card__meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--he-space-3);
-  padding-top: var(--he-space-2);
-  border-top: 1px solid var(--he-border);
-  color: var(--he-text-dim);
-  font-size: var(--he-caption);
+  gap: var(--he-spacing-3);
+  padding-top: var(--he-spacing-2);
+  border-top: 1px solid var(--he-border-default);
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
 }
 
 @keyframes he-floating-in {

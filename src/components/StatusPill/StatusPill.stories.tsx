@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StatusPill } from './StatusPill';
 
 const meta = {
-  title: 'Elements/StatusPill',
+  title: 'Atoms/StatusPill',
   component: StatusPill,
-  args: { status: 'ok', label: 'Active' },
+  args: { status: 'ok', label: 'Pagado' },
   argTypes: {
     status: { control: 'select', options: ['ok', 'warn', 'error', 'neutral', 'accent'] },
     appearance: { control: 'select', options: ['outline', 'soft'] },
@@ -19,12 +19,12 @@ export const Playground: Story = {};
 export const AllStatuses: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-      <StatusPill status="ok" label="Active" />
-      <StatusPill status="warn" label="Pending" />
-      <StatusPill status="error" label="At risk" />
-      <StatusPill status="neutral" label="Archived" />
-      <StatusPill status="accent" label="New" />
-      <StatusPill status="ok" label="No dot" withDot={false} />
+      <StatusPill status="ok" label="Pagado" />
+      <StatusPill status="warn" label="Pendiente" />
+      <StatusPill status="error" label="Vencido" />
+      <StatusPill status="neutral" label="Sin conectar" />
+      <StatusPill status="accent" label="Nuevo" />
+      <StatusPill status="ok" label="Sin punto" withDot={false} />
     </div>
   ),
 };

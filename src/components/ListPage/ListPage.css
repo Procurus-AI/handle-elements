@@ -1,0 +1,48 @@
+/* ListPage (Figma "Validación de pagos · Pendientes"): content column pad 20/24/24/24, gap 12;
+ * the table panel is a bordered surface (corner lg) with a 56px toolbar, a rule, the table
+ * and the pagination. */
+.he-list-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-spacing-3);
+  padding: 20px var(--he-spacing-6) var(--he-spacing-6);
+}
+
+.he-list-page__filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--he-spacing-3);
+}
+
+.he-list-page__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--he-spacing-2);
+  box-sizing: border-box;
+  min-height: 56px;
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border-bottom: var(--he-border-width) solid var(--he-border-default);
+}
+
+.he-list-page__toolbar-start,
+.he-list-page__toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+  min-width: 0;
+}
+
+.he-list-page__toolbar-start {
+  flex: 1 1 auto;
+}
+
+.he-list-page__pagination {
+  padding: var(--he-spacing-3) var(--he-spacing-4);
+  border-top: var(--he-border-width) solid var(--he-border-default);
+}
+
+.he-list-page__table {
+  overflow: hidden;
+}

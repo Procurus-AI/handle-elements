@@ -1,113 +1,150 @@
+/* PageHeader (Figma "Page header"): column, gap 16. Title row = Sentient page title + actions
+ * on the right; the Tabs row sits under it. Flush by default and 32px of air below a page
+ * header, as in 0.4.5: apps pad their own pages. `inset` adds the Figma padding 24/24/0/24
+ * for a header that sits at the top of a shell panel (ListPage sets it). */
 .he-pagehead {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--he-space-5);
-  padding-bottom: var(--he-space-5);
-  margin-bottom: var(--he-space-6);
-  border-bottom: 1px solid var(--he-border);
+  flex-direction: column;
+  gap: var(--he-spacing-4);
+  box-sizing: border-box;
+  margin-bottom: var(--he-spacing-8);
+  color: var(--he-text-primary);
 }
 
-/* Section variant — a panel/card/chart title, not a page title. Lighter weight,
- * no divider, tighter rhythm; pairs with the h2 heading level. */
-.he-pagehead--section {
-  align-items: flex-start;
-  gap: var(--he-space-4);
-  padding-bottom: 0;
+.he-pagehead--inset {
   margin-bottom: 0;
-  border-bottom: none;
+  padding: var(--he-spacing-6) var(--he-spacing-6) 0;
 }
 
-.he-pagehead--section .he-pagehead__title {
-  font-size: var(--he-heading);
-  line-height: 1.15;
-}
-
-.he-pagehead--section .he-pagehead__eyebrow {
-  margin-bottom: var(--he-space-1);
-}
-
-.he-pagehead--section .he-pagehead__lede {
-  margin-top: var(--he-space-2);
-  font-size: var(--he-body-sm);
-}
-
-/* Compact is still the page's h1, but at dense record-header rhythm. It keeps
- * identity and actions readable without spending a full dashboard header. */
-.he-pagehead--compact {
-  align-items: flex-start;
+.he-pagehead__row {
+  display: flex;
   flex-wrap: wrap;
-  gap: var(--he-space-3);
-  padding-bottom: 0;
-  margin-bottom: 0;
-  border-bottom: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--he-spacing-4);
 }
 
-/* Compact headers are also used inside drawers and narrow workspace grids.
- * Preserve a readable title measure and let the aside move beneath it instead
- * of squeezing or overlapping the heading. */
+.he-pagehead__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* Optional measure cap. */
+  max-width: var(--he-pagehead-measure, none);
+}
+
+.he-pagehead__aside {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+  flex-shrink: 0;
+}
+
+.he-pagehead__tabs {
+  min-width: 0;
+}
+
+.he-pagehead__eyebrow {
+  display: block;
+  margin-bottom: var(--he-spacing-1);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
+}
+
+.he-pagehead__title {
+  margin: 0;
+  font-family: var(--he-type-display-page-title-family);
+  font-size: var(--he-type-display-page-title-size);
+  line-height: var(--he-type-display-page-title-line);
+  font-weight: var(--he-type-display-page-title-weight);
+  letter-spacing: var(--he-type-display-page-title-tracking);
+  color: var(--he-text-primary);
+}
+
+.he-pagehead__subtitle,
+.he-pagehead__lede {
+  margin: var(--he-spacing-1) 0 0;
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-secondary);
+}
+
+.he-pagehead__subtitle + .he-pagehead__lede {
+  margin-top: var(--he-spacing-1);
+}
+
+/* compact — the page's h1 at record/workspace density, no outer margin. */
+.he-pagehead--compact {
+  margin-bottom: 0;
+  gap: var(--he-spacing-3);
+}
+
 .he-pagehead--compact .he-pagehead__main {
-  flex-basis: calc(var(--he-space-7) * 5);
-  min-width: min(100%, calc(var(--he-space-7) * 5));
+  flex-basis: 240px;
 }
 
 .he-pagehead--compact .he-pagehead__title {
-  font-size: var(--he-heading);
-  line-height: 1.15;
+  font-size: var(--he-type-display-page-title-sm-size);
+  line-height: var(--he-type-display-page-title-sm-line);
+  font-weight: var(--he-type-display-page-title-sm-weight);
+  letter-spacing: var(--he-type-display-page-title-sm-tracking);
 }
 
-.he-pagehead--compact .he-pagehead__eyebrow {
-  margin-bottom: var(--he-space-1);
+/* section — titles a panel, card or chart. Sans heading, no margin. */
+.he-pagehead--section {
+  margin-bottom: 0;
+  gap: var(--he-spacing-2);
 }
 
-.he-pagehead--compact .he-pagehead__subtitle {
-  margin-top: var(--he-space-1);
-  font-size: var(--he-caption);
+.he-pagehead--section .he-pagehead__row {
+  align-items: flex-start;
 }
 
-.he-pagehead--compact .he-pagehead__lede {
-  margin-top: var(--he-space-2);
-  font-size: var(--he-body-sm);
+.he-pagehead--section .he-pagehead__title {
+  font-family: var(--he-type-heading-md-family);
+  font-size: var(--he-type-heading-md-size);
+  line-height: var(--he-type-heading-md-line);
+  font-weight: var(--he-type-heading-md-weight);
+  letter-spacing: var(--he-type-heading-md-tracking);
 }
 
-.he-pagehead--compact .he-pagehead__aside {
-  align-self: center;
+.he-pagehead--section .he-pagehead__subtitle,
+.he-pagehead--section .he-pagehead__lede {
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  color: var(--he-text-tertiary);
 }
 
-/* Hero — the centered greeting. Gives --he-display-1 its first component home;
- * clamps down to --he-display-2 on narrow viewports. */
+/* hero — the centered greeting. */
 .he-pagehead--hero {
-  align-items: center;
-  gap: var(--he-space-4);
-  padding-block-start: var(--he-space-7);
-  padding-bottom: 0;
-  margin-bottom: var(--he-space-6);
-  border-bottom: none;
+  padding-top: var(--he-spacing-12);
 }
 
 .he-pagehead--hero .he-pagehead__title {
-  font-size: clamp(var(--he-display-2), 4.6vw, var(--he-display-1));
-  line-height: 1.02;
+  font-size: var(--he-type-display-page-title-size);
 }
 
-/* Divider decoupled from the type scale, and switchable in BOTH directions for
- * every size — these two follow the size rules above so they always win. */
+/* rule under the header (opt in) */
 .he-pagehead--divider {
-  padding-bottom: var(--he-space-5);
-  border-bottom: 1px solid var(--he-border);
+  padding-bottom: var(--he-spacing-6);
+  border-bottom: var(--he-border-width) solid var(--he-border-default);
 }
 
-.he-pagehead--nodivider {
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-/* Centered variant — one column, optical center shared by title, subtitle and aside. */
+/* centered: one column, optical center shared by title, subtitle and actions. */
 .he-pagehead--center {
-  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   text-align: center;
+}
+
+.he-pagehead--center .he-pagehead__row {
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .he-pagehead--center .he-pagehead__main {
@@ -118,68 +155,5 @@
 
 .he-pagehead--center .he-pagehead__aside {
   flex-shrink: 1;
-  width: 100%;
   justify-content: center;
-  margin-top: var(--he-space-5);
-}
-
-.he-pagehead__main {
-  min-width: 0;
-  /* Grow to fill the row so the lede spans the full width (Perplexity-style)
-   * instead of collapsing to its intrinsic width beside the aside. */
-  flex: 1 1 auto;
-  /* Optional measure cap (mirrors Container's --he-container-max). */
-  max-width: var(--he-pagehead-measure, none);
-}
-
-.he-pagehead__eyebrow {
-  display: block;
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: var(--he-tracking-caps);
-  color: var(--he-text-faint);
-  margin-bottom: var(--he-space-2);
-}
-
-.he-pagehead__title {
-  margin: 0;
-  font-family: var(--he-font-display);
-  font-weight: 300;
-  font-size: var(--he-display-2);
-  line-height: 1.05;
-  color: var(--he-text);
-}
-
-.he-pagehead__lede {
-  margin: var(--he-space-3) 0 0;
-  font-size: var(--he-body);
-  line-height: 1.55;
-  color: var(--he-text-dim);
-}
-
-/* Subtitle — the dim date/context line. Smaller and tighter than `lede`. */
-.he-pagehead__subtitle {
-  margin: var(--he-space-3) 0 0;
-  font-size: var(--he-body-sm);
-  line-height: 1.4;
-  color: var(--he-text-dim);
-}
-
-.he-pagehead--section .he-pagehead__subtitle {
-  margin-top: var(--he-space-2);
-  font-size: var(--he-caption);
-}
-
-/* When both are present the lede tightens up under the subtitle. */
-.he-pagehead__subtitle + .he-pagehead__lede {
-  margin-top: var(--he-space-2);
-}
-
-.he-pagehead__aside {
-  display: flex;
-  align-items: center;
-  gap: var(--he-space-2);
-  flex-shrink: 0;
 }

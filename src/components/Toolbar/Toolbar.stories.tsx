@@ -7,7 +7,7 @@ import { Tabs, type TabItem } from '../Tabs/Tabs';
 import { Toolbar, ToolbarGroup, ResultCount } from './Toolbar';
 
 const meta = {
-  title: 'Elements/Toolbar',
+  title: 'Molecules/Toolbar',
   component: Toolbar,
 } satisfies Meta<typeof Toolbar>;
 
@@ -52,18 +52,18 @@ export const CobranzaControls: Story = {
             placeholder="Buscar cliente u org…"
             style={{ maxWidth: 260 }}
           />
-          <Select defaultValue="signal">
+          <Select aria-label="Señal" defaultValue="signal">
             <option value="signal">Cualquier señal</option>
             <option value="risk">En riesgo</option>
             <option value="healthy">Saludable</option>
           </Select>
-          <Select defaultValue="health">
+          <Select aria-label="Ordenar por" defaultValue="health">
             <option value="health">Salud (peor primero)</option>
             <option value="mrr">MRR (mayor primero)</option>
           </Select>
           <ToolbarGroup align="end">
             <ResultCount>
-              {shown.length} de {clients.length}
+              {shown.length} de {clients.length} registros
             </ResultCount>
           </ToolbarGroup>
         </Toolbar>

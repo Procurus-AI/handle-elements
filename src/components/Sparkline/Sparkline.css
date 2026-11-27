@@ -3,7 +3,7 @@
   vertical-align: middle;
   line-height: 0;
   max-width: 100%;
-  color: var(--he-chart-ink);
+  color: var(--he-text-primary);
 }
 
 .he-sparkline__svg {
@@ -33,7 +33,7 @@
 }
 
 .he-sparkline__baseline {
-  stroke: var(--he-chart-grid);
+  stroke: var(--he-border-subtle);
   stroke-width: 1;
   stroke-dasharray: 2 2;
   vector-effect: non-scaling-stroke;
@@ -45,32 +45,32 @@
 
 /* tones — color drives both line (currentColor) and gradient */
 .he-sparkline--accent {
-  color: var(--he-chart-accent);
+  color: var(--he-accent-default);
 }
 
 .he-sparkline--ok {
-  color: var(--he-chart-pos);
+  color: var(--he-status-success-solid);
 }
 
 .he-sparkline--warn {
-  color: var(--he-warn);
+  color: var(--he-status-warning-text);
 }
 
 .he-sparkline--error {
-  color: var(--he-chart-neg);
+  color: var(--he-status-danger-solid);
 }
 
 .he-sparkline--neutral {
-  color: var(--he-neutral);
+  color: var(--he-status-idle-text);
 }
 
 /* Borealis line on a light surface is low-contrast; darken the stroke while
  * keeping the accent legible (fills/markers stay accent). */
 .he-sparkline--accent .he-sparkline__line {
-  stroke: var(--he-text);
+  stroke: var(--he-text-primary);
 }
 
 [data-theme='dark'] .he-sparkline--accent .he-sparkline__line,
 .he-theme-dark .he-sparkline--accent .he-sparkline__line {
-  stroke: var(--he-chart-accent);
+  stroke: var(--he-accent-default);
 }

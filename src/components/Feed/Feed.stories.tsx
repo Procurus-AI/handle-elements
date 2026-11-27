@@ -50,7 +50,7 @@ const customerEvents: FeedItem[] = [
 ];
 
 const meta = {
-  title: 'Elements/Feed',
+  title: 'Organisms/Feed',
   component: Feed,
   args: { items: customerEvents, now: NOW, locale: 'en-US' },
   // The real drawer body is ~410-505px wide. Design and review it there.

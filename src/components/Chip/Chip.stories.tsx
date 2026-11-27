@@ -7,7 +7,7 @@ import { Stack } from '../Layout/Layout';
 import { Chip } from './Chip';
 
 const meta = {
-  title: 'Elements/Chip',
+  title: 'Atoms/Chip',
   component: Chip,
   args: { children: 'Quoting' },
   argTypes: {

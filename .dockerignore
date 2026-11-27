@@ -1,0 +1,4 @@
+# Only the Storybook image needs a Docker context: send the build and its config, nothing else.
+*
+!storybook-static
+!deploy/storybook

@@ -9,8 +9,8 @@
   height: 100vh;
   min-height: 640px;
   overflow: hidden;
-  background: var(--he-bg);
-  color: var(--he-text);
+  background: var(--he-bg-app);
+  color: var(--he-text-primary);
 }
 
 .he-agent-workspace__navigation {
@@ -41,8 +41,8 @@
 .he-agent-workspace__header {
   position: relative;
   z-index: 2;
-  padding: var(--he-space-4) var(--he-space-6) 0;
-  background: var(--he-bg);
+  padding: var(--he-spacing-4) var(--he-spacing-8) 0;
+  background: var(--he-bg-app);
 }
 
 .he-agent-workspace__main {
@@ -54,13 +54,13 @@
 
 .he-agent-workspace__split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(calc(var(--he-space-7) * 5.5), calc(var(--he-space-7) * 6.35));
+  grid-template-columns: minmax(0, 1fr) minmax(calc(var(--he-spacing-12) * 5.5), calc(var(--he-spacing-12) * 6.35));
   align-items: start;
-  gap: var(--he-space-7);
+  gap: var(--he-spacing-12);
   width: 100%;
-  max-width: calc(var(--he-space-7) * 24.6);
+  max-width: calc(var(--he-spacing-12) * 24.6);
   margin-inline: auto;
-  padding: var(--he-space-6) var(--he-space-7);
+  padding: var(--he-spacing-8) var(--he-spacing-12);
 }
 
 .he-agent-workspace__primary,
@@ -71,8 +71,8 @@
 .he-agent-workspace__composer {
   position: relative;
   z-index: 3;
-  padding: var(--he-space-3) var(--he-space-6) var(--he-space-5);
-  background: linear-gradient(to top, var(--he-bg) 78%, transparent);
+  padding: var(--he-spacing-3) var(--he-spacing-8) var(--he-spacing-6);
+  background: linear-gradient(to top, var(--he-bg-app) 78%, transparent);
 }
 
 @media (max-width: 860px) {
@@ -93,14 +93,14 @@
     width: min(86vw, var(--he-agent-workspace-nav, 224px));
     height: 100%;
     overflow: visible;
-    background: var(--he-bg);
-    box-shadow: var(--he-shadow-lift);
+    background: var(--he-bg-app);
+    box-shadow: var(--he-elevation-popover);
   }
 
   .he-agent-workspace__mobile-trigger {
     position: absolute;
-    top: var(--he-space-3);
-    left: var(--he-space-3);
+    top: var(--he-spacing-3);
+    left: var(--he-spacing-3);
     z-index: 4;
     display: grid;
     place-content: center;
@@ -108,11 +108,10 @@
     width: 34px;
     height: 34px;
     padding: 0;
-    border: 1px solid var(--he-border);
-    border-radius: var(--he-radius-full);
-    background: var(--he-surface);
-    color: var(--he-text);
-    box-shadow: var(--he-shadow-card);
+    border: 1px solid var(--he-border-default);
+    border-radius: var(--he-corner-full);
+    background: var(--he-bg-surface);
+    color: var(--he-text-primary);
     cursor: pointer;
   }
 
@@ -125,7 +124,7 @@
 
   .he-agent-workspace__mobile-trigger:focus-visible,
   .he-agent-workspace__mobile-close:focus-visible {
-    outline: 2px solid var(--he-focus);
+    outline: 2px solid var(--he-border-focus);
     outline-offset: 2px;
   }
 
@@ -144,8 +143,8 @@
 
   .he-agent-workspace__mobile-close {
     position: absolute;
-    top: var(--he-space-3);
-    right: calc(var(--he-space-7) * -1);
+    top: var(--he-spacing-3);
+    right: calc(var(--he-spacing-12) * -1);
     z-index: 2;
     display: grid;
     place-items: center;
@@ -153,33 +152,33 @@
     height: 29px;
     padding: 0;
     border: 0;
-    border-radius: var(--he-radius-full);
-    background: var(--he-surface-2);
-    color: var(--he-text);
+    border-radius: var(--he-corner-full);
+    background: var(--he-bg-subtle);
+    color: var(--he-text-primary);
     cursor: pointer;
   }
 
   .he-agent-workspace__header {
-    padding-left: var(--he-space-7);
-    padding-right: var(--he-space-4);
+    padding-left: var(--he-spacing-12);
+    padding-right: var(--he-spacing-4);
   }
 
   .he-agent-workspace__composer {
-    padding-inline: var(--he-space-4);
-    padding-bottom: var(--he-space-4);
+    padding-inline: var(--he-spacing-4);
+    padding-bottom: var(--he-spacing-4);
   }
 }
 
 @container (max-width: 58rem) {
   .he-agent-workspace__split {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--he-space-6);
-    padding: var(--he-space-6);
+    gap: var(--he-spacing-8);
+    padding: var(--he-spacing-8);
   }
 }
 
 @container (max-width: 40rem) {
   .he-agent-workspace__split {
-    padding: var(--he-space-4);
+    padding: var(--he-spacing-4);
   }
 }

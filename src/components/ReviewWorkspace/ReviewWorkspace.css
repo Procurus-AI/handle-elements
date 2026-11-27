@@ -7,16 +7,16 @@
   min-width: 0;
   min-height: 0;
   container-type: inline-size;
-  background: var(--he-bg);
-  color: var(--he-text);
+  background: var(--he-bg-app);
+  color: var(--he-text-primary);
 }
 
 .he-review-workspace__layout {
   display: grid;
   grid-template-columns:
-    minmax(0, calc(var(--he-space-7) * 6))
+    minmax(0, calc(var(--he-spacing-12) * 6))
     minmax(0, 1fr)
-    minmax(0, calc(var(--he-space-7) * 7));
+    minmax(0, calc(var(--he-spacing-12) * 7));
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -28,26 +28,25 @@
  * as three more pieces of page chrome. The breathing room and a single outer
  * hairline are opt-in; the default full-bleed workspace remains unchanged. */
 .he-review-workspace--contained {
-  width: calc(100% - (var(--he-space-4) * 2));
-  height: calc(100% - (var(--he-space-4) * 2));
-  max-width: calc(var(--he-space-7) * 22);
-  max-height: calc(var(--he-space-7) * 15);
-  margin: var(--he-space-4) auto;
+  width: calc(100% - (var(--he-spacing-4) * 2));
+  height: calc(100% - (var(--he-spacing-4) * 2));
+  max-width: calc(var(--he-spacing-12) * 22);
+  max-height: calc(var(--he-spacing-12) * 15);
+  margin: var(--he-spacing-4) auto;
   overflow: auto;
   overscroll-behavior: contain;
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-lg);
-  background: var(--he-surface);
-  box-shadow: var(--he-shadow-card);
+  border: 1px solid var(--he-border-default);
+  border-radius: var(--he-corner-xl);
+  background: var(--he-bg-surface);
 }
 
 /* A narrower pair of supporting rails for review surfaces nested beside an
  * application sidebar. */
 .he-review-workspace--contained .he-review-workspace__layout {
   grid-template-columns:
-    minmax(0, calc(var(--he-space-7) * 4.5))
+    minmax(0, calc(var(--he-spacing-12) * 4.5))
     minmax(0, 1fr)
-    minmax(0, calc(var(--he-space-7) * 6));
+    minmax(0, calc(var(--he-spacing-12) * 6));
 }
 
 .he-review-workspace__pane {
@@ -59,19 +58,19 @@
 
 .he-review-workspace__navigation,
 .he-review-workspace__inspector {
-  background: var(--he-bg);
+  background: var(--he-bg-app);
 }
 
 .he-review-workspace__navigation {
-  border-right: 1px solid var(--he-border);
+  border-right: 1px solid var(--he-border-default);
 }
 
 .he-review-workspace__document {
-  background: var(--he-surface);
+  background: var(--he-bg-surface);
 }
 
 .he-review-workspace__inspector {
-  border-left: 1px solid var(--he-border);
+  border-left: 1px solid var(--he-border-default);
 }
 
 /* ReviewConclusion — the compact answer inside the inspector rail. The pane is
@@ -80,48 +79,53 @@
 .he-review-conclusion {
   display: grid;
   align-content: start;
-  gap: var(--he-space-4);
+  gap: var(--he-spacing-4);
   width: 100%;
-  max-width: calc(var(--he-space-7) * 6);
-  padding: var(--he-space-5);
-  color: var(--he-text);
+  max-width: calc(var(--he-spacing-12) * 6);
+  padding: var(--he-spacing-6);
+  color: var(--he-text-primary);
   font-family: var(--he-font-sans);
 }
 
 .he-review-conclusion__eyebrow {
   display: block;
-  margin-bottom: var(--he-space-2);
-  color: var(--he-text-faint);
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
-  font-weight: 500;
-  line-height: 1.3;
-  letter-spacing: var(--he-tracking-caps);
-  text-transform: uppercase;
+  margin-bottom: var(--he-spacing-2);
+  color: var(--he-text-tertiary);
+  font-family: var(--he-font-sans);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
 }
 
 .he-review-conclusion__title {
   margin: 0;
-  color: var(--he-text);
-  font-family: var(--he-font-display);
-  font-size: var(--he-heading);
-  font-weight: 300;
-  line-height: 1.18;
+  color: var(--he-text-primary);
+  font-family: var(--he-font-sans);
+  font-size: var(--he-type-heading-lg-size);
+  font-weight: var(--he-type-heading-lg-weight);
+  letter-spacing: var(--he-type-heading-lg-tracking);
+  line-height: var(--he-type-heading-lg-line);
   text-wrap: balance;
 }
 
 .he-review-conclusion__meta {
-  margin: var(--he-space-1) 0 0;
-  color: var(--he-text-faint);
-  font-size: var(--he-caption);
-  line-height: 1.4;
+  margin: var(--he-spacing-1) 0 0;
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
 }
 
 .he-review-conclusion__summary {
   margin: 0;
-  color: var(--he-text-dim);
-  font-size: var(--he-body-sm);
-  line-height: 1.5;
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
   text-wrap: pretty;
 }
 
@@ -137,7 +141,7 @@
 
 .he-review-conclusion__facts {
   display: grid;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   min-width: 0;
   margin: 0;
 }
@@ -146,25 +150,27 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: baseline;
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-3);
   min-width: 0;
 }
 
 .he-review-conclusion__fact-label,
 .he-review-conclusion__fact-value {
   min-width: 0;
-  font-size: var(--he-body-sm);
-  line-height: 1.4;
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
   overflow-wrap: anywhere;
 }
 
 .he-review-conclusion__fact-label {
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 .he-review-conclusion__fact-value {
   margin: 0;
-  color: var(--he-text);
+  color: var(--he-text-primary);
   font-weight: 500;
   text-align: right;
   font-variant-numeric: tabular-nums;
@@ -191,10 +197,10 @@
 
   .he-review-workspace:not(.he-review-workspace--contained) .he-review-workspace__navigation {
     grid-row: 1;
-    max-height: calc(var(--he-space-7) * 6);
+    max-height: calc(var(--he-spacing-12) * 6);
     overflow: auto;
     border-right: 0;
-    border-bottom: 1px solid var(--he-border);
+    border-bottom: 1px solid var(--he-border-default);
   }
 
   .he-review-workspace:not(.he-review-workspace--contained) .he-review-workspace__inspector {
@@ -205,16 +211,16 @@
 
   .he-review-workspace:not(.he-review-workspace--contained) .he-review-workspace__document {
     grid-row: 2;
-    border-bottom: 1px solid var(--he-border);
+    border-bottom: 1px solid var(--he-border-default);
   }
 }
 
 @container (max-width: 48rem) {
   .he-review-workspace--contained .he-review-workspace__layout {
     grid-template-columns:
-      minmax(0, calc(var(--he-space-7) * 3.75))
+      minmax(0, calc(var(--he-spacing-12) * 3.75))
       minmax(0, 1fr)
-      minmax(0, calc(var(--he-space-7) * 5.4));
+      minmax(0, calc(var(--he-spacing-12) * 5.4));
   }
 }
 
@@ -237,10 +243,10 @@
 
   .he-review-workspace--contained .he-review-workspace__navigation {
     grid-row: 1;
-    max-height: calc(var(--he-space-7) * 6);
+    max-height: calc(var(--he-spacing-12) * 6);
     overflow: auto;
     border-right: 0;
-    border-bottom: 1px solid var(--he-border);
+    border-bottom: 1px solid var(--he-border-default);
   }
 
   .he-review-workspace--contained .he-review-workspace__inspector {
@@ -251,6 +257,6 @@
 
   .he-review-workspace--contained .he-review-workspace__document {
     grid-row: 2;
-    border-bottom: 1px solid var(--he-border);
+    border-bottom: 1px solid var(--he-border-default);
   }
 }

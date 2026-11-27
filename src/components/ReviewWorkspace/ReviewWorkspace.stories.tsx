@@ -5,7 +5,7 @@ import { ReviewField, ReviewFieldList } from '../ReviewField/ReviewField';
 import { ReviewConclusion, ReviewWorkspace } from './ReviewWorkspace';
 
 const meta = {
-  title: 'Elements/Review Workspace',
+  title: 'Organisms/Review Workspace',
   component: ReviewWorkspace,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof ReviewWorkspace>;
@@ -42,7 +42,7 @@ function Navigation() {
 function Document() {
   return (
     <Pane title="INE" eyebrow="Extracted data">
-      <p style={{ margin: 0, color: 'var(--he-text-dim)' }}>
+      <p style={{ margin: 0, color: 'var(--he-text-secondary)' }}>
         Identity document identified with high confidence. One field needs a human review.
       </p>
       <ReviewFieldList aria-label="Extracted identity fields">
@@ -89,7 +89,7 @@ export const ThreePane: Story = {
     inspectorLabel: 'Review conclusions',
   },
   render: (args) => (
-    <div style={{ height: 'calc(100vh - var(--he-space-7))', minHeight: 560 }}>
+    <div style={{ height: 'calc(100vh - var(--he-spacing-12))', minHeight: 560 }}>
       <ReviewWorkspace {...args} />
     </div>
   ),
@@ -123,7 +123,7 @@ export const Contained: Story = {
 export const CompactConclusion: Story = {
   args: ThreePane.args,
   render: () => (
-    <div style={{ width: 288, maxWidth: '100%', background: 'var(--he-bg)' }}>
+    <div style={{ width: 288, maxWidth: '100%', background: 'var(--he-bg-app)' }}>
       <Inspector />
     </div>
   ),
@@ -135,22 +135,21 @@ function Pane({ eyebrow, title, children }: { eyebrow: string; title: string; ch
       style={{
         display: 'grid',
         alignContent: 'start',
-        gap: 'var(--he-space-4)',
-        padding: 'var(--he-space-5)',
+        gap: 'var(--he-spacing-4)',
+        padding: 'var(--he-spacing-6)',
       }}
     >
       <span
         style={{
-          color: 'var(--he-text-faint)',
-          fontFamily: 'var(--he-font-mono)',
-          fontSize: 'var(--he-caption)',
-          letterSpacing: 'var(--he-tracking-caps)',
-          textTransform: 'uppercase',
+          color: 'var(--he-text-tertiary)',
+          fontFamily: 'var(--he-font-sans)',
+          fontSize: 'var(--he-type-caption-size)',
+          lineHeight: 'var(--he-type-caption-line)',
         }}
       >
         {eyebrow}
       </span>
-      <h2 style={{ margin: 0, fontFamily: 'var(--he-font-display)', fontSize: 'var(--he-heading)' }}>{title}</h2>
+      <h2 style={{ margin: 0, fontFamily: 'var(--he-font-sans)', fontSize: 'var(--he-type-heading-lg-size)', fontWeight: 'var(--he-type-heading-lg-weight)', letterSpacing: 'var(--he-type-heading-lg-tracking)' }}>{title}</h2>
       {children}
     </div>
   );

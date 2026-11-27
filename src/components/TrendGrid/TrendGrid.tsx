@@ -127,6 +127,7 @@ export function TrendGrid({
           <Sparkline
             className="he-trendgrid__sparkline"
             data={item.data}
+            aria-label={typeof item.label === 'string' ? `Tendencia de ${item.label}` : undefined}
             variant={variant}
             smooth={smooth}
             tone={tone}

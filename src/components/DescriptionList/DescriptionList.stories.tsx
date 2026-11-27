@@ -13,7 +13,7 @@ import { DescriptionItem, DescriptionList } from './DescriptionList';
  * missing value prints the same faint em dash whichever path produced it.
  */
 const meta = {
-  title: 'Elements/Description List',
+  title: 'Molecules/Description list',
   component: DescriptionList,
   argTypes: {
     columns: { control: 'inline-radio', options: [1, 2] },

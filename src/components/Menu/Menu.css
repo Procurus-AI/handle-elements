@@ -23,14 +23,14 @@
   flex-direction: column;
   overflow: hidden;
   max-height: var(--he-popover-max-height, 60vh);
-  max-width: var(--he-popover-max-width, calc(100vw - var(--he-space-4)));
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  box-shadow: var(--he-shadow-lift);
-  color: var(--he-text);
-  font-family: var(--he-font-sans);
-  animation: he-popover-in var(--he-transition-fast);
+  max-width: var(--he-popover-max-width, calc(100vw - var(--he-spacing-4)));
+  background: var(--he-bg-surface);
+  border: 1px solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  box-shadow: var(--he-elevation-popover);
+  color: var(--he-text-primary);
+  font-family: var(--he-type-body-sm-family);
+  animation: he-popover-in var(--he-motion-fast);
   /* The panel is a focus HOLDER (tabindex="-1"), not a control: on open it takes
    * DOM focus so Escape and the arrows have somewhere to land. Without this the
    * UA paints its own `:focus-visible` ring — a raw browser blue that exists in
@@ -54,7 +54,7 @@
   flex: 1;
   min-height: 0;
   gap: 0;
-  padding: var(--he-space-1);
+  padding: var(--he-spacing-1);
   min-width: 176px;
   /* Same reason as `.he-popover`: this is the element that actually takes focus
    * on every open (and on every submenu open), so the UA ring would otherwise
@@ -70,7 +70,7 @@
  * machine. */
 .he-menu__scroll {
   display: grid;
-  gap: var(--he-space-1);
+  gap: var(--he-spacing-1);
   align-content: start;
   flex: 1;
   min-height: 0;
@@ -81,24 +81,24 @@
 
 .he-menu__header {
   flex: 0 0 auto;
-  border-bottom: 1px solid var(--he-border);
+  border-bottom: 1px solid var(--he-border-default);
 }
 
 .he-menu__filter {
   display: flex;
   align-items: center;
-  gap: var(--he-space-2);
-  padding: var(--he-space-2) var(--he-space-3);
-  color: var(--he-text-faint);
+  gap: var(--he-spacing-2);
+  padding: var(--he-spacing-2) var(--he-spacing-3);
+  color: var(--he-text-tertiary);
 }
 
 /* The input is borderless and drops the UA ring, so the ring lives on the ROW —
  * it hugs the full-bleed header instead of an invisible box, and Tab into the
  * filter is visible (WCAG 2.4.7) like every other control in the library. */
 .he-menu__filter:focus-within {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: -2px;
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
 }
 
 .he-menu__filter-input {
@@ -106,22 +106,25 @@
   min-width: 0;
   border: 0;
   background: transparent;
-  color: var(--he-text);
+  color: var(--he-text-primary);
   font: inherit;
-  font-size: var(--he-body-sm);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
   outline: none;
 }
 
 .he-menu__filter-input::placeholder {
-  color: var(--he-text-faint);
+  color: var(--he-text-tertiary);
 }
 
 .he-menu__footer {
   flex: 0 0 auto;
-  margin-top: var(--he-space-1);
-  padding-top: var(--he-space-1);
-  border-top: 1px solid var(--he-border);
-  background: var(--he-surface);
+  margin-top: var(--he-spacing-1);
+  padding-top: var(--he-spacing-1);
+  border-top: 1px solid var(--he-border-default);
+  background: var(--he-bg-surface);
   /* The scroll box reserves a gutter on both edges; the pinned footer is not a
    * scroll container, so without this its row starts one gutter-width left of
    * every scrolled row (measured 15px on classic scrollbars, 0 on macOS overlay
@@ -132,35 +135,36 @@
 }
 
 .he-menu__group + .he-menu__group {
-  margin-top: var(--he-space-2);
+  margin-top: var(--he-spacing-2);
 }
 
 .he-menu__group-label {
-  padding: var(--he-space-2) var(--he-space-3) var(--he-space-1);
-  color: var(--he-text-faint);
-  font-family: var(--he-font-mono);
-  font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: var(--he-tracking-caps);
-  text-transform: uppercase;
+  padding: var(--he-spacing-2) var(--he-spacing-3) var(--he-spacing-1);
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-label-md-weight);
 }
 
 .he-menu__item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--he-space-4);
+  gap: var(--he-spacing-4);
   width: 100%;
   min-height: 32px;
   margin: 0;
-  padding: var(--he-space-2) var(--he-space-3);
+  padding: var(--he-spacing-2) var(--he-spacing-3);
   border: 0;
-  border-radius: var(--he-radius-xs);
+  border-radius: var(--he-corner-sm);
   background: transparent;
-  color: var(--he-text);
+  color: var(--he-text-primary);
   cursor: pointer;
   font: inherit;
-  font-size: var(--he-body-sm);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
   text-align: left;
 }
 
@@ -169,7 +173,7 @@
  * rule does not paint on the pointer path. Same token as :hover. A FILL, never a
  * spine, never --he-accent. */
 .he-menu__item--open {
-  background: var(--he-surface-2);
+  background: var(--he-bg-hover);
 }
 
 /* Three states, three renderings: hover lifts, the keyboard highlight adds the
@@ -179,12 +183,12 @@
  * focus (the highlight rides aria-activedescendant) and because a filter input
  * always matches it. Pointing at the list hands the highlight back to :hover. */
 .he-menu__item:hover:not(:disabled) {
-  background: var(--he-surface-2);
+  background: var(--he-bg-hover);
 }
 
 [data-he-nav='keyboard'] .he-menu__item--active {
-  background: var(--he-surface-2);
-  outline: 2px solid var(--he-focus);
+  background: var(--he-bg-hover);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: -2px;
 }
 
@@ -194,7 +198,7 @@
  * in a hover-driven submenu paints TWO identical rows and makes the pointer
  * ambiguous: the reader cannot tell what they are pointing at from what is set. */
 .he-menu__item--checked .he-menu__item-label {
-  font-weight: 500;
+  font-weight: var(--he-type-label-md-weight);
 }
 
 .he-menu__item:disabled {
@@ -211,7 +215,7 @@
 }
 
 .he-menu__item--destructive {
-  color: var(--he-error);
+  color: var(--he-status-danger-text);
 }
 
 /* 41.4px with a sublabel: 12px padding-block + a 29.4px two-line text column.
@@ -222,10 +226,10 @@
  * the reference's icon rows are 32px like its text rows. */
 .he-menu__item--rich {
   grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: var(--he-space-3);
-  padding: 6px var(--he-space-3);
+  gap: var(--he-spacing-3);
+  padding: 6px var(--he-spacing-3);
   min-height: 32px;
-  border-radius: calc(var(--he-radius-sm) - 2px);
+  border-radius: calc(var(--he-corner-md) - 2px);
 }
 
 .he-menu__item-media {
@@ -252,10 +256,11 @@
 
 .he-menu__item-sublabel {
   overflow: hidden;
-  color: var(--he-text-faint);
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
-  line-height: 1.2;
+  color: var(--he-text-tertiary);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -264,7 +269,7 @@
   display: inline-flex;
   justify-content: center;
   width: 16px;
-  color: var(--he-text);
+  color: var(--he-text-primary);
 }
 
 .he-menu__item-trailing {
@@ -272,7 +277,7 @@
   align-items: center;
   justify-content: center;
   width: 16px;
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 /* Same 8/12 padding `.he-menu__filter` already uses, so the two things that can
@@ -282,10 +287,13 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--he-space-3);
-  padding: var(--he-space-2) var(--he-space-3);
-  color: var(--he-text);
-  font-size: var(--he-body-sm);
+  gap: var(--he-spacing-3);
+  padding: var(--he-spacing-2) var(--he-spacing-3);
+  color: var(--he-text-primary);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
 }
 
 /* --he-neutral-bg IS --he-surface-2 in both themes, so a tone-0 avatar would
@@ -295,15 +303,19 @@
  * hook — no token changes, no Avatar edits. */
 .he-menu__item:hover:not(:disabled) .he-menu__item-media .he-avatar,
 [data-he-nav='keyboard'] .he-menu__item--active .he-menu__item-media .he-avatar {
-  --he-avatar-bg: var(--he-surface);
-  --he-avatar-color: var(--he-text-dim);
+  --he-avatar-bg: var(--he-bg-surface);
+  --he-avatar-color: var(--he-text-secondary);
   border-color: var(--he-border-strong);
 }
 
+/* Secondary, not tertiary: the shortcut sits on the hover and highlight fills too, where
+ * tertiary drops below 4.5:1 in dark mode. */
 .he-menu__shortcut {
-  color: var(--he-text-faint);
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-caption-family);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
 }
 
 /* The hairline starts at the ICON COLUMN — 12px of margin on top of the card's
@@ -313,8 +325,8 @@
  * deliberate difference, not a transcription of that number.) */
 .he-menu__separator {
   height: 1px;
-  margin: var(--he-space-1) var(--he-space-3);
-  background: var(--he-border);
+  margin: var(--he-spacing-1) var(--he-spacing-3);
+  background: var(--he-border-default);
 }
 
 /* Side placements enter along their own axis. Declared AFTER the base

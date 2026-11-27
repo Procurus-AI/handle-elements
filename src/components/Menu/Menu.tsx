@@ -19,6 +19,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../lib/cx';
+import { Icon } from '../Icon/Icon';
 import { useHoverIntent } from '../../lib/hoverIntent';
 import { computePosition, type PopoverAlign, type PopoverSide, type PositionResult } from '../../lib/position';
 
@@ -564,9 +565,15 @@ export function Popover({
     applyActiveId(null);
     setOpenSubId(null);
     setPosition(null);
-    if (restoreFocus.current) returnFocusRef.current?.focus?.();
+    if (restoreFocus.current) {
+      returnFocusRef.current?.focus?.();
+      // The saved element may be gone or unfocusable (a menu open on mount saves whatever
+      // held focus then); never leave keyboard users on <body>: fall back to the trigger.
+      const landed = document.activeElement;
+      if (!landed || landed === document.body) (delegate ?? triggerRef.current)?.focus?.();
+    }
     restoreFocus.current = false;
-  }, [currentOpen, applyActiveId, setOpenSubId]);
+  }, [currentOpen, applyActiveId, setOpenSubId, delegate]);
 
   useEffect(() => {
     if (!currentOpen || !isBrowser()) return;
@@ -874,17 +881,7 @@ export function Menu({ children, label, header, footer, contentClassName, ...res
   );
 }
 
-const CHECK = (
-  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-    <path
-      d="M3.4 7.8 6.2 10.6 11.6 4.8"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+const CHECK = <Icon name="check" size={14} />;
 
 export function MenuItem({
   inset = false,
@@ -997,11 +994,7 @@ export function MenuStatic({ media, sublabel, trailing, className, children, ...
 }
 
 /* The mirror of Sidebar's ChevronGlyph path — one glyph weight across the library. */
-const CHEVRON_RIGHT = (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-    <path d="M4.5 3 7.5 6 4.5 9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+const CHEVRON_RIGHT = <Icon name="chevron-right" size={12} />;
 
 /**
  * A menu row that owns a nested menu. Zero product vocabulary: every option is a
@@ -1261,10 +1254,7 @@ export function MenuFilter({
 
   return (
     <div className={cx('he-menu__filter', className)}>
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-        <circle cx="6.6" cy="6.6" r="4.3" stroke="currentColor" strokeWidth="1.4" />
-        <path d="M9.9 9.9 13.3 13.3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      </svg>
+      <Icon name="search" size={14} />
       <input
         className="he-menu__filter-input"
         type="text"

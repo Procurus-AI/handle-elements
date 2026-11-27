@@ -29,7 +29,7 @@ const activity: (number | null)[][] = days.map((_, d) =>
 );
 
 const meta = {
-  title: 'Charts/Heatmap',
+  title: 'Organisms/Heatmap',
   component: Heatmap,
   args: {
     data: cohort,

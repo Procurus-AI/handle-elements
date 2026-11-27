@@ -7,13 +7,13 @@
   width: var(--he-avatar-size);
   height: var(--he-avatar-size);
   overflow: hidden;
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-full);
-  background: var(--he-avatar-bg, var(--he-neutral-bg));
-  color: var(--he-avatar-color, var(--he-neutral));
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-full);
+  background: var(--he-avatar-bg, var(--he-status-idle-surface));
+  color: var(--he-avatar-color, var(--he-status-idle-text));
   font-family: var(--he-font-sans);
   font-size: var(--he-avatar-font);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
 }
 
@@ -29,37 +29,37 @@
 
 .he-avatar--md {
   --he-avatar-size: 36px;
-  --he-avatar-font: var(--he-caption);
+  --he-avatar-font: var(--he-type-caption-size);
 }
 
 .he-avatar--lg {
   --he-avatar-size: 48px;
-  --he-avatar-font: var(--he-body-sm);
+  --he-avatar-font: var(--he-type-label-sm-size);
 }
 
 .he-avatar--tone-0 {
-  --he-avatar-bg: var(--he-neutral-bg);
-  --he-avatar-color: var(--he-neutral);
+  --he-avatar-bg: var(--he-status-idle-surface);
+  --he-avatar-color: var(--he-status-idle-text);
 }
 
 .he-avatar--tone-1 {
-  --he-avatar-bg: var(--he-ok-bg);
-  --he-avatar-color: var(--he-ok);
+  --he-avatar-bg: var(--he-status-success-surface);
+  --he-avatar-color: var(--he-status-success-text);
 }
 
 .he-avatar--tone-2 {
-  --he-avatar-bg: var(--he-warn-bg);
-  --he-avatar-color: var(--he-warn);
+  --he-avatar-bg: var(--he-status-warning-surface);
+  --he-avatar-color: var(--he-status-warning-text);
 }
 
 .he-avatar--tone-3 {
-  --he-avatar-bg: var(--he-error-bg);
-  --he-avatar-color: var(--he-error);
+  --he-avatar-bg: var(--he-status-danger-surface);
+  --he-avatar-color: var(--he-status-danger-text);
 }
 
 .he-avatar--tone-4 {
-  --he-avatar-bg: var(--he-accent);
-  --he-avatar-color: var(--he-on-accent);
+  --he-avatar-bg: var(--he-accent-default);
+  --he-avatar-color: var(--he-accent-on-accent);
 }
 
 .he-avatar__image {
@@ -89,9 +89,9 @@
   bottom: 0;
   width: 28%;
   height: 28%;
-  border: 2px solid var(--he-surface);
-  border-radius: var(--he-radius-full);
-  background: var(--he-neutral);
+  border: 2px solid var(--he-bg-surface);
+  border-radius: var(--he-corner-full);
+  background: var(--he-status-idle-solid);
 }
 
 /* Centred ON the disc's bottom edge (badge centre y == disc bottom), with the
@@ -103,8 +103,8 @@
   bottom: 0;
   transform: translate(-50%, 50%);
   display: inline-flex;
-  border-radius: var(--he-radius-full);
-  box-shadow: 0 0 0 2px var(--he-surface);
+  border-radius: var(--he-corner-full);
+  box-shadow: 0 0 0 2px var(--he-bg-surface);
 }
 
 /* The SLOT dictates rim scale, not the caller. A Badge keeps its own metrics by
@@ -114,9 +114,11 @@
 .he-avatar__badge > .he-badge,
 .he-avatar__badge > .he-chip {
   height: 14px;
+  min-height: 0;
   min-width: 0;
-  padding-inline: var(--he-space-1);
-  font-size: var(--he-micro);
+  padding-inline: var(--he-spacing-1);
+  font-size: var(--he-type-caption-size);
+  line-height: 14px;
 }
 
 /* Scoped to the wrapper for the same reason the base rule is: at one class the
@@ -124,15 +126,15 @@
  * every dot would render the neutral fallback. Measured before the fix: an
  * `online` dot painted --he-neutral grey. */
 .he-avatar-badged .he-avatar__status--online {
-  background: var(--he-ok);
+  background: var(--he-status-success-solid);
 }
 
 .he-avatar-badged .he-avatar__status--busy {
-  background: var(--he-warn);
+  background: var(--he-status-warning-solid);
 }
 
 .he-avatar-badged .he-avatar__status--offline {
-  background: var(--he-neutral);
+  background: var(--he-status-idle-solid);
 }
 
 .he-avatar-stack {
@@ -141,7 +143,7 @@
 }
 
 .he-avatar-stack .he-avatar {
-  box-shadow: 0 0 0 2px var(--he-surface);
+  box-shadow: 0 0 0 2px var(--he-bg-surface);
 }
 
 .he-avatar-stack .he-avatar + .he-avatar {
@@ -153,6 +155,6 @@
 }
 
 .he-avatar--more {
-  background: var(--he-surface-2);
-  color: var(--he-text-dim);
+  background: var(--he-bg-subtle);
+  color: var(--he-text-secondary);
 }

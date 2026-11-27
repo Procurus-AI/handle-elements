@@ -1,0 +1,68 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Foundations/Deviations from Figma" />
+
+# Deviations from Figma
+
+The visual source is Kevin's Figma file "Handle Platform UI — Foundations" (last modified 2026-11-26). The tokens match it except in the places listed here. Each one needs Kevin's sign-off.
+
+## Why tokens come from variable-bound fills
+
+The Foundations page in Figma shows each colour twice: as a swatch bound to a variable, and as a typed label. The two had drifted apart. The generator found 66 differences. The swatch is the live variable, which is what the Figma components render, so `scripts/tokens/build-tokens.mjs` reads the swatch fill and ignores the label.
+
+`npm run tokens -- --check` regenerates `tokens.css` and fails if someone edited it by hand.
+
+Six of the 66 differences:
+
+<DocTable
+  head={['Token', 'Typed label', 'Variable fill (used)']}
+  rows={[
+    ['Success/500 (primitive)', '#2F8F5B', '#1F9D5B'],
+    ['Danger/500 (primitive)', '#B23A2B', '#D03F3F'],
+    ['Chart base/2 (primitive)', '#C8F04A', '#E0FEA2'],
+    ['bg/app, dark', 'neutral/950 = #11141C', '#0E1118'],
+    ['accent/default, light and dark', 'brand/verde = #C8F04A', '#E0FEA2'],
+    ['text/primary, dark', 'neutral/25 = #FBFAF8', '#EBEDF1'],
+  ]}
+/>
+
+Two of the differences matter for how the product looks. The primary accent is Borealis (`#E0FEA2`), not Verde (`#C8F04A`). The dark surfaces are the bluish values from the fills, not the warm neutrals in the labels. The dark status chips also use 800 and 900 steps (for example Success/800 and Success/900) that are not in the primitive swatches. They ship as plain values in the dark theme.
+
+## AA adjustments
+
+WCAG 2.1 AA asks for 4.5:1 on text. Five text tokens in Kevin's palette are below that. The generator moves a failing token the smallest step toward `text/primary` until it reaches 4.5:1. Disabled text is exempt. The list is in `tokens/aa-adjustments.json`.
+
+<DocTable
+  head={['Token', 'Mode', 'Figma value', 'Shipped value', 'Contrast', 'Checked against']}
+  rows={[
+    [<code key="a">--he-text-tertiary</code>, 'light', '#8E8E90', '#717276', '3.08 → 4.53', <><code>--he-bg-surface</code>, <code>--he-bg-panel</code></>],
+    [<code key="b">--he-status-success-text</code>, 'light', '#1F9D5B', '#1E7D4E', '3.09 → 4.55', <><code>--he-status-success-surface</code>, <code>--he-bg-surface</code></>],
+    [<code key="c">--he-status-warning-text</code>, 'light', '#B4740F', '#986413', '3.49 → 4.56', <><code>--he-status-warning-surface</code>, <code>--he-bg-surface</code></>],
+    [<code key="d">--he-status-danger-text</code>, 'light', '#D03F3F', '#C13C3D', '4.06 → 4.55', <><code>--he-status-danger-surface</code>, <code>--he-bg-surface</code></>],
+    [<code key="e">--he-text-tertiary</code>, 'dark', '#6B7488', '#838B9C', '3.31 → 4.54', <><code>--he-bg-surface</code>, <code>--he-bg-panel</code></>],
+  ]}
+/>
+
+The shipped values are close to Kevin's. The status text colours look slightly darker in light mode, and the dark tertiary text is slightly lighter.
+
+## Dark chart-1
+
+In light, `--he-chart-1` is Midnight. On a dark surface Midnight would disappear, so in dark it follows `--he-text-primary`. Kevin's file does not define a dark value for this slot.
+
+## Dark elevation tint
+
+The light shadows are tinted with Midnight at 6%, 10% and 16% opacity. The same shadows are almost invisible on a dark surface. In dark the shadows are black at 21%, 36% and 56%. The offsets and blur values are Kevin's.
+
+## Needs Kevin's sign-off
+
+- [ ] The five AA adjustments in the table above.
+- [ ] Dark `--he-chart-1` follows text/primary instead of Midnight.
+- [ ] Dark elevation shadows use black at higher opacity.
+- [ ] Primary accent is Borealis from the live variables, not Verde from the labels.
+- [ ] Dark 800 and 900 status values come from the chip fills, because the primitives do not exist.
+- [ ] The 66 typed labels in Figma are corrected to match the variables, or the variables are changed. One of the two has to move.
+
+<Rule title="Status of this page">
+  1.0.0 is a draft for team review. Nothing here is final until Kevin has replied.
+</Rule>

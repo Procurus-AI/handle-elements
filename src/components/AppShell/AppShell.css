@@ -1,0 +1,57 @@
+/* AppShell (Figma "App shell"): canvas bg-app, pad 8/8/8/0, gap 8; sidebar fixed 208;
+ * main = inset Panel filling the rest, scrolling vertically inside. */
+:where(.he-app-shell) {
+  height: 100dvh;
+}
+
+.he-app-shell {
+  display: flex;
+  gap: var(--he-spacing-2);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  padding: var(--he-spacing-2) var(--he-spacing-2) var(--he-spacing-2) 0;
+  background: var(--he-bg-app);
+  color: var(--he-text-primary);
+  font-family: var(--he-type-body-sm-family);
+}
+
+.he-app-shell__sidebar {
+  display: flex;
+  flex: 0 0 208px;
+  width: 208px;
+  min-height: 0;
+}
+
+.he-app-shell__sidebar > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.he-app-shell__main {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.he-app-shell__panel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+/* Below 960px the sidebar collapses to the 56px Brandmark rail (the Sidebar's own rules
+ * apply under `.he-app-shell`). */
+@media (max-width: 959px) {
+  .he-app-shell__sidebar {
+    flex-basis: 56px;
+    width: 56px;
+  }
+}
+
+/* an explicitly collapsed Sidebar narrows its column to the rail */
+.he-app-shell__sidebar:has(> .he-sidebar--collapsed) {
+  flex-basis: 56px;
+  width: 56px;
+}

@@ -1,4 +1,4 @@
-import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
+import { useId, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 import { arcPath, circumference, clamp } from '../../lib/chart';
 
@@ -53,10 +53,13 @@ export function RadialGauge({
   valueLabel,
   showValue = true,
   rounded = true,
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   className,
   style,
   ...rest
 }: RadialGaugeProps) {
+  const labelId = useId();
   const safeMax = max > min ? max : min + 1;
   const bounded = clamp(value, min, safeMax);
   const fraction = (bounded - min) / (safeMax - min);
@@ -159,6 +162,8 @@ export function RadialGauge({
       aria-valuemax={max}
       aria-valuenow={bounded}
       aria-valuetext={valueText}
+      aria-label={ariaLabel ?? (ariaLabelledBy || label != null ? undefined : 'Progreso')}
+      aria-labelledby={ariaLabelledBy ?? (ariaLabel == null && label != null ? labelId : undefined)}
       {...rest}
     >
       <svg
@@ -175,7 +180,7 @@ export function RadialGauge({
       {(showValue || label != null) && (
         <div className="he-gauge__center">
           {showValue && <span className="he-gauge__number">{numberText}</span>}
-          {label != null && <span className="he-gauge__label">{label}</span>}
+          {label != null && <span id={labelId} className="he-gauge__label">{label}</span>}
         </div>
       )}
     </div>

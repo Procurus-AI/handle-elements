@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.0.0 (draft for team review)
+
+One design system for every Handle product, rebuilt on Kevin's Figma "Handle Platform UI —
+Foundations" and organised by Atomic Design. Upgrade notes: MIGRATION.md.
+
+### Added
+
+- Tokens generated from the Figma variables (`npm run tokens`): primitives, semantic light and
+  dark, type styles, spacing, corners, density and three elevations. Five text tokens are
+  adjusted to reach WCAG AA; see `tokens/aa-adjustments.json`.
+- Components from the Figma: Icon (57 Lucide icons), Logo, Count, FilterChip, CarrierChip,
+  StatCell and StatStrip, CarrierStatusCard, NavItem, CalendarDay. New without Figma: Checkbox,
+  Radio, Field, Stepper, ChoiceCard, Toast, ThemeSwitch. Templates: AppShell, ListPage.
+- Storybook: Introduction (overview, benchmarks, Atomic Design, migration, changelog),
+  Foundations (colour, deviations, typography, spacing, elevation, content), atoms to pages,
+  autodocs and the a11y addon.
+- Checks: `check:levels`, `check:compat`, `check:a11y`, `capture`, and a stricter
+  `check:tokens`.
+
+### Changed
+
+- Every component restyled to the Figma foundations; Inter replaces Neue Haas Unica.
+- Interaction and accessibility fixes: keyboard support in Tabs and ChoiceCard, focus trap in
+  Modal, grid semantics in Calendar, accessible names on charts, Meter and Avatar.
+
+### Removed
+
+- Nothing. The 0.x token names and exports remain, deprecated where noted.
+
 ## 0.4.5
 
 ### Fixed

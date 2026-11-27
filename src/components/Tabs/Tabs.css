@@ -1,6 +1,9 @@
+/* Tabs (Figma "Tab"): 32px, pad 8/10, gap 6, corner md. Active is a soft fill, never a border.
+ * `underline` and `pills` both render this style (kept for 0.x callers). */
 .he-tabs {
   display: flex;
   align-items: center;
+  gap: var(--he-spacing-1);
   max-width: 100%;
   /* Long filter rows scroll horizontally rather than overflow the container. */
   overflow-x: auto;
@@ -11,141 +14,87 @@
   display: none;
 }
 
-/* wrap — a second line beats a hidden fourth tab. Scrolling is off here, so
- * overflow goes back to visible and focus rings are not clipped. */
+/* wrap: a second line beats a hidden fourth tab. Overflow goes back to visible so focus
+ * rings are not clipped. */
 .he-tabs--wrap {
   flex-wrap: wrap;
-  row-gap: var(--he-space-2);
+  row-gap: var(--he-spacing-1);
   overflow: visible;
 }
 
 .he-tab {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-2);
+  gap: 6px;
   flex: 0 0 auto;
   appearance: none;
-  background: none;
-  border: none;
+  min-height: 32px;
   margin: 0;
+  padding: var(--he-spacing-2) 10px;
+  border: 0;
+  border-radius: var(--he-corner-md);
+  background: transparent;
   cursor: pointer;
-  font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  font-weight: 500;
-  color: var(--he-text-dim);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+  color: var(--he-text-secondary);
   white-space: nowrap;
   transition:
-    color var(--he-transition-fast),
-    background var(--he-transition-fast),
-    border-color var(--he-transition-fast);
+    color var(--he-motion-fast),
+    background var(--he-motion-fast);
 }
 
-/* A neutral count badge tracks the tab's dim/active color; toned badges keep
- * their own status color. */
-.he-tab__count.he-badge--neutral {
-  color: inherit;
+.he-tab:hover:not(:disabled):not(.he-tab--active) {
+  background: var(--he-bg-hover);
+  color: var(--he-text-primary);
+}
+
+.he-tab--active {
+  background: var(--he-bg-subtle);
+  color: var(--he-text-primary);
 }
 
 .he-tab:disabled {
-  opacity: 0.45;
+  color: var(--he-text-disabled);
   cursor: not-allowed;
 }
 
 .he-tab:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: -2px;
-  border-radius: var(--he-radius-xs);
 }
 
-/* underline — quiet page-level nav with an active rule */
-.he-tabs--underline {
-  gap: var(--he-space-5);
-  border-bottom: 1px solid var(--he-border);
-}
-
-.he-tabs--underline .he-tab {
-  padding: var(--he-space-3) 2px;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-}
-
-.he-tabs--underline .he-tab:hover:not(:disabled) {
-  color: var(--he-text);
-}
-
-.he-tabs--underline .he-tab--active {
-  color: var(--he-text);
-  border-bottom-color: var(--he-text);
-}
-
-/* pills — compact filter row; active pill is a bordered surface */
-.he-tabs--pills {
-  gap: var(--he-space-2);
-}
-
-.he-tabs--pills .he-tab {
-  padding: 5px 14px;
-  border: 1px solid transparent;
-  border-radius: var(--he-radius-full);
-}
-
-.he-tabs--pills .he-tab:hover:not(:disabled) {
-  color: var(--he-text);
-  background: var(--he-surface-2);
-}
-
-.he-tabs--pills .he-tab--active {
-  color: var(--he-text);
-  background: var(--he-surface);
-  border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-card);
+.he-tab__count {
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  font-weight: var(--he-type-caption-weight);
+  letter-spacing: var(--he-type-caption-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-text-tertiary);
 }
 
 /* ---- group divider ----
- * Splits the strip into groups: a hairline, optionally captioned with a marker
- * ("Beta"). Borealis is the marker's FILL — the caps text on it is midnight via
- * --he-on-accent, never green-on-light. */
+ * Splits the strip into groups: a hairline, optionally captioned with a marker ("Beta"). */
 .he-tabs__divider {
   display: inline-flex;
   align-items: center;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   flex: 0 0 auto;
-  /* Own the group's leading space so the rule does not crowd the previous pill. */
-  margin-inline-start: var(--he-space-2);
+  margin-inline-start: var(--he-spacing-2);
 }
 
 .he-tabs__rule {
   width: 1px;
-  height: 18px;
+  height: 16px;
   flex: 0 0 auto;
-  background: var(--he-border);
-}
-
-/* Two classes so the caps treatment wins over .he-badge regardless of the order
- * component stylesheets are imported in. */
-.he-badge.he-tabs__marker {
-  font-family: var(--he-font-mono);
-  font-size: 10px;
-  letter-spacing: var(--he-tracking-caps);
-  /* The tracking adds a trailing gap; pull it back so the pill stays centered. */
-  padding-inline: var(--he-space-2) calc(var(--he-space-2) - 1px);
-  text-transform: uppercase;
+  background: var(--he-border-default);
 }
 
 /* sm density */
-.he-tabs--sm .he-tabs__rule {
-  height: 16px;
-}
-
-.he-tabs--sm.he-tabs--underline {
-  gap: var(--he-space-4);
-}
 .he-tabs--sm .he-tab {
-  font-size: var(--he-caption);
-}
-.he-tabs--sm.he-tabs--underline .he-tab {
-  padding: var(--he-space-2) 2px;
-}
-.he-tabs--sm.he-tabs--pills .he-tab {
-  padding: 3px 11px;
+  min-height: 28px;
+  padding: var(--he-spacing-1) var(--he-spacing-2);
 }

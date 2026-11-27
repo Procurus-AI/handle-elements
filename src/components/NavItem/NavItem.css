@@ -1,0 +1,62 @@
+/* NavItem (Figma "Nav item"): 32px, pad 7/8, gap 8, corner md, flat on bg-app. */
+.he-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--he-spacing-2);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 32px;
+  margin: 0;
+  padding: 7px var(--he-spacing-2);
+  border: 0;
+  border-radius: var(--he-corner-md);
+  background: transparent;
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  font-weight: var(--he-type-body-sm-weight);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--he-motion-fast),
+    color var(--he-motion-fast);
+}
+
+.he-nav-item__icon {
+  flex: none;
+  color: var(--he-text-tertiary);
+}
+
+.he-nav-item__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-nav-item:hover:not(.he-nav-item--active):not(:disabled) {
+  background: var(--he-bg-hover);
+  color: var(--he-text-primary);
+}
+
+.he-nav-item--active {
+  background: var(--he-bg-active);
+  color: var(--he-text-primary);
+}
+
+.he-nav-item--active .he-nav-item__icon {
+  color: var(--he-text-primary);
+}
+
+.he-nav-item:disabled {
+  color: var(--he-text-disabled);
+  cursor: not-allowed;
+}
+
+.he-nav-item:focus-visible {
+  outline: 2px solid var(--he-border-focus);
+  outline-offset: -2px;
+}

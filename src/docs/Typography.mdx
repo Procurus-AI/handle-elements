@@ -1,0 +1,70 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { DocTable, Rule } from './DocParts';
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+Three families, 16 styles. Inter is the UI face. Sentient is for page titles. IBM Plex Mono is for machine identifiers. Inter replaces Neue Haas Unica from 0.x.
+
+Each style is a set of five variables: `--he-type-<style>-family`, `-size`, `-line`, `-weight` and `-tracking`. For example, `--he-type-body-md-size`. Components set type from these variables and never from a raw size.
+
+<Rule title="One family per job">
+  Sentient only for page titles. Inter for everything else. Plex Mono only for machine identifiers
+  such as policy numbers and receipt numbers. Do not use Plex Mono to make text look technical.
+</Rule>
+
+## The 16 styles
+
+export const styles = [
+  { name: "Display/Page title", slug: "display-page-title", spec: "Sentient Light · 30/36", sample: "Validador de pagos" },
+  { name: "Display/Page title sm", slug: "display-page-title-sm", spec: "Sentient Light · 24/30", sample: "Agente de Cobranza" },
+  { name: "Heading/lg", slug: "heading-lg", spec: "Inter Medium · 18/24", sample: "Requiere tu atención" },
+  { name: "Heading/md", slug: "heading-md", spec: "Inter Medium · 15/20", sample: "Cartera por antigüedad" },
+  { name: "Heading/sm", slug: "heading-sm", spec: "Inter Medium · 14/20", sample: "Credenciales de aseguradoras" },
+  { name: "Body/md", slug: "body-md", spec: "Inter Regular · 14/20", sample: "Los documentos de alta confianza entran solos al SoR." },
+  { name: "Body/md emphasis", slug: "body-md-emphasis", spec: "Inter Medium · 14/20", sample: "Los documentos de alta confianza entran solos." },
+  { name: "Body/sm", slug: "body-sm", spec: "Inter Regular · 13/18", sample: "Juan Pacheco Aranda · Seguros Afirme" },
+  { name: "Body/sm emphasis", slug: "body-sm-emphasis", spec: "Inter Medium · 13/18", sample: "Juan Pacheco Aranda" },
+  { name: "Label/md", slug: "label-md", spec: "Inter Medium · 13/16", sample: "Ejecutar validación" },
+  { name: "Label/sm", slug: "label-sm", spec: "Inter Medium · 12/16", sample: "Sin datos nuevos" },
+  { name: "Caption", slug: "caption", spec: "Inter Regular · 11/14", sample: "MONTO VENCIDO" },
+  { name: "Metric/xl", slug: "metric-xl", spec: "Inter Light · 32/36", sample: "$112,601,918.79" },
+  { name: "Metric/lg", slug: "metric-lg", spec: "Inter Regular · 24/28", sample: "$103,708.44" },
+  { name: "Metric/md", slug: "metric-md", spec: "Inter Medium · 18/22", sample: "53,938" },
+  { name: "Mono/sm", slug: "mono-sm", spec: "IBM Plex Mono Regular · 12/16", sample: "3101-02938188-00" }
+];
+
+export const specimen = (s) => ({
+  fontFamily: `var(--he-type-${s.slug}-family)`,
+  fontSize: `var(--he-type-${s.slug}-size)`,
+  lineHeight: `var(--he-type-${s.slug}-line)`,
+  fontWeight: `var(--he-type-${s.slug}-weight)`,
+  letterSpacing: `var(--he-type-${s.slug}-tracking)`,
+  color: 'var(--he-text-primary)',
+  margin: 0,
+});
+
+<DocTable
+  head={['Style', 'Specimen', 'Spec', 'Variables']}
+  rows={styles.map((s) => [
+    s.name,
+    <p style={specimen(s)}>{s.sample}</p>,
+    s.spec,
+    <code>{`--he-type-${s.slug}-*`}</code>,
+  ])}
+/>
+
+## Where each style is used
+
+- **Display** is for the page title only. Page title is 30/36 and Page title sm is 24/30 for narrow views.
+- **Heading** names a section or a panel. `lg` for a view section, `md` for a panel, `sm` for a group inside a panel.
+- **Body** is running text and table cells. Use the emphasis weight for the one thing in a line that matters.
+- **Label** is for buttons, tabs, form labels and badges.
+- **Caption** is the smallest text. It is the only style that may be set in capitals, as in "MONTO VENCIDO" above a number.
+- **Metric** is for large numbers in stat cells and charts. Numbers use the format in [Content](?path=/docs/foundations-content--docs).
+- **Mono** is for identifiers such as `3101-02938188-00`. One size only.
+
+## Fonts
+
+`fonts.css` loads Sentient (Light, Regular), Inter (variable font, weights 300, 400 and 500 are used) and IBM Plex Mono. All three are vendored in the package. The build fails if `fonts.css` points to a file that is missing. Sentient is under the Fontshare free licence. Inter and Plex Mono are under the SIL Open Font Licence.

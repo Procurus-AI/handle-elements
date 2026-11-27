@@ -5,7 +5,7 @@ import { StatusPill } from '../StatusPill/StatusPill';
 import { InboxItem, InboxList } from './InboxList';
 
 const meta = {
-  title: 'Components/InboxList',
+  title: 'Organisms/Inbox List',
   component: InboxList,
 } satisfies Meta<typeof InboxList>;
 

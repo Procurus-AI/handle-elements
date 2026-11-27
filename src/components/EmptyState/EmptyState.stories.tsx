@@ -1,49 +1,54 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button } from '../Button/Button';
-import { Card } from '../Card/Card';
+import { Icon } from '../Icon/Icon';
 import { EmptyState } from './EmptyState';
 
+/**
+ * Shown inside a table panel when filters return nothing. The title states the fact, the body
+ * states the fix, and there is at most one action.
+ */
 const meta = {
-  title: 'Elements/EmptyState',
+  title: 'Molecules/Empty state',
   component: EmptyState,
   args: {
-    title: 'No transactions found',
-    hint: 'Adjust filters or try a broader search.',
+    title: 'Sin recibos que coincidan',
+    hint: 'Ajusta los filtros o el término de búsqueda para ver resultados.',
   },
 } satisfies Meta<typeof EmptyState>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <path
-        d="M7.25 12.5a5.25 5.25 0 1 0 0-10.5 5.25 5.25 0 0 0 0 10.5ZM11 11l3 3"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-export const Playground: Story = {
-  args: {
-    icon: <SearchIcon />,
-    action: <Button variant="secondary">Clear filters</Button>,
-  },
+/** The Figma board: 600x200 panel. */
+export const Figma: Story = {
+  args: { icon: <Icon name="inbox" size={24} /> },
+  render: (args) => (
+    <div style={{ width: 600, height: 200, display: 'flex' }}>
+      <EmptyState {...args} />
+    </div>
+  ),
 };
 
-export const InCard: Story = {
+export const States: Story = {
   render: () => (
-    <Card padding="none" style={{ maxWidth: 520 }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        gap: 16,
+        width: 880,
+        background: 'var(--he-bg-surface)',
+      }}
+    >
+      <EmptyState size="sm" icon={<Icon name="search" size={24} />} title="Sin resultados" hint="Prueba con otro término." />
       <EmptyState
-        icon={<SearchIcon />}
-        title="No matching accounts"
-        hint="Saved filters returned no rows for this portfolio."
-        action={<Button variant="secondary">Reset</Button>}
+        icon={<Icon name="inbox" size={24} />}
+        title="Sin recibos que coincidan"
+        hint="Ajusta los filtros o el término de búsqueda para ver resultados."
+        action={<Button variant="secondary">Limpiar filtros</Button>}
       />
-    </Card>
+      <EmptyState align="start" size="sm" title="Sin pólizas" hint="Conecta una aseguradora para traerlas." />
+      <EmptyState size="sm" title="Nada por aquí" />
+    </div>
   ),
 };

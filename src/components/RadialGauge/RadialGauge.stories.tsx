@@ -3,7 +3,7 @@ import { Card } from '../Card/Card';
 import { RadialGauge } from './RadialGauge';
 
 const meta = {
-  title: 'Charts/RadialGauge',
+  title: 'Organisms/Radial Gauge',
   component: RadialGauge,
   args: {
     value: 68,

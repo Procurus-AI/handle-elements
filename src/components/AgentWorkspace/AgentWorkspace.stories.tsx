@@ -8,7 +8,7 @@ import { Sidebar, SidebarHeader, SidebarItem } from '../Sidebar/Sidebar';
 import { Text } from '../Text/Text';
 
 const meta = {
-  title: 'Components/AgentWorkspace',
+  title: 'Templates/Agent Workspace',
   component: AgentWorkspace,
   parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof AgentWorkspace>;

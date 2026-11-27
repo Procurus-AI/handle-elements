@@ -1,4 +1,4 @@
-import { Fragment, useId, type HTMLAttributes, type ReactNode } from 'react';
+import { Fragment, useId, type HTMLAttributes, type KeyboardEvent, type ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 import { Badge, type BadgeTone } from '../Badge/Badge';
 
@@ -6,9 +6,9 @@ export interface TabItem {
   value: string;
   label: ReactNode;
   disabled?: boolean;
-  /** Trailing count badge (e.g. filter tabs: "Necesitan atención 24"). */
+  /** Trailing count (Caption, tertiary, no dot), e.g. "Necesitan atención 24". */
   count?: ReactNode;
-  /** Tone for the count badge (default neutral). */
+  /** @deprecated Kept for 0.x callers. The Figma count has no tone and ignores it. */
   countTone?: BadgeTone;
   /** Start a new group before this tab with a vertical hairline. */
   divider?: boolean;
@@ -28,7 +28,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   items: TabItem[];
   value: string;
   onChange?: (value: string) => void;
-  /** `underline` for page-level nav, `pills` for filter rows. */
+  /** Both variants render the Figma style (soft fill, no border). Kept for 0.x callers. */
   variant?: TabsVariant;
   size?: 'sm' | 'md';
   /**
@@ -38,6 +38,9 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
    */
   wrap?: boolean;
 }
+
+const enabledTabs = (list: HTMLElement) =>
+  Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)'));
 
 export function Tabs({
   items,
@@ -50,6 +53,33 @@ export function Tabs({
   ...rest
 }: TabsProps) {
   const groupId = useId();
+  // Roving tabindex: the selected tab is the one tab stop; with no match, the first enabled tab.
+  const stopValue = items.some((i) => i.value === value && !i.disabled)
+    ? value
+    : items.find((i) => !i.disabled)?.value;
+
+  // Arrow keys move focus and select (automatic activation); Home/End jump to the ends.
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    rest.onKeyDown?.(event);
+    if (event.defaultPrevented) return;
+    const tabs = enabledTabs(event.currentTarget);
+    const at = tabs.indexOf(document.activeElement as HTMLButtonElement);
+    if (at < 0 || tabs.length === 0) return;
+    const next =
+      event.key === 'ArrowRight'
+        ? tabs[(at + 1) % tabs.length]
+        : event.key === 'ArrowLeft'
+          ? tabs[(at - 1 + tabs.length) % tabs.length]
+          : event.key === 'Home'
+            ? tabs[0]
+            : event.key === 'End'
+              ? tabs[tabs.length - 1]
+              : null;
+    if (!next) return;
+    event.preventDefault();
+    next.focus();
+    next.click();
+  };
   // The marker in scope for the current group, carried forward from the last
   // labelled divider so every tab after it inherits the description.
   let describedBy: string | undefined;
@@ -65,6 +95,7 @@ export function Tabs({
         className,
       )}
       {...rest}
+      onKeyDown={onKeyDown}
     >
       {items.map((item, i) => {
         const hasDivider = item.divider || item.dividerLabel != null;
@@ -93,15 +124,14 @@ export function Tabs({
               role="tab"
               aria-selected={item.value === value}
               aria-describedby={describedBy}
+              tabIndex={item.value === stopValue ? 0 : -1}
               disabled={item.disabled}
               className={cx('he-tab', item.value === value && 'he-tab--active')}
               onClick={() => onChange?.(item.value)}
             >
               <span className="he-tab__label">{item.label}</span>
               {item.count != null && (
-                <Badge size="sm" tone={item.countTone ?? 'neutral'} className="he-tab__count">
-                  {item.count}
-                </Badge>
+                <span className="he-tab__count">{item.count}</span>
               )}
             </button>
           </Fragment>

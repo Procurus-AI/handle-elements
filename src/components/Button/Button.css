@@ -2,125 +2,158 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--he-space-2);
-  border: 1px solid transparent;
-  border-radius: var(--he-radius-full);
-  font-family: var(--he-font-sans);
-  font-size: var(--he-body-sm);
-  font-weight: 500;
-  line-height: 1;
+  gap: 6px;
+  box-sizing: border-box;
+  border: var(--he-border-width) solid transparent;
+  border-radius: var(--he-corner-md);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  font-weight: var(--he-type-label-md-weight);
+  line-height: var(--he-type-label-md-line);
+  letter-spacing: var(--he-type-label-md-tracking);
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
   transition:
-    background var(--he-transition-fast),
-    border-color var(--he-transition-fast),
-    box-shadow var(--he-transition-fast);
+    background var(--he-motion-fast),
+    border-color var(--he-motion-fast),
+    color var(--he-motion-fast);
 }
 
 .he-btn:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
 }
 
 .he-btn:disabled {
-  opacity: 0.5;
+  background: var(--he-bg-subtle);
+  border-color: var(--he-border-default);
+  color: var(--he-text-disabled);
   cursor: not-allowed;
 }
 
-/* variants */
+.he-btn--ghost:disabled,
+.he-btn--link:disabled {
+  background: transparent;
+  border-color: transparent;
+}
+
+.he-btn__icon {
+  flex: 0 0 auto;
+}
+
+.he-btn--loading {
+  cursor: progress;
+}
+
+.he-btn__spinner {
+  animation: he-btn-spin 700ms linear infinite;
+}
+
+@keyframes he-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* primary */
 .he-btn--default {
-  background: var(--he-action);
-  border-color: var(--he-action-border);
-  color: var(--he-on-action);
+  background: var(--he-accent-default);
+  color: var(--he-accent-on-accent);
 }
 .he-btn--default:hover:not(:disabled) {
-  background: var(--he-action-hover);
-  box-shadow: var(--he-shadow-card);
+  background: var(--he-accent-hover);
+}
+.he-btn--default:active:not(:disabled) {
+  background: var(--he-accent-press);
 }
 
-.he-btn--destructive {
-  background: var(--he-error);
-  color: var(--he-white);
-}
-.he-btn--destructive:hover:not(:disabled) {
-  box-shadow: var(--he-shadow-card);
-  opacity: 0.92;
-}
-
-.he-btn--outline {
-  background: transparent;
-  border-color: var(--he-border);
-  color: var(--he-text);
-}
-.he-btn--outline:hover:not(:disabled) {
-  background: var(--he-surface);
-  border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-card);
-}
-
+/* secondary look: outline and secondary */
+.he-btn--outline,
 .he-btn--secondary {
-  background: var(--he-surface);
-  border-color: var(--he-border);
-  color: var(--he-text);
+  background: var(--he-bg-surface);
+  border-color: var(--he-border-default);
+  color: var(--he-text-primary);
 }
+.he-btn--outline .he-btn__icon,
+.he-btn--secondary .he-btn__icon {
+  color: var(--he-text-secondary);
+}
+.he-btn--outline:hover:not(:disabled),
 .he-btn--secondary:hover:not(:disabled) {
-  border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-card);
+  background: var(--he-bg-hover);
+}
+.he-btn--outline:active:not(:disabled),
+.he-btn--secondary:active:not(:disabled) {
+  background: var(--he-bg-active);
 }
 
 .he-btn--ghost {
   background: transparent;
-  color: var(--he-text);
+  color: var(--he-text-secondary);
 }
 .he-btn--ghost:hover:not(:disabled) {
-  background: var(--he-surface-2);
+  background: var(--he-bg-hover);
+}
+.he-btn--ghost:active:not(:disabled) {
+  background: var(--he-bg-active);
+}
+
+.he-btn--destructive {
+  background: var(--he-status-danger-solid);
+  color: var(--he-text-inverse);
+}
+.he-btn--destructive:hover:not(:disabled) {
+  background: var(--he-status-danger-text);
+}
+.he-btn--destructive:active:not(:disabled) {
+  background: var(--he-status-danger-text);
 }
 
 .he-btn--link {
   background: transparent;
-  color: var(--he-text);
+  color: var(--he-text-secondary);
   text-decoration: underline;
   text-underline-offset: 3px;
   padding: 0;
   height: auto;
 }
 .he-btn--link:hover:not(:disabled) {
-  color: var(--he-text-dim);
+  color: var(--he-text-primary);
 }
 
-/* sizes */
+/* sizes: default is the Figma 32px button, pad 8/12 */
 .he-btn--size-default {
-  height: 34px;
-  padding: 0 var(--he-space-4);
+  height: 32px;
+  padding: var(--he-spacing-2) var(--he-spacing-3);
 }
 .he-btn--size-xs {
-  height: 25px;
-  padding: 0 var(--he-space-3);
-  font-size: var(--he-caption);
+  height: 24px;
+  padding: 0 var(--he-spacing-2);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
 }
 .he-btn--size-sm {
-  height: 29px;
-  padding: 0 var(--he-space-3);
+  height: 28px;
+  padding: 0 var(--he-spacing-3);
 }
 .he-btn--size-lg {
   height: 40px;
-  padding: 0 var(--he-space-5);
-  font-size: var(--he-body);
+  padding: 0 var(--he-spacing-4);
 }
 .he-btn--size-icon {
-  height: 34px;
-  width: 34px;
+  height: 32px;
+  width: 32px;
   padding: 0;
 }
 .he-btn--size-icon-xs {
-  height: 25px;
-  width: 25px;
+  height: 24px;
+  width: 24px;
   padding: 0;
 }
 .he-btn--size-icon-sm {
-  height: 29px;
-  width: 29px;
+  height: 28px;
+  width: 28px;
   padding: 0;
 }
 .he-btn--size-icon-lg {
@@ -135,4 +168,10 @@
 .he-btn--link.he-btn--size-lg {
   height: auto;
   padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .he-btn__spinner {
+    animation-duration: 1800ms;
+  }
 }

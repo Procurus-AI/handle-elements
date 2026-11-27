@@ -26,7 +26,7 @@ import { Treemap, type TreemapDatum } from '../components/Treemap/Treemap';
  * Numbers are illustrative; stage totals match the source snapshot ($30,145 / $14,455).
  */
 const meta = {
-  title: 'Examples/Revenue Map',
+  title: 'Pages/Examples/Revenue Map',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
@@ -224,19 +224,19 @@ const HEALTH_STATUS = { active: 'ok', risk: 'error', none: 'neutral' } as const;
 
 /** Priority reads as one colored dot — no pill chrome. */
 const PRIORITY_DOT = {
-  high: 'var(--he-error)',
-  med: 'var(--he-warn)',
-  low: 'var(--he-text-faint)',
+  high: 'var(--he-status-danger-text)',
+  med: 'var(--he-status-warning-text)',
+  low: 'var(--he-text-tertiary)',
 } as const;
 const PRIORITY_LABEL = { high: 'High', med: 'Med', low: 'Low' } as const;
 
 /** Each product gets a stable swatch from the restrained series palette. */
 const PRODUCT_DOT: Record<string, string> = {
-  'Payment Validation': 'var(--he-series-1)',
-  'System of Record': 'var(--he-series-2)',
-  'Quoting Agent (Onboarding)': 'var(--he-series-3)',
+  'Payment Validation': 'var(--he-chart-1)',
+  'System of Record': 'var(--he-chart-2)',
+  'Quoting Agent (Onboarding)': 'var(--he-chart-3)',
 };
-const productDot = (name: string) => PRODUCT_DOT[name] ?? 'var(--he-series-5)';
+const productDot = (name: string) => PRODUCT_DOT[name] ?? 'var(--he-chart-5)';
 
 /* ------------------------------------------------------------------ drawer body */
 
@@ -436,7 +436,7 @@ function RevenueMapView() {
           <Text as="label" size="sm" tone="dim">
             Product
           </Text>
-          <Select value={product} onChange={(e) => setProduct(e.target.value)}>
+          <Select aria-label="Product" value={product} onChange={(e) => setProduct(e.target.value)}>
             <option value="all">All products</option>
             <option value="broker">Broker Suite</option>
             <option value="claims">Claims</option>
@@ -444,7 +444,7 @@ function RevenueMapView() {
           <Text as="label" size="sm" tone="dim">
             Owner
           </Text>
-          <Select value={owner} onChange={(e) => setOwner(e.target.value)}>
+          <Select aria-label="Owner" value={owner} onChange={(e) => setOwner(e.target.value)}>
             <option value="all">All owners</option>
             <option value="lucia">Lucía</option>
             <option value="marco">Marco</option>

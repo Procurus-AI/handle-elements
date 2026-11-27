@@ -7,7 +7,7 @@ const weekly = [12, 14, 13, 18, 16, 22, 20, 26, 24, 30, 28, 34];
 const volatile = [40, 8, 52, 20, 60, 15, 48, 30, 62, 24, 70, 35];
 
 const meta = {
-  title: 'Charts/Sparkline',
+  title: 'Molecules/Sparkline',
   component: Sparkline,
   args: { data: weekly, width: 120, variant: 'line' },
   argTypes: {

@@ -42,7 +42,7 @@ import {
  *
  * - The organisation switcher marks the current account with a CHECK, never a bar.
  *   There is no spine anywhere in this file (`.he-sidebar-item--active` is a
- *   `--he-surface-2` fill plus weight 500).
+ *   `--he-bg-subtle` fill plus weight 500).
  * - Groups are keyed by TENANT ID, so an organisation gets exactly one heading —
  *   the fixture deliberately contains two accounts with the identical display name
  *   "Alfonso de los rios" inside the same tenant (Handle). Grouping by display name
@@ -87,7 +87,7 @@ import {
  * "Live"/"Dev" stay untranslated because they are the deploy targets' names.
  */
 const meta = {
-  title: 'Examples/App Shell',
+  title: 'Pages/Examples/App Shell',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
@@ -226,8 +226,8 @@ const icons = {
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
       <path d="M7.5 2C5.3 2 4 3.7 4 5.7c0 2.9-1.2 3.8-1.2 3.8h9.4S11 8.6 11 5.7C11 3.7 9.7 2 7.5 2Z" {...stroke} />
       <path d="M6.3 11.8c.2.6.7 1 1.2 1s1-.4 1.2-1" {...stroke} />
-      <circle cx="11.6" cy="3.2" r="3.4" fill="var(--he-surface)" />
-      <circle cx="11.6" cy="3.2" r="2.4" fill="var(--he-ok)" />
+      <circle cx="11.6" cy="3.2" r="3.4" fill="var(--he-bg-surface)" />
+      <circle cx="11.6" cy="3.2" r="2.4" fill="var(--he-status-success-text)" />
     </svg>
   ),
 };

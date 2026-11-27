@@ -43,6 +43,7 @@ export function Sparkline({
   className,
   style,
   role = 'img',
+  'aria-label': ariaLabel,
   ...rest
 }: SparklineProps) {
   const h = height ?? Math.round(width / 4);
@@ -61,11 +62,18 @@ export function Sparkline({
   const last = points[points.length - 1];
   const baseY = baseline != null ? y(baseline) : null;
 
+  const fmt = (v: number) => new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(v);
+  const defaultLabel =
+    values.length > 1
+      ? `Tendencia de ${values.length} puntos, de ${fmt(values[0])} a ${fmt(values[values.length - 1])}`
+      : 'Tendencia sin datos suficientes';
+
   return (
     <span
       className={cx('he-sparkline', `he-sparkline--${tone}`, className)}
       style={{ width, height: h, ...style } as CSSProperties}
       role={role}
+      aria-label={ariaLabel ?? (role === 'img' ? defaultLabel : undefined)}
       {...rest}
     >
       {values.length > 0 && (

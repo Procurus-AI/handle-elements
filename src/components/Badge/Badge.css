@@ -1,44 +1,60 @@
+/* Badge: status pill. Fill + text, no border; the dot paints in the label hue. */
 .he-badge {
+  --he-badge-surface: var(--he-status-idle-surface);
+  --he-badge-text: var(--he-status-idle-text);
+  --he-badge-dot: var(--he-text-tertiary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 6px;
-  border-radius: var(--he-radius-full);
-  background: var(--he-surface-2);
-  color: var(--he-text-dim);
-  font-family: var(--he-font-sans);
-  font-size: var(--he-caption);
-  font-weight: 500;
+  gap: 6px;
+  min-height: 24px;
+  padding: var(--he-spacing-1) var(--he-spacing-2);
+  border-radius: var(--he-corner-full);
+  background: var(--he-badge-surface);
+  color: var(--he-badge-text);
+  font-family: var(--he-type-label-sm-family);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
   font-variant-numeric: tabular-nums;
-  line-height: 1;
   white-space: nowrap;
 }
 
 .he-badge--sm {
-  min-width: 16px;
-  height: 16px;
-  padding: 0 5px;
-  font-size: 10.5px;
+  min-height: 20px;
+  padding: 2px 6px;
 }
 
+.he-badge__dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-badge-dot);
+}
+
+.he-badge--success {
+  --he-badge-surface: var(--he-status-success-surface);
+  --he-badge-text: var(--he-status-success-text);
+  --he-badge-dot: var(--he-status-success-text);
+}
+
+.he-badge--warning {
+  --he-badge-surface: var(--he-status-warning-surface);
+  --he-badge-text: var(--he-status-warning-text);
+  --he-badge-dot: var(--he-status-warning-text);
+}
+
+.he-badge--danger {
+  --he-badge-surface: var(--he-status-danger-surface);
+  --he-badge-text: var(--he-status-danger-text);
+  --he-badge-dot: var(--he-status-danger-text);
+}
+
+/* 0.x brand tone, kept accepted: brand fill, never a status. */
 .he-badge--accent {
-  background: var(--he-accent);
-  color: var(--he-on-accent);
-}
-
-.he-badge--ok {
-  background: var(--he-ok-bg);
-  color: var(--he-ok);
-}
-
-.he-badge--warn {
-  background: var(--he-warn-bg);
-  color: var(--he-warn);
-}
-
-.he-badge--error {
-  background: var(--he-error-bg);
-  color: var(--he-error);
+  --he-badge-surface: var(--he-accent-default);
+  --he-badge-text: var(--he-accent-on-accent);
+  --he-badge-dot: var(--he-accent-on-accent);
 }

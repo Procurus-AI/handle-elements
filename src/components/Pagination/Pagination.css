@@ -1,27 +1,21 @@
-/* Pagination — the footer of a record index: range readout, rows-per-page and
- * prev/next arrows. Carries no padding of its own (like .he-toolbar) so the
- * host slot — e.g. DataTable's footer — owns the inset and the numbers line up
- * with the first column. All color/size values come from --he-* tokens. */
+/* Pagination (Figma "Pagination"): range text left (Caption, tertiary), prev / pages / next
+ * right. Carries no padding of its own so the host slot (a table panel footer) owns the inset. */
 .he-pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap; /* survives a narrow container */
-  gap: var(--he-space-3);
+  gap: var(--he-spacing-2);
   width: 100%;
   font-family: var(--he-font-sans);
 }
 
-/* Same type recipe as .he-toolbar__count so the control row and the footer
- * print their numbers in one voice. --he-text-faint is now an AA token
- * (measured 4.86:1 on --he-surface, 4.65:1 on --he-bg); before that it was
- * 2.81:1 and this readout — which is also the aria-live region — was the least
- * legible text on the page. */
 .he-pagination__range,
 .he-pagination__page {
-  font-family: var(--he-font-mono);
-  font-size: var(--he-caption);
-  color: var(--he-text-faint);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-tertiary);
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
@@ -34,68 +28,114 @@
 .he-pagination__controls {
   display: flex;
   align-items: center;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
   margin-left: auto;
-}
-
-.he-pagination--compact .he-pagination__controls {
-  margin-left: 0;
 }
 
 .he-pagination--compact {
   justify-content: center;
 }
 
-/* Arrow geometry matches the Calendar header (28px round, hairline border).
- * The hover DIFFERS on purpose: Calendar fills to --he-surface-2, which darkens
- * in light theme. This lifts instead — stronger border + card shadow, no fill
- * change — per the house rule. Do not "align" it back to Calendar. */
-.he-pagination__arrow {
+.he-pagination--compact .he-pagination__controls {
+  margin-left: 0;
+}
+
+.he-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* prev / next: 26px, pad 5/8, gap 4, corner md, Label/md secondary */
+.he-pagination__step,
+.he-pagination__num {
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
+  border: 0;
+  border-radius: var(--he-corner-md);
+  background: transparent;
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-label-md-family);
+  font-size: var(--he-type-label-md-size);
+  line-height: var(--he-type-label-md-line);
+  font-weight: var(--he-type-label-md-weight);
+  letter-spacing: var(--he-type-label-md-tracking);
+  cursor: pointer;
+  transition:
+    background var(--he-motion-fast),
+    color var(--he-motion-fast);
+}
+
+.he-pagination__step {
+  gap: var(--he-spacing-1);
+  padding: 5px var(--he-spacing-2);
+}
+
+.he-pagination__step .he-icon {
+  color: var(--he-text-tertiary);
+}
+
+.he-pagination--compact .he-pagination__step {
+  padding: 5px;
+}
+
+/* page: 28px square; the current page is the inverse fill */
+.he-pagination__num,
+.he-pagination__gap {
+  box-sizing: border-box;
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-full);
-  background: var(--he-surface);
-  color: var(--he-text-dim);
-  cursor: pointer;
-  transition:
-    color var(--he-transition-fast),
-    border-color var(--he-transition-fast),
-    box-shadow var(--he-transition-fast);
 }
 
-.he-pagination__arrow svg {
-  width: 16px;
-  height: 16px;
+.he-pagination__gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--he-text-secondary);
+  font-size: var(--he-type-label-md-size);
 }
 
-.he-pagination__arrow:hover:not(:disabled) {
-  color: var(--he-text);
-  border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-card);
+.he-pagination__step:hover:not(:disabled),
+.he-pagination__num:hover:not(:disabled):not(.he-pagination__num--current) {
+  background: var(--he-bg-hover);
+  color: var(--he-text-primary);
 }
 
-.he-pagination__arrow:focus-visible {
-  outline: 2px solid var(--he-focus);
+.he-pagination__num--current {
+  background: var(--he-bg-inverse);
+  color: var(--he-bg-surface);
+  cursor: default;
+}
+
+.he-pagination__step:disabled,
+.he-pagination__num:disabled {
+  color: var(--he-text-disabled);
+  cursor: default;
+}
+
+.he-pagination__step:disabled .he-icon {
+  color: var(--he-text-disabled);
+}
+
+.he-pagination__step:focus-visible,
+.he-pagination__num:focus-visible {
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
 }
 
-.he-pagination__arrow:disabled {
-  color: var(--he-text-faint);
-  cursor: default;
-  opacity: 0.55;
+.he-pagination--dense .he-pagination__step {
+  padding-block: 3px;
 }
 
-.he-pagination--dense .he-pagination__arrow {
-  width: 25px;
-  height: 25px;
-}
-
-.he-pagination--dense .he-pagination__arrow svg {
-  width: 14px;
-  height: 14px;
+.he-pagination--dense .he-pagination__num,
+.he-pagination--dense .he-pagination__gap {
+  width: 24px;
+  height: 24px;
 }

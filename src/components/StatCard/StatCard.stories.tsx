@@ -1,14 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '../Badge/Badge';
 import { Card } from '../Card/Card';
-import { Container } from '../Layout/Layout';
 import { Meter } from '../Meter/Meter';
 import { PageHeader } from '../PageHeader/PageHeader';
 import { Sparkline } from '../Sparkline/Sparkline';
 import { StatCard, StatCardGroup, type StatCardTone } from './StatCard';
 
 const meta = {
-  title: 'Elements/StatCard',
+  title: 'Molecules/StatCard',
   component: StatCard,
   args: {
     label: 'Premium volume',
@@ -74,9 +73,9 @@ const KpiRail = ({ columns }: { columns?: number }) => (
       tone="ok"
       label="Overdue receivable"
       value="0"
-      visual={<Sparkline data={[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} tone="ok" height={20} />}
+      visual={<Sparkline data={[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} tone="ok" height={20} aria-label="Cobranza vencida, sin cambios en 12 semanas" />}
     />
-    <StatCard tone="ok" label="Collections" value="46%" visual={<Meter size="sm" tone="ok" value={46} />} />
+    <StatCard tone="ok" label="Collections" value="46%" visual={<Meter size="sm" tone="ok" value={46} aria-label="Cobranza" />} />
     <StatCard
       tone="warn"
       label="Commissions"
@@ -89,16 +88,6 @@ const KpiRail = ({ columns }: { columns?: number }) => (
 
 export const Rail: Story = {
   render: () => <KpiRail columns={6} />,
-};
-
-// Narrow viewport: the auto-fit tracks wrap, the 1px gaps become horizontal
-// hairlines, and the outer border stays single.
-export const RailResponsive: Story = {
-  render: () => (
-    <Container max={480} padding={0}>
-      <KpiRail />
-    </Container>
-  ),
 };
 
 // The dot replaces marking a tile with a coloured bar — 28px² of colour, not 180px².
@@ -121,7 +110,7 @@ export const Visual: Story = {
         label="Collections"
         value="46%"
         delta={{ value: '6 pts', direction: 'up' }}
-        visual={<Sparkline data={[28, 31, 30, 35, 39, 38, 42, 46]} variant="area" tone="ok" width={228} height={32} />}
+        visual={<Sparkline data={[28, 31, 30, 35, 39, 38, 42, 46]} variant="area" tone="ok" width={228} height={32} aria-label="Cobranza, últimas 8 semanas" />}
         footer="Trailing 8 weeks"
       />
     </div>

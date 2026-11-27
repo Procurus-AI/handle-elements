@@ -22,7 +22,7 @@ const collections = [
 ];
 
 const meta = {
-  title: 'Charts/SegmentBar',
+  title: 'Molecules/Segment Bar',
   component: SegmentBar,
   args: {
     segments: premium,

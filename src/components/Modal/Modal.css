@@ -1,28 +1,34 @@
+/* Modal: scrim + centred panel. Figma "Modal" frame: 20px padding, 1px hairlines
+ * between header, body and footer, title 18/24 (heading-lg). */
 .he-modal {
+  --he-modal-pad: calc(var(--he-spacing-4) + var(--he-spacing-1));
   position: fixed;
   inset: 0;
   z-index: 1050;
   display: grid;
   place-items: center;
-  padding: var(--he-space-5);
-  background: var(--he-scrim-soft);
-  animation: he-modal-fade var(--he-transition-base);
+  padding: var(--he-spacing-6);
+  background: var(--he-scrim);
+  animation: he-modal-fade var(--he-motion-base);
 }
 
 .he-modal__panel {
   width: 100%;
-  max-height: min(720px, calc(100vh - (var(--he-space-5) * 2)));
+  max-height: min(720px, calc(100vh - (var(--he-spacing-6) * 2)));
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: var(--he-surface);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  box-shadow: var(--he-shadow-lift);
-  color: var(--he-text);
-  font-family: var(--he-font-sans);
+  background: var(--he-bg-surface);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-xl);
+  box-shadow: var(--he-elevation-modal);
+  color: var(--he-text-primary);
+  font-family: var(--he-type-body-sm-family);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
   outline: none;
-  animation: he-modal-in var(--he-transition-base);
+  animation: he-modal-in var(--he-motion-base);
 }
 
 .he-modal__panel--sm {
@@ -38,113 +44,153 @@
 }
 
 .he-modal__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--he-spacing-4);
+  padding: var(--he-modal-pad);
+}
+
+.he-modal__titles {
   display: grid;
-  gap: var(--he-space-1);
-  padding: var(--he-space-5) var(--he-space-5) var(--he-space-3);
+  flex: 1;
+  gap: var(--he-spacing-1);
+  min-width: 0;
 }
 
 .he-modal__title {
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.25;
+  font-family: var(--he-type-heading-lg-family);
+  font-size: var(--he-type-heading-lg-size);
+  line-height: var(--he-type-heading-lg-line);
+  font-weight: var(--he-type-heading-lg-weight);
+  letter-spacing: var(--he-type-heading-lg-tracking);
+  color: var(--he-text-primary);
 }
 
 .he-modal__description {
-  font-size: var(--he-body-sm);
-  line-height: 1.45;
-  color: var(--he-text-dim);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
+  color: var(--he-text-secondary);
+}
+
+.he-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--he-corner-md);
+  background: transparent;
+  color: var(--he-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--he-motion-fast),
+    color var(--he-motion-fast);
+}
+
+.he-modal__close:hover {
+  background: var(--he-bg-hover);
+  color: var(--he-text-primary);
 }
 
 .he-modal__body {
   overflow-y: auto;
-  padding: 0 var(--he-space-5) var(--he-space-5);
-  font-size: var(--he-body-sm);
-  line-height: 1.5;
+  padding: 0 var(--he-modal-pad) var(--he-modal-pad);
+  font-size: var(--he-type-body-sm-size);
+  line-height: var(--he-type-body-sm-line);
+  letter-spacing: var(--he-type-body-sm-tracking);
+}
+
+.he-modal__header + .he-modal__body {
+  padding-top: 0;
 }
 
 .he-modal__footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--he-space-2);
-  min-height: 58px;
-  padding: var(--he-space-3) var(--he-space-5);
-  border-top: 1px solid var(--he-border);
-  background: var(--he-surface);
+  gap: var(--he-spacing-2);
+  padding: var(--he-spacing-3) var(--he-modal-pad);
+  border-top: var(--he-border-width) solid var(--he-border-default);
+  background: var(--he-bg-surface);
 }
 
 .he-modal__summary {
   display: grid;
-  gap: var(--he-space-2);
-  padding: var(--he-space-3);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  background: var(--he-surface);
+  gap: var(--he-spacing-2);
+  padding: var(--he-spacing-3);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-surface);
 }
 
 .he-modal__summary-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--he-space-4);
+  gap: var(--he-spacing-4);
 }
 
 .he-modal__summary-label {
-  color: var(--he-text-dim);
+  color: var(--he-text-secondary);
 }
 
 .he-modal__summary-value {
-  font-weight: 500;
-  color: var(--he-text);
+  font-weight: var(--he-type-label-md-weight);
+  color: var(--he-text-primary);
 }
 
 .he-modal__option-list {
   display: grid;
-  gap: var(--he-space-2);
+  gap: var(--he-spacing-2);
 }
 
 .he-modal__option {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--he-space-3);
-  padding: var(--he-space-3);
-  border: 1px solid var(--he-border);
-  border-radius: var(--he-radius-sm);
-  background: var(--he-surface);
+  gap: var(--he-spacing-3);
+  padding: var(--he-spacing-3);
+  border: var(--he-border-width) solid var(--he-border-default);
+  border-radius: var(--he-corner-lg);
+  background: var(--he-bg-surface);
 }
 
 .he-modal__option--selected {
   border-color: var(--he-border-strong);
-  box-shadow: var(--he-shadow-card);
+  background: var(--he-bg-subtle);
 }
 
 .he-modal__option-mark {
   width: 14px;
   height: 14px;
-  border: 1px solid var(--he-border-strong);
-  border-radius: var(--he-radius-full);
+  border: var(--he-border-width) solid var(--he-border-strong);
+  border-radius: var(--he-corner-full);
 }
 
 .he-modal__option--selected .he-modal__option-mark {
-  border: 4px solid var(--he-action);
+  border: 4px solid var(--he-bg-inverse);
 }
 
 .he-modal__option-text {
   display: grid;
-  gap: var(--he-space-1);
+  gap: var(--he-spacing-1);
   min-width: 0;
 }
 
 .he-modal__option-title {
-  font-weight: 500;
-  line-height: 1.25;
+  font-weight: var(--he-type-label-md-weight);
+  line-height: var(--he-type-label-md-line);
 }
 
 .he-modal__option-hint {
-  color: var(--he-text-dim);
-  font-size: var(--he-caption);
-  line-height: 1.35;
+  color: var(--he-text-tertiary);
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
 }
 
 @keyframes he-modal-fade {

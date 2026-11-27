@@ -1,0 +1,74 @@
+{
+  "rule": "WCAG 2.1 AA 4.5:1 for text; disabled text exempt",
+  "adjustments": [
+    {
+      "token": "--he-text-tertiary",
+      "mode": "light",
+      "figma": "#8E8E90",
+      "adjusted": "#6A6B6F",
+      "before": 2.77,
+      "after": 4.51,
+      "against": [
+        "--he-bg-surface",
+        "--he-bg-panel",
+        "--he-bg-subtle",
+        "--he-bg-app"
+      ],
+      "step": 0.31
+    },
+    {
+      "token": "--he-status-success-text",
+      "mode": "light",
+      "figma": "#1F9D5B",
+      "adjusted": "#1E7D4E",
+      "before": 3.09,
+      "after": 4.55,
+      "against": [
+        "--he-status-success-surface",
+        "--he-bg-surface"
+      ],
+      "step": 0.25
+    },
+    {
+      "token": "--he-status-warning-text",
+      "mode": "light",
+      "figma": "#B4740F",
+      "adjusted": "#986413",
+      "before": 3.49,
+      "after": 4.56,
+      "against": [
+        "--he-status-warning-surface",
+        "--he-bg-surface"
+      ],
+      "step": 0.18
+    },
+    {
+      "token": "--he-status-danger-text",
+      "mode": "light",
+      "figma": "#D03F3F",
+      "adjusted": "#C13C3D",
+      "before": 4.06,
+      "after": 4.55,
+      "against": [
+        "--he-status-danger-surface",
+        "--he-bg-surface"
+      ],
+      "step": 0.08
+    },
+    {
+      "token": "--he-text-tertiary",
+      "mode": "dark",
+      "figma": "#6B7488",
+      "adjusted": "#838B9C",
+      "before": 3.31,
+      "after": 4.54,
+      "against": [
+        "--he-bg-surface",
+        "--he-bg-panel",
+        "--he-bg-subtle",
+        "--he-bg-app"
+      ],
+      "step": 0.19
+    }
+  ]
+}

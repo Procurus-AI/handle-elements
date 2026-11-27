@@ -1,0 +1,119 @@
+/* CalendarDay: one month-grid cell. 96px tall, pad 8/10, gap 6, bg-surface with a bg-subtle
+ * hairline. Today is a filled circle on the number (bg-inverse), never a filled cell. */
+.he-calendar-day {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-height: 96px;
+  margin: 0;
+  padding: var(--he-spacing-2) 10px;
+  border: 0;
+  border-radius: 0;
+  background: var(--he-bg-surface);
+  box-shadow: inset 0 0 0 var(--he-border-width) var(--he-bg-subtle);
+  color: var(--he-text-primary);
+  font-family: var(--he-font-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--he-motion-fast);
+}
+
+.he-calendar-day:hover:not(.he-calendar-day--empty) {
+  background: var(--he-bg-hover);
+}
+
+.he-calendar-day:focus-visible {
+  outline: 2px solid var(--he-border-focus);
+  outline-offset: -2px;
+}
+
+.he-calendar-day--selected {
+  background: var(--he-bg-subtle);
+}
+
+.he-calendar-day--empty {
+  cursor: default;
+}
+
+.he-calendar-day--outside {
+  background: var(--he-bg-app);
+}
+
+.he-calendar-day__head {
+  display: inline-flex;
+  align-self: flex-start;
+}
+
+.he-calendar-day__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--he-text-primary);
+}
+
+.he-calendar-day--outside .he-calendar-day__num {
+  color: var(--he-text-tertiary);
+}
+
+.he-calendar-day--today .he-calendar-day__num {
+  min-width: 22px;
+  height: 22px;
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-inverse);
+  color: var(--he-bg-surface);
+}
+
+.he-calendar-day__events {
+  display: flex;
+  flex-direction: column;
+  gap: var(--he-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.he-calendar-day__event {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--he-type-caption-size);
+  line-height: var(--he-type-caption-line);
+  letter-spacing: var(--he-type-caption-tracking);
+  color: var(--he-text-secondary);
+}
+
+.he-calendar-day__dot {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--he-corner-full);
+  background: var(--he-text-tertiary);
+}
+
+.he-calendar-day__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.he-calendar-day__event--ok .he-calendar-day__dot {
+  background: var(--he-status-success-text);
+}
+.he-calendar-day__event--warn .he-calendar-day__dot {
+  background: var(--he-status-warning-text);
+}
+.he-calendar-day__event--error .he-calendar-day__dot {
+  background: var(--he-status-danger-text);
+}
+/* In the Calendar grid the grid's 1px gap draws the hairlines, so the cell's own inset line goes. */
+.he-cal__cell > .he-calendar-day {
+  box-shadow: none;
+}

@@ -230,7 +230,7 @@ const COPY_GLYPH = (
 );
 
 const meta = {
-  title: 'Examples/Customer Drawer',
+  title: 'Pages/Examples/Customer Drawer',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
@@ -258,7 +258,7 @@ type Story = StoryObj<typeof meta>;
  * | An expand toggle that just stretched every row (a receipt amount ~1000px from its status pill) | `Drawer aside` — expanding reveals the activity feed as a **second column**, so the width buys density instead of slack |
  * | `$9,222 MXN` for a `$9,221.56` receipt | `minimumFractionDigits={2}` on the one shared `mxn()` helper, table column included |
  * | "Entidades relacionadas 4" | No count — 1 and 3 are already stated by the two sub-heads directly below it |
- * | A 2px Borealis spine on the selected table row | `isRowSelected` → a `--he-surface-2` fill plus a weight step on the first cell. **This is the sanctioned selected-row idiom**: no accent bar, no edge spine, in DataTable, List or Sidebar |
+ * | A 2px Borealis spine on the selected table row | `isRowSelected` → a `--he-bg-subtle` fill plus a weight step on the first cell. **This is the sanctioned selected-row idiom**: no accent bar, no edge spine, in DataTable, List or Sidebar |
  *
  * Interactions are real: rows open the drawer, the expand toggle widens it,
  * "Agregar documento" flips the empty state into hairline rows, the copy control

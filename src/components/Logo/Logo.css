@@ -1,0 +1,17 @@
+.he-logo {
+  flex: none;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.he-logo--default {
+  color: var(--he-text-primary);
+}
+
+.he-logo--inverse {
+  color: var(--he-text-inverse);
+}
+
+.he-logo--accent {
+  color: var(--he-accent-default);
+}

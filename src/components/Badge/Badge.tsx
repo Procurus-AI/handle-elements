@@ -1,21 +1,42 @@
 import type { HTMLAttributes } from 'react';
 import { cx } from '../../lib/cx';
 
-export type BadgeTone = 'neutral' | 'accent' | 'ok' | 'warn' | 'error';
+/** v1 tones are `success | warning | danger | idle`; the 0.4.5 names stay accepted. */
+export type BadgeTone = 'neutral' | 'accent' | 'ok' | 'warn' | 'error' | 'success' | 'warning' | 'danger' | 'idle';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  /** Quiet neutral by default; status tones tint bg + text. */
+  /** Status tone. `neutral` = `idle`, `ok` = `success`, `warn` = `warning`, `error` = `danger`. Default `idle`. */
   tone?: BadgeTone;
   size?: 'sm' | 'md';
+  /** Leading status dot (Figma `Dot`). Off by default: without it the badge is a plain label pill. */
+  dot?: boolean;
 }
 
-/** Small count / status pill — e.g. a filter-tab count or a sidebar counter. */
-export function Badge({ tone = 'neutral', size = 'md', className, children, ...rest }: BadgeProps) {
+const CANONICAL: Record<BadgeTone, 'success' | 'warning' | 'danger' | 'idle' | 'accent'> = {
+  neutral: 'idle',
+  idle: 'idle',
+  ok: 'success',
+  success: 'success',
+  warn: 'warning',
+  warning: 'warning',
+  error: 'danger',
+  danger: 'danger',
+  accent: 'accent',
+};
+
+/** 0.4.5 class names, still emitted so consumer CSS keyed on them keeps matching. */
+const LEGACY_CLASS = { idle: 'neutral', success: 'ok', warning: 'warn', danger: 'error' } as const;
+
+/** Status pill: tinted fill, text and dot in one hue, no border. For bare numbers use Count. */
+export function Badge({ tone = 'neutral', size = 'md', dot = false, className, children, ...rest }: BadgeProps) {
+  const canonical = CANONICAL[tone];
+  const legacy = canonical === 'accent' ? undefined : LEGACY_CLASS[canonical];
   return (
     <span
-      className={cx('he-badge', `he-badge--${tone}`, size === 'sm' && 'he-badge--sm', className)}
+      className={cx('he-badge', `he-badge--${canonical}`, legacy && `he-badge--${legacy}`, size === 'sm' && 'he-badge--sm', className)}
       {...rest}
     >
+      {dot && <span className="he-badge__dot" aria-hidden />}
       {children}
     </span>
   );

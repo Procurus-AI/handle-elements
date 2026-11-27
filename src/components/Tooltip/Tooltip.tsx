@@ -1,5 +1,9 @@
 import {
+  cloneElement,
+  Fragment,
+  isValidElement,
   useCallback,
+  useId,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -30,6 +34,8 @@ export interface HoverCardProps extends Omit<HTMLAttributes<HTMLSpanElement>, 'c
   placement?: TooltipPlacement;
   openDelay?: number;
   closeDelay?: number;
+  /** Accessible name of the card (it is a `dialog`). Give it whenever the card has no visible heading. */
+  label?: string;
   width?: CSSProperties['width'];
   contentClassName?: string;
 }
@@ -129,6 +135,8 @@ export function Tooltip({
   const contentRef = useRef<HTMLDivElement>(null);
   const floating = useDelayedOpen(delay, 0);
   const { hide } = floating;
+  const tooltipId = useId();
+  const shown = floating.open && content != null && content !== false && isBrowser();
   const [position, setPosition] = useState<FloatingPosition | null>(null);
 
   /* NEVER position from an unmeasured bubble. `positionFor` subtracts the bubble's
@@ -173,11 +181,23 @@ export function Tooltip({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [floating.open, hide]);
 
+  // The description belongs on the control that holds focus. A single element child
+  // gets it directly; any other child shape falls back to the anchor span.
+  // A Fragment is an element but takes no props: it falls back to the anchor span.
+  const only =
+    isValidElement<{ 'aria-describedby'?: string }>(children) && children.type !== Fragment ? children : null;
+  const describedBy = shown ? tooltipId : undefined;
+  const merge = (existing?: string) => [existing, describedBy].filter(Boolean).join(' ') || undefined;
+  const anchored = only
+    ? cloneElement(only, { 'aria-describedby': merge(only.props['aria-describedby']) })
+    : children;
+
   return (
     <>
       <span
         ref={anchorRef}
         className={cx('he-tooltip-anchor', className)}
+        aria-describedby={only ? undefined : describedBy}
         onPointerEnter={(event) => {
           if (disabled) return;
           updatePosition(event);
@@ -195,17 +215,15 @@ export function Tooltip({
         onBlur={floating.hide}
         {...rest}
       >
-        {children}
+        {anchored}
       </span>
       {/* A shared anchor (charts hand one Tooltip the whole plot) can be hovered
         * with nothing under the cursor — never portal an empty bubble. */}
-      {floating.open &&
-        content != null &&
-        content !== false &&
-        isBrowser() &&
+      {shown &&
         createPortal(
           <div
             ref={contentRef}
+            id={tooltipId}
             role="tooltip"
             className={cx('he-tooltip', contentClassName)}
             style={
@@ -230,6 +248,7 @@ export function HoverCard({
   placement = 'bottom',
   openDelay = 150,
   closeDelay = 120,
+  label,
   width = 280,
   contentClassName,
   className,
@@ -256,6 +275,17 @@ export function HoverCard({
     if (floating.open) updatePosition();
   }, [floating.open, placement, width]);
 
+  // WCAG 1.4.13: hover content must be dismissible without moving the pointer or focus.
+  const { open: cardOpen, hide: hideCard } = floating;
+  useEffect(() => {
+    if (!cardOpen || !isBrowser()) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') hideCard();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [cardOpen, hideCard]);
+
   return (
     <>
       <span
@@ -281,6 +311,7 @@ export function HoverCard({
           <div
             ref={contentRef}
             role="dialog"
+            aria-label={label}
             className={cx('he-hover-card', contentClassName)}
             style={
               {

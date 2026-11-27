@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../lib/cx';
+import { Icon } from '../Icon/Icon';
 
 export type DrawerSide = 'right' | 'left';
 export type DrawerCompanionVariant = 'panel' | 'floating';
@@ -58,7 +59,7 @@ export interface DrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
   companion?: ReactNode;
   /** Width of the connected workspace. Default `min(600px, calc(100vw - 420px))`. */
   companionWidth?: string;
-  /** Accessible name for the connected workspace region. */
+  /** Accessible name for the connected workspace region. Default `Espacio de trabajo conectado`. */
   companionLabel?: string;
   /**
    * `panel` joins the drawer at full height. `floating` presents a smaller
@@ -70,12 +71,12 @@ export interface DrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title
    * companion before it dismisses the full drawer.
    */
   onCompanionClose?: () => void;
-  /** Accessible name for the close control. Default `Close` — pass the screen's
+  /** Accessible name for the close control. Default `Cerrar` — pass the screen's
    *  own language, the library will not mix one in for you. */
   closeLabel?: string;
-  /** Accessible name for the expand toggle while collapsed. Default `Expand panel`. */
+  /** Accessible name for the expand toggle while collapsed. Default `Expandir panel`. */
   expandLabel?: string;
-  /** Accessible name for the expand toggle while expanded. Default `Collapse panel`. */
+  /** Accessible name for the expand toggle while expanded. Default `Contraer panel`. */
   collapseLabel?: string;
   /** Any valid CSS width for the panel (default 420px). */
   width?: string;
@@ -99,18 +100,18 @@ export function Drawer({
   actions,
   expanded = false,
   onToggleExpand,
-  expandedWidth = 'min(880px, calc(100vw - var(--he-space-7)))',
+  expandedWidth = 'min(880px, calc(100vw - var(--he-spacing-12)))',
   tabs,
   aside,
   footer,
   companion,
   companionWidth = 'min(600px, calc(100vw - 420px))',
-  companionLabel = 'Connected workspace',
+  companionLabel = 'Espacio de trabajo conectado',
   companionVariant = 'panel',
   onCompanionClose,
-  closeLabel = 'Close',
-  expandLabel = 'Expand panel',
-  collapseLabel = 'Collapse panel',
+  closeLabel = 'Cerrar',
+  expandLabel = 'Expandir panel',
+  collapseLabel = 'Contraer panel',
   width = '420px',
   closeOnScrim = true,
   closeOnEsc = true,
@@ -282,9 +283,7 @@ export function Drawer({
               )}
               {actions}
               <button type="button" className="he-drawer__close" onClick={onClose} aria-label={closeLabel}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                  <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
+                <Icon name="x" size={16} />
               </button>
             </div>
           </div>

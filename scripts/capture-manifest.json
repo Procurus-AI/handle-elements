@@ -1,0 +1,24 @@
+{
+  "convention": "Every Figma component has a story exported as `Figma` that reproduces the Figma board layout of its variants. Its meta title is `<Level>/<Name in words>` (e.g. `Molecules/Filter Chip`), so the id is `<level>-<name-in-words>--figma` (`molecules-filter-chip--figma`). Existing single-word folders keep their name (`Molecules/Tabs`, `Molecules/Segmented`). The App shell page has two stories, `Pages/App Shell` `Light` and `Dark`. `figma` paths are relative to $FIGMA_EXPORT (default /home/ec2-user/data/dev/figma-handle-platform-ui-2026-11-27). The composite uses the light capture: the Figma boards are light.",
+  "entries": [
+    { "name": "Badge", "figma": "02-Components/Badge__23-19.png", "story": "atoms-badge--figma", "themes": ["light", "dark"] },
+    { "name": "Button", "figma": "02-Components/Button__23-41.png", "story": "atoms-button--figma", "themes": ["light", "dark"] },
+    { "name": "Tab", "figma": "02-Components/Tab__23-56.png", "story": "molecules-tabs--figma", "themes": ["light", "dark"] },
+    { "name": "NavItem", "figma": "02-Components/Nav-item__23-65.png", "story": "molecules-nav-item--figma", "themes": ["light", "dark"] },
+    { "name": "Input", "figma": "02-Components/Input__24-10.png", "story": "atoms-input--figma", "themes": ["light", "dark"] },
+    { "name": "SegmentedControl", "figma": "02-Components/Segmented-control__24-16.png", "story": "molecules-segmented--figma", "themes": ["light", "dark"] },
+    { "name": "CarrierChip", "figma": "02-Components/Carrier-chip__24-37.png", "story": "molecules-carrier-chip--figma", "themes": ["light", "dark"] },
+    { "name": "StatCell", "figma": "02-Components/Stat-cell__24-66.png", "story": "molecules-stat-cell--figma", "themes": ["light", "dark"] },
+    { "name": "LogoWordmark", "figma": "02-Components/Logo-Wordmark__26-35.png", "story": "atoms-logo--figma", "themes": ["light", "dark"] },
+    { "name": "LogoBrandmark", "figma": "02-Components/Logo-Brandmark__26-51.png", "story": "atoms-logo--figma", "themes": ["light", "dark"] },
+    { "name": "Pagination", "figma": "02-Components/Pagination__27-20.png", "story": "molecules-pagination--figma", "themes": ["light", "dark"] },
+    { "name": "EmptyState", "figma": "02-Components/Empty-state__27-25.png", "story": "molecules-empty-state--figma", "themes": ["light", "dark"] },
+    { "name": "CalendarDay", "figma": "02-Components/Calendar-day__27-49.png", "story": "molecules-calendar-day--figma", "themes": ["light", "dark"] },
+    { "name": "FilterChip", "figma": "02-Components/Filter-chip__42-41.png", "story": "molecules-filter-chip--figma", "themes": ["light", "dark"] },
+    { "name": "CarrierStatusCard", "figma": "02-Components/Carrier-status-card__42-132.png", "story": "molecules-carrier-status-card--figma", "themes": ["light", "dark"] },
+    { "name": "Icon", "figma": "02-Components/Icon__68-109.png", "story": "atoms-icon--figma", "themes": ["light", "dark"] },
+    { "name": "Count", "figma": "02-Components/Count__84-84.png", "story": "atoms-count--figma", "themes": ["light", "dark"] },
+    { "name": "AppShell", "figma": null, "figmaNote": "No Figma render for 03 App shell: the image endpoint was rate-limited at export (figma export README, Missing).", "story": "pages-app-shell--light", "themes": ["light"], "fullscreen": true },
+    { "name": "AppShell", "figma": null, "figmaNote": "No Figma render for 03 App shell: the image endpoint was rate-limited at export (figma export README, Missing).", "story": "pages-app-shell--dark", "themes": ["dark"], "fullscreen": true }
+  ]
+}

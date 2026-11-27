@@ -1,0 +1,51 @@
+.he-carrier-chip {
+  --he-carrier-chip-dot: var(--he-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--he-spacing-1) var(--he-spacing-2);
+  border-radius: var(--he-corner-full);
+  background: var(--he-bg-surface);
+  color: var(--he-text-secondary);
+  font-family: var(--he-type-label-sm-family);
+  font-size: var(--he-type-label-sm-size);
+  line-height: var(--he-type-label-sm-line);
+  font-weight: var(--he-type-label-sm-weight);
+  letter-spacing: var(--he-type-label-sm-tracking);
+  white-space: nowrap;
+}
+
+.he-carrier-chip__icon {
+  flex-shrink: 0;
+  color: var(--he-text-tertiary);
+}
+
+.he-carrier-chip__dot {
+  width: 5px;
+  height: 5px;
+  flex-shrink: 0;
+  border-radius: var(--he-corner-full);
+  background: var(--he-carrier-chip-dot);
+}
+
+.he-carrier-chip--ok {
+  --he-carrier-chip-dot: var(--he-status-success-text);
+}
+
+.he-carrier-chip--warning {
+  --he-carrier-chip-dot: var(--he-status-warning-text);
+}
+
+.he-carrier-chip--error {
+  --he-carrier-chip-dot: var(--he-status-danger-text);
+}
+
+/* The dot carries the state visually; this text carries it for screen readers. */
+.he-carrier-chip__state {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -89,6 +89,7 @@ export function Avatar({
         `he-avatar--tone-${resolvedTone}`,
         !overlaid && className,
       )}
+      role="img"
       aria-label={label}
       {...(overlaid ? {} : rest)}
     >
@@ -143,7 +144,7 @@ export function AvatarStack({
         />
       ))}
       {remaining > 0 && (
-        <span className={cx('he-avatar', `he-avatar--${size}`, 'he-avatar--more')} style={{ zIndex: 0 }}>
+        <span className={cx('he-avatar', `he-avatar--${size}`, 'he-avatar--more')} role="img" aria-label={`${remaining} más`} style={{ zIndex: 0 }}>
           +{remaining}
         </span>
       )}

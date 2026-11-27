@@ -40,7 +40,7 @@ import { formatCurrency } from '../format';
  * Numbers are illustrative (non-zero) so every chart renders.
  */
 const meta = {
-  title: 'Examples/Records Dashboard',
+  title: 'Pages/Examples/Records Dashboard',
   parameters: { layout: 'fullscreen' },
 } satisfies Meta;
 
