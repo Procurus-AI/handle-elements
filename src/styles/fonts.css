@@ -29,7 +29,7 @@
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Inter'; /* unslop-ignore: the designer's specified UI face (Figma Foundations), paired with Sentient for titles */
   src: url('../fonts/inter/InterVariable.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
@@ -37,7 +37,7 @@
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: 'Inter'; /* unslop-ignore: the designer's specified UI face (Figma Foundations), paired with Sentient for titles */
   src: url('../fonts/inter/InterVariable-Italic.woff2') format('woff2');
   font-weight: 100 900;
   font-style: italic;
