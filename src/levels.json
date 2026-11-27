@@ -1,0 +1,20 @@
+{
+  "atoms": [
+    "Icon", "Text", "Button", "Badge", "StatusPill", "Count", "Chip", "Input", "Checkbox",
+    "Radio", "Switch", "Avatar", "Logo", "Loading", "Meter", "Money", "DateText", "Layout",
+    "Tooltip"
+  ],
+  "molecules": [
+    "Tabs", "NavItem", "Segmented", "FilterChip", "CarrierChip", "Pagination", "EmptyState",
+    "Field", "StatCell", "StatCard", "StatToggle", "CarrierStatusCard", "CalendarDay",
+    "ChoiceCard", "Stepper", "Toast", "ThemeSwitch", "Menu", "DescriptionList", "List",
+    "Toolbar", "Section", "Sparkline", "SegmentBar"
+  ],
+  "organisms": [
+    "Sidebar", "PageHeader", "Panel", "Card", "DataTable", "Modal", "Drawer", "Calendar",
+    "Composer", "EmailComposer", "AgentResponse", "ReviewField", "ReviewWorkspace",
+    "InboxList", "Feed", "Timeline", "EvidencePreview", "BarChart", "ColumnChart",
+    "Histogram", "Heatmap", "RadialGauge", "Treemap", "TrendGrid"
+  ],
+  "templates": ["AppShell", "ListPage", "AgentWorkspace"]
+}
