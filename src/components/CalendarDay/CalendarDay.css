@@ -113,10 +113,6 @@
 .he-calendar-day__event--error .he-calendar-day__dot {
   background: var(--he-status-danger-text);
 }
-.he-calendar-day__event--accent .he-calendar-day__dot {
-  background: var(--he-accent-default);
-}
-
 /* In the Calendar grid the grid's 1px gap draws the hairlines, so the cell's own inset line goes. */
 .he-cal__cell > .he-calendar-day {
   box-shadow: none;

@@ -6,7 +6,9 @@ import { DemoSidebar } from '../ListPage/fixtures';
 import { Sidebar, SidebarFooterItem, SidebarHeader, SidebarItem, SidebarSection } from './Sidebar';
 
 /**
- * The app's left rail, flat on the bg-app canvas: logo, labelled sections of Nav items,
+ * The app's left rail. Standalone it is opaque with a hairline on the right and padding on the
+ * scroll region (0.4.5 geometry); inside the App shell, or with `flat`, it is Kevin's flat look
+ * on the bg-app canvas: logo, labelled sections of Nav items,
  * then a footer with Configuración, the theme control and the Profile row. A single
  * settings entry: Configuración lives only in the footer. `collapsed` (or the App shell below
  * 960px) turns it into a 56px rail with the Brandmark.
@@ -39,6 +41,32 @@ export const Figma: Story = {
       <DemoSidebar active="validacion" />
     </div>
   ),
+};
+
+/**
+ * Standalone defaults, the geometry apps that place the rail themselves depend on: opaque
+ * background, border on the right, padding on the scroll region and none on the rail.
+ */
+export const Standalone: Story = {
+  render: () => (
+    <div style={column(250, 320)}>
+      <Sidebar aria-label="Barra lateral independiente">
+        <SidebarSection label="Agentes" collapsible={false}>
+          <SidebarItem icon={<Icon name="file-text" />} label="Agente de Cotización" />
+        </SidebarSection>
+      </Sidebar>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const rail = within(canvasElement).getByRole('complementary', { name: 'Barra lateral independiente' });
+    const railStyle = getComputedStyle(rail);
+    const scroll = getComputedStyle(rail.querySelector('.he-sidebar__scroll')!);
+    await expect(railStyle.paddingLeft).toBe('0px');
+    await expect(railStyle.borderRightWidth).toBe('1px');
+    await expect(railStyle.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+    await expect(scroll.paddingTop).toBe('8px');
+    await expect(scroll.paddingLeft).toBe('16px');
+  },
 };
 
 /** Nav item states. Hover and focus come from the pointer and keyboard: tab into the list or hover a row. */

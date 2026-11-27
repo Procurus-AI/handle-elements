@@ -131,7 +131,7 @@
 }
 .he-stat__dot--accent {
   background: var(--he-accent-default);
-  box-shadow: 0 0 0 var(--he-border-width) var(--he-accent-line);
+  box-shadow: 0 0 0 var(--he-border-width) var(--he-border-strong);
 }
 
 /* Visual slot: a Sparkline or Meter, between the value row and the footer. */

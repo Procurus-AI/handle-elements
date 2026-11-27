@@ -50,6 +50,16 @@ export const States: Story = {
   ),
 };
 
+/** The value names a disabled card: the first enabled card must still be a tab stop. */
+export const DisabledSelection: Story = {
+  render: () => <Choices initial="manual" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('radio', { name: /Conectar bandeja/ })).toHaveAttribute('tabindex', '0');
+    await expect(canvas.getByRole('radio', { name: /Reenviar correos/ })).toHaveAttribute('tabindex', '-1');
+  },
+};
+
 export const KeyboardNavigation: Story = {
   render: () => <Choices initial="bandeja" />,
   play: async ({ canvasElement }) => {

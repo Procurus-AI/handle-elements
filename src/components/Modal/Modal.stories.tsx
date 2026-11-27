@@ -206,3 +206,43 @@ export const Sizes: Story = {
     );
   },
 };
+
+/** Tab wraps at the first and last tabbable control: negative tabindex, disabled and hidden controls are skipped, and the header close button is optional. */
+export const TabbableTrap: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>Abrir ajustes</Button>
+        <Modal open={open} onClose={() => setOpen(false)} title="Ajustes" hideCloseButton>
+          <div style={{ display: 'flex', gap: 'var(--he-spacing-2)' }}>
+            <Button variant="outline">Primero</Button>
+            <Button variant="outline" disabled>
+              Deshabilitado
+            </Button>
+            <Button variant="outline">Último</Button>
+            <button type="button" tabIndex={-1}>
+              Solo con puntero
+            </button>
+            <button type="button" hidden>
+              Oculto
+            </button>
+          </div>
+        </Modal>
+      </>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(document.body);
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Abrir ajustes' }));
+    const dialog = await body.findByRole('dialog');
+    await expect(within(dialog).queryByRole('button', { name: 'Cerrar' })).toBeNull();
+    const first = within(dialog).getByRole('button', { name: 'Primero' });
+    const last = within(dialog).getByRole('button', { name: 'Último' });
+    last.focus();
+    await userEvent.tab();
+    await expect(first).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    await expect(last).toHaveFocus();
+  },
+};

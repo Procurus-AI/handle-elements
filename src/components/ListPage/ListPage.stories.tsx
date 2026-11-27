@@ -138,6 +138,13 @@ export const Figma: Story = {
   render: () => <Page />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    // Shell look: the page header is inset (24/24/0) and the rail is flat (pad 12, no border).
+    const head = canvas.getByRole('heading', { level: 1 }).closest('header')!;
+    await expect(getComputedStyle(head).paddingLeft).toBe('24px');
+    await expect(getComputedStyle(head).marginBottom).toBe('0px');
+    const rail = canvasElement.querySelector('.he-sidebar')!;
+    await expect(getComputedStyle(rail).paddingLeft).toBe('12px');
+    await expect(getComputedStyle(rail).borderRightWidth).toBe('0px');
     await userEvent.type(canvas.getByRole('searchbox', { name: 'Buscar póliza o cliente' }), 'Pacheco');
     await expect(canvas.getAllByRole('row')).toHaveLength(2);
     await expect(canvas.getByText('Juan Pacheco Aranda')).toBeVisible();

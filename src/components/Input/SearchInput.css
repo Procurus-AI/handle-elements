@@ -26,6 +26,6 @@
 }
 
 .he-searchinput__clear:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 1px;
 }

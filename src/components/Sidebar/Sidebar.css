@@ -1,15 +1,17 @@
-/* Sidebar (Figma "Sidebar"): 208 wide, pad 12, flat on the app canvas (bg-app), no border.
- * Rows are NavItems (`he-nav-item`, styled in NavItem.css); this file owns the layout around them:
- * logo row, labelled sections, and the footer (rule, Configuración, theme, rule, Profile). */
+/* Sidebar (Figma "Sidebar"): quiet single-column rail. Standalone it keeps the 0.4.5 geometry
+ * (opaque bg-app, hairline on the right, padding on the scroll region and the pinned blocks)
+ * so apps that place it themselves do not shift. Inside the App shell the rail is Kevin's flat
+ * look: pad 12, no border (the `.he-app-shell` block below). Rows are NavItems (`he-nav-item`,
+ * styled in NavItem.css); this file owns the layout around them. */
 
 .he-sidebar {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  width: var(--he-sidebar-width, 208px);
+  width: var(--he-sidebar-width, 250px);
   height: 100%;
-  padding: var(--he-spacing-3);
-  background: transparent;
+  background: var(--he-bg-app);
+  border-right: var(--he-border-width) solid var(--he-border-default);
   font-family: var(--he-type-body-sm-family);
   color: var(--he-text-primary);
 }
@@ -18,40 +20,65 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  padding: var(--he-spacing-2) var(--he-spacing-4) var(--he-spacing-4);
 }
 
 /* Logo row: pad 12/8 */
 .he-sidebar__header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--he-spacing-2);
-  padding: var(--he-spacing-3) var(--he-spacing-2);
+  padding: var(--he-spacing-3) var(--he-spacing-2) var(--he-spacing-4);
 }
 
 .he-sidebar__brandmark {
   display: none;
 }
 
-/* Footer blocks: a rule, then 10px of air before the content. */
+/* Pinned blocks (utility, footer): a rule, then the content on the nav rows' edge. */
 .he-sidebar__utility,
 .he-sidebar__footer {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: var(--he-spacing-3);
-  padding-top: 10px;
+  gap: 2px;
+  padding: var(--he-spacing-2) var(--he-spacing-4);
   border-top: var(--he-border-width) solid var(--he-border-default);
 }
 
-.he-sidebar__utility {
+/* Flat rail (Kevin's look): pad 12, no border, rules above the pinned blocks. Applied inside
+ * the App shell and by the `flat` prop. Selectors reach three classes so they win over the
+ * standalone and collapsed rules whatever the stylesheet order. */
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) {
+  --he-sidebar-width: 208px;
+  padding: var(--he-spacing-3);
+  border-right: none;
+}
+
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__scroll {
+  padding: 0;
+}
+
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__header {
+  padding-bottom: var(--he-spacing-3);
+}
+
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__utility,
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__footer {
+  gap: var(--he-spacing-3);
+  padding: 10px 0 0;
+}
+
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__utility {
   margin-top: var(--he-spacing-3);
 }
 
-.he-sidebar__utility + .he-sidebar__footer {
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__utility + .he-sidebar__footer {
   margin-top: 10px;
 }
 
-.he-sidebar__scroll + .he-sidebar__footer {
+:is(.he-app-shell .he-sidebar, .he-sidebar.he-sidebar--flat) .he-sidebar__scroll + .he-sidebar__footer {
   margin-top: var(--he-spacing-3);
 }
 
@@ -321,6 +348,15 @@
  * visually, not removed, so every control keeps its accessible name. */
 .he-sidebar--collapsed {
   width: 56px;
+}
+
+.he-sidebar--collapsed .he-sidebar__scroll,
+.he-sidebar--collapsed .he-sidebar__utility,
+.he-sidebar--collapsed .he-sidebar__footer {
+  padding-inline: var(--he-spacing-2);
+}
+
+:is(.he-app-shell .he-sidebar--collapsed, .he-sidebar--flat.he-sidebar--collapsed) {
   padding-inline: var(--he-spacing-2);
 }
 

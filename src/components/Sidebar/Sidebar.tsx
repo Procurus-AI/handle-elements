@@ -28,8 +28,14 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
    * landmark whose name contradicts its role.
    */
   as?: 'aside' | 'nav' | 'div';
-  /** Any valid CSS width (default 208px, the Figma sidebar). Ignored while `collapsed`. */
+  /** Any valid CSS width (default 250px as in 0.4.5; 208px, the Figma sidebar, inside AppShell or with `flat`). Ignored while `collapsed`. */
   width?: string;
+  /**
+   * Kevin's flat rail: padding 12 on the sidebar, no right border. The App shell applies
+   * the same look to any Sidebar inside it. Off by default: standalone, the Sidebar keeps its
+   * 0.4.5 geometry (opaque, border on the right, padding on the scroll region).
+   */
+  flat?: boolean;
   /** Icon-only rail: hides labels, ends, and sections; footer keeps only its media. */
   collapsed?: boolean;
   /**
@@ -44,6 +50,7 @@ export interface SidebarProps extends HTMLAttributes<HTMLElement> {
 export function Sidebar({
   as: Element = 'aside',
   width,
+  flat = false,
   collapsed = false,
   utility,
   footer,
@@ -54,7 +61,7 @@ export function Sidebar({
 }: SidebarProps) {
   return (
     <Element
-      className={cx('he-sidebar', collapsed && 'he-sidebar--collapsed', className)}
+      className={cx('he-sidebar', flat && 'he-sidebar--flat', collapsed && 'he-sidebar--collapsed', className)}
       style={{ width: collapsed ? undefined : width, ...style }}
       data-collapsed={collapsed || undefined}
       {...rest}

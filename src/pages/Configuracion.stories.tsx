@@ -118,7 +118,7 @@ function Page({ initialOpen }: { initialOpen?: string }) {
 
   return (
     <AppShell sidebar={<PagesSidebar active="configuracion" />}>
-      <PageHeader title="Configuración" />
+      <PageHeader inset title="Configuración" />
       <div className="pg-settings">
         <nav className="pg-settings__index" aria-label="Secciones de configuración">
           {SETTINGS_INDEX.map((s) => (

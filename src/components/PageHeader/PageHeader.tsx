@@ -22,13 +22,19 @@ export interface PageHeaderProps extends Omit<HTMLAttributes<HTMLElement>, 'titl
   tabs?: ReactNode;
   /**
    * `page` (default) is the Figma page header: display title, actions on the right, tabs
-   * below, padding 24/24/0/24. `compact` is the same at record/workspace density, without
-   * padding. `section` titles a panel, card, or chart with an `h2`. `hero` is the centered
+   * below, flush with 32px below (0.4.5 spacing; add `inset` for the Figma padding).
+   * `compact` is the same at record/workspace density, without margin. `section` titles a panel, card, or chart with an `h2`. `hero` is the centered
    * greeting.
    */
   size?: PageHeaderSize;
   /** Defaults to `center` for `hero`, `start` otherwise. */
   align?: PageHeaderAlign;
+  /**
+   * Figma padding 24/24/0/24 and no bottom margin, for a header at the top of a shell
+   * panel. Off by default so apps that pad their own pages do not get double padding.
+   * Only applies to `size="page"`.
+   */
+  inset?: boolean;
   /** Bottom rule. Off by default for every size (the Figma header has none). */
   divider?: boolean;
   /** Caps the text column: a number (px) or any CSS length. */
@@ -46,7 +52,8 @@ export function PageHeader({
   tabs,
   size = 'page',
   align,
-  divider = false,
+  divider,
+  inset = false,
   measure,
   as,
   className,
@@ -61,7 +68,9 @@ export function PageHeader({
         'he-pagehead',
         `he-pagehead--${size}`,
         resolvedAlign === 'center' && 'he-pagehead--center',
-        divider && 'he-pagehead--divider',
+        // 0.4.5 default kept: a page header has a divider unless it is inset in Kevin's shell.
+        (divider ?? (size === 'page' && !inset)) && 'he-pagehead--divider',
+        inset && size === 'page' && 'he-pagehead--inset',
         className,
       )}
       style={

@@ -59,6 +59,7 @@ export function DemoSidebar({ active = 'registros', collapsed = false, theme = '
     <Sidebar
       aria-label="Navegación principal"
       as="nav"
+      flat
       collapsed={collapsed}
       utility={
         <>

@@ -11,9 +11,24 @@ import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
 import { cx } from '../../lib/cx';
 
-/** Everything a keyboard can land on; the trap cycles this set inside the panel. */
+/** Candidates for the Tab order; `tabbable()` then drops what a keyboard cannot reach. */
 const FOCUSABLE =
-  'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  'a[href],button,input:not([type="hidden"]),select,textarea,summary,[contenteditable]:not([contenteditable="false"]),[tabindex]';
+
+/** Elements Tab can land on: not disabled, hidden, inert, negative-tabindex or non-rendered. */
+function tabbable(panel: HTMLElement): HTMLElement[] {
+  return Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((node) => {
+    if (node.tabIndex < 0) return false;
+    if ((node as HTMLButtonElement).disabled) return false;
+    if (node.closest('[hidden],[inert],fieldset:disabled')) return false;
+    if (node.closest('details:not([open])') && node.tagName !== 'SUMMARY') return false;
+    for (let el: HTMLElement | null = node; el && el !== panel.parentElement; el = el.parentElement) {
+      const style = getComputedStyle(el);
+      if (style.display === 'none' || style.visibility === 'hidden') return false;
+    }
+    return true;
+  });
+}
 
 export type ModalSize = 'sm' | 'md' | 'lg';
 export type ConfirmDialogIntent = 'default' | 'destructive';
@@ -29,8 +44,10 @@ export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   closeOnEsc?: boolean;
   /** Accessible name when there is no visible `title`. A visible title labels the dialog by reference. */
   ariaLabel?: string;
-  /** Accessible name of the header close button. Default `Close`; give it in the screen's own language. */
+  /** Accessible name of the header close button. Default `Cerrar`; give it in the screen's own language. */
   closeLabel?: string;
+  /** Omit the header close button (Esc, scrim and footer actions still close). Default false. */
+  hideCloseButton?: boolean;
   scrimClassName?: string;
 }
 
@@ -55,6 +72,7 @@ export function Modal({
   closeOnEsc = true,
   ariaLabel,
   closeLabel = 'Cerrar',
+  hideCloseButton = false,
   scrimClassName,
   className,
   onKeyDown,
@@ -95,9 +113,7 @@ export function Modal({
     if (event.key !== 'Tab' || event.defaultPrevented) return;
     const panel = panelRef.current;
     if (!panel) return;
-    const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-      (node) => node.offsetParent !== null,
-    );
+    const nodes = tabbable(panel);
     if (nodes.length === 0) {
       event.preventDefault();
       panel.focus();
@@ -143,9 +159,11 @@ export function Modal({
               )}
               {description != null && <div className="he-modal__description">{description}</div>}
             </div>
-            <button type="button" className="he-modal__close" onClick={onClose} aria-label={closeLabel}>
-              <Icon name="x" size={16} />
-            </button>
+            {!hideCloseButton && (
+              <button type="button" className="he-modal__close" onClick={onClose} aria-label={closeLabel}>
+                <Icon name="x" size={16} />
+              </button>
+            )}
           </div>
         )}
         {children != null && <div className="he-modal__body">{children}</div>}
@@ -157,8 +175,8 @@ export function Modal({
 }
 
 export function ConfirmDialog({
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel = 'Confirmar',
+  cancelLabel = 'Cancelar',
   intent = 'default',
   onConfirm,
   onCancel,

@@ -90,7 +90,7 @@
 }
 .he-card--status-accent {
   --he-card-status: var(--he-accent-default);
-  --he-card-line: var(--he-accent-line);
+  --he-card-line: var(--he-border-strong);
 }
 
 .he-card--statusvar-edge {

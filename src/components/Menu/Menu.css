@@ -308,8 +308,10 @@
   border-color: var(--he-border-strong);
 }
 
+/* Secondary, not tertiary: the shortcut sits on the hover and highlight fills too, where
+ * tertiary drops below 4.5:1 in dark mode. */
 .he-menu__shortcut {
-  color: var(--he-text-tertiary);
+  color: var(--he-text-secondary);
   font-family: var(--he-type-caption-family);
   font-size: var(--he-type-caption-size);
   line-height: var(--he-type-caption-line);

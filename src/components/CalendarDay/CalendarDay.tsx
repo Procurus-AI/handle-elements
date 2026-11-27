@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cx } from '../../lib/cx';
 
-/** Event line tone; mirrors the status dot colours. `accent` is the brand mark, not a status. */
-export type CalendarDayEventStatus = 'ok' | 'warn' | 'error' | 'neutral' | 'accent';
+/** Event line tone; mirrors the status dot colours. The brand accent is never a status. */
+export type CalendarDayEventStatus = 'ok' | 'warn' | 'error' | 'neutral';
 
 export interface CalendarDayEvent {
   status: CalendarDayEventStatus;

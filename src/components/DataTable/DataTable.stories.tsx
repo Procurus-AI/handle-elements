@@ -86,6 +86,21 @@ function SelectableTable() {
         data={RECEIPTS.slice(0, 4)}
         rowKey={rowKey}
       />
+      {/* No rowKey: the key is the row's index in `data`, so one record is selected, not one per page. */}
+      {[1, 2].map((page) => (
+        <DataTable
+          key={page}
+          caption={`Sin rowKey, página ${page}`}
+          captionHidden
+          selectable
+          defaultSelectedKeys={[0]}
+          defaultSort={{ key: 'cliente', direction: 'desc' }}
+          columns={RECEIPT_COLUMNS.slice(0, 2)}
+          data={RECEIPTS.slice(0, 4)}
+          page={page}
+          pageSize={2}
+        />
+      ))}
     </div>
   );
 }
@@ -95,7 +110,7 @@ export const Selectable: Story = {
   render: () => <SelectableTable />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const all = canvas.getByRole('checkbox', { name: 'Seleccionar todas las filas' });
+    const [all] = canvas.getAllByRole('checkbox', { name: 'Seleccionar todas las filas' });
     const rows = canvas.getAllByRole('checkbox', { name: 'Seleccionar fila' });
     await userEvent.click(rows[0]);
     await expect(canvas.getByRole('status')).toHaveTextContent('1 seleccionados');
@@ -105,6 +120,13 @@ export const Selectable: Story = {
     await expect(all).toBeChecked();
     await userEvent.click(all);
     await expect(canvas.getByRole('status')).toHaveTextContent('0 seleccionados');
+    // Without rowKey, defaultSelectedKeys=[0] is the first record of `data` wherever it lands.
+    const checkedRows = canvas
+      .getAllByRole('checkbox', { name: 'Seleccionar fila' })
+      .filter((box) => (box as HTMLInputElement).checked)
+      .map((box) => box.closest('tr')!);
+    await expect(checkedRows).toHaveLength(1);
+    await expect(checkedRows[0]).toHaveTextContent(RECEIPTS[0].cliente);
   },
 };
 

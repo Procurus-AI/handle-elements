@@ -146,6 +146,15 @@ ENTRIES.forEach((entry, i) => {
         `(b) <${where(ex.name)}> rejects 0.4.5 props`,
       );
     }
+    if (ex.value && !ex.component) {
+      // Functions and constants: the new value must be usable wherever the 0.4.5 one was
+      // (same parameters accepted, return type still assignable).
+      counts.values = (counts.values ?? 0) + 1;
+      emit(
+        `type _d_${id} = Assert<typeof ${N}.${ex.name}, typeof ${O}.${ex.name}>;`,
+        `(d) value ${where(ex.name)} no longer matches its 0.4.5 signature`,
+      );
+    }
     if (ex.type) {
       counts.types++;
       const args = ex.typeParams ? `<${Array(ex.typeParams).fill('any').join(', ')}>` : '';
@@ -174,7 +183,7 @@ writeFileSync(
 );
 
 // ---- 4. type-check -------------------------------------------------------------------
-log(`checking ${counts.exports} exports, ${counts.components} components, ${counts.types} types`);
+log(`checking ${counts.exports} exports, ${counts.components} components, ${counts.values ?? 0} values, ${counts.types} types`);
 const tsc = spawnSync(path.join(root, 'node_modules/.bin/tsc'), ['-p', path.join(fixtureDir, 'tsconfig.json'), '--pretty', 'false'], {
   encoding: 'utf8',
   cwd: fixtureDir,
@@ -188,8 +197,9 @@ for (const line of out.split('\n').filter(Boolean)) {
   if (m && path.resolve(fixtureDir, m[1]) === fixture && checks[Number(m[2])]) {
     const label = checks[Number(m[2])];
     if (!failures.has(label)) failures.set(label, []);
-    last = failures.get(label);
-    last.push(m[3]);
+    const diag = [m[3]];
+    failures.get(label).push(diag);
+    last = diag;
   } else if (/^\s/.test(line) && last) {
     last.push(line.trim());
   } else {
@@ -203,8 +213,10 @@ const waived = [];
 const exceptionsFile = path.join(root, 'compat-exceptions.json');
 if (existsSync(exceptionsFile)) {
   for (const ex of JSON.parse(readFileSync(exceptionsFile, 'utf8')).exceptions ?? []) {
-    const msgs = failures.get(ex.label);
-    if (msgs && msgs.join('\n').includes(ex.mustMention)) {
+    const diags = failures.get(ex.label);
+    // Every diagnostic under the label must name the stated cause; one unrelated error keeps
+    // the whole label failing.
+    if (diags && diags.every((d) => d.join('\n').includes(ex.mustMention))) {
       failures.delete(ex.label);
       waived.push(`${ex.label} — ${ex.reason}`);
     }
@@ -217,7 +229,7 @@ if (failures.size || other.length || (tsc.status !== 0 && !onlyWaived)) {
   console.error(`[check-compat] ${failures.size} incompatibilit${failures.size === 1 ? 'y' : 'ies'} with 0.4.5:`);
   for (const [label, msgs] of failures) {
     console.error(`  ${label}`);
-    for (const msg of msgs) console.error(`      ${msg.length > 400 ? msg.slice(0, 400) + '...' : msg}`);
+    for (const msg of msgs.flat()) console.error(`      ${msg.length > 400 ? msg.slice(0, 400) + '...' : msg}`);
   }
   if (other.length) {
     console.error('  other tsc errors (fixture or source):');
@@ -225,4 +237,4 @@ if (failures.size || other.length || (tsc.status !== 0 && !onlyWaived)) {
   }
   process.exit(1);
 }
-log(`OK: the current tree is compatible with 0.4.5 (${counts.exports} exports, ${counts.components} components, ${counts.types} types)`);
+log(`OK: the current tree is compatible with 0.4.5 (${counts.exports} exports, ${counts.components} components, ${counts.values ?? 0} values, ${counts.types} types)`);

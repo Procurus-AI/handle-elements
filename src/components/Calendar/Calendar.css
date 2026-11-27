@@ -330,9 +330,6 @@
 .he-cal-panel__row-dot--neutral {
   background: var(--he-text-tertiary);
 }
-.he-cal-panel__row-dot--accent {
-  background: var(--he-accent-default);
-}
 
 .he-cal-panel__row-main {
   flex: 1;
@@ -366,7 +363,7 @@
 
 .he-cal-panel__row-amount {
   flex-shrink: 0;
-  font-family: var(--he-font-mono);
+  font-family: var(--he-font-sans);
   font-size: var(--he-type-caption-size);
   color: var(--he-text-primary);
   font-variant-numeric: tabular-nums;

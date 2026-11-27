@@ -1,7 +1,6 @@
 import {
   Fragment,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -11,6 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../lib/cx';
+import { useIsomorphicLayoutEffect } from '../../lib/useIsomorphicLayoutEffect';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Icon } from '../Icon/Icon';
 import { Skeleton } from '../Loading/Skeleton';
@@ -80,7 +80,10 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
   caption?: ReactNode;
   /** Keeps `caption` available to assistive technology without adding a visible table title. */
   captionHidden?: boolean;
-  /** Stable React key per row. Defaults to the row index. */
+  /**
+   * Stable key per row, used for selection and expansion. `index` is the row's position in the
+   * original `data` array (not its position after filter, sort or paging). Defaults to that index.
+   */
   rowKey?: (row: T, index: number) => string | number;
   onRowClick?: (row: T, index: number) => void;
   /**
@@ -147,6 +150,8 @@ export interface DataTableProps<T> extends Omit<HTMLAttributes<HTMLDivElement>, 
    * users, and the team reported not finding it.
    */
   rowActions?: (row: T, index: number) => ReactNode;
+  /** Hidden header text of the row-actions column. Default 'Acciones'. */
+  actionsLabel?: string;
   /** Adds a leading checkbox column. The header checkbox selects every row on the current page. */
   selectable?: boolean;
   /** Controlled set of selected row keys (values from `rowKey`). Omit for uncontrolled. */
@@ -213,6 +218,7 @@ export function DataTable<T>({
   onExpandedChange,
   defaultExpandedKeys,
   expandLabel = 'Mostrar detalle',
+  actionsLabel = 'Acciones',
   rowActions,
   selectable = false,
   selectedKeys,
@@ -241,8 +247,10 @@ export function DataTable<T>({
     () => new Set(isExpandControlled ? expandedKeys : internalExpanded),
     [isExpandControlled, expandedKeys, internalExpanded],
   );
-  const keyOf = (row: T, index: number): string | number =>
-    rowKey ? rowKey(row, index) : index;
+  // Keys follow the record: `origin` is the row's index in the original `data`, carried through
+  // filter, sort and paging, so selection never moves to another record.
+  const keyOf = (row: T, origin: number): string | number =>
+    rowKey ? rowKey(row, origin) : origin;
   const toggleExpand = (key: string | number) => {
     const next = new Set(expandedSet);
     if (next.has(key)) next.delete(key);
@@ -276,11 +284,12 @@ export function DataTable<T>({
     return map;
   }, [columns]);
 
-  const filteredData = useMemo(() => {
+  const filteredEntries = useMemo(() => {
+    const entries = data.map((row, origin) => ({ row, origin }));
     const query = (globalFilter ?? '').trim().toLowerCase();
-    if (!query) return data;
+    if (!query) return entries;
     const keys = filterKeys ?? columns.map((c) => c.key);
-    return data.filter((row) => {
+    return entries.filter(({ row }) => {
       if (filterFn) return filterFn(row, query);
       return keys.some((k) => {
         const value = (row as Record<string, unknown>)[k];
@@ -288,6 +297,8 @@ export function DataTable<T>({
       });
     });
   }, [data, globalFilter, filterKeys, filterFn, columns]);
+
+  const filteredData = useMemo(() => filteredEntries.map((e) => e.row), [filteredEntries]);
 
   // The callback is held in a ref and kept out of the dep array on purpose: an
   // inline arrow is a new identity every render, so depending on it turns any
@@ -298,16 +309,16 @@ export function DataTable<T>({
     filteredCb.current?.(filteredData);
   }, [filteredData]);
 
-  const sortedData = useMemo(() => {
-    if (!sort) return filteredData;
+  const sortedEntries = useMemo(() => {
+    if (!sort) return filteredEntries;
     const col = columnByKey.get(sort.key);
-    if (!col) return filteredData;
+    if (!col) return filteredEntries;
     const accessor = col.sortValue ?? ((row: T) => (row as Record<string, unknown>)[col.key] as never);
     const dir = sort.direction === 'asc' ? 1 : -1;
     const nulls = col.nulls ?? 'auto';
-    return [...filteredData].sort((a, b) => {
-      const av = accessor(a);
-      const bv = accessor(b);
+    return [...filteredEntries].sort((ea, eb) => {
+      const av = accessor(ea.row);
+      const bv = accessor(eb.row);
       if (nulls !== 'auto') {
         // Deliberately NOT multiplied by `dir`: the whole point is that empty /
         // suspect values keep their side of the table across an asc↔desc flip.
@@ -319,15 +330,17 @@ export function DataTable<T>({
       }
       return defaultCompare(av, bv) * dir;
     });
-  }, [filteredData, sort, columnByKey]);
+  }, [filteredEntries, sort, columnByKey]);
 
-  const pagedData = useMemo(() => {
-    if (!pageSize || pageSize <= 0) return sortedData;
+  const sortedData = useMemo(() => sortedEntries.map((e) => e.row), [sortedEntries]);
+
+  const pagedEntries = useMemo(() => {
+    if (!pageSize || pageSize <= 0) return sortedEntries;
     const start = (Math.max(1, Math.floor(page) || 1) - 1) * pageSize;
-    return sortedData.slice(start, start + pageSize);
-  }, [sortedData, page, pageSize]);
+    return sortedEntries.slice(start, start + pageSize);
+  }, [sortedEntries, page, pageSize]);
 
-  const pageKeys = pagedData.map((row, index) => keyOf(row, index));
+  const pageKeys = pagedEntries.map(({ row, origin }) => keyOf(row, origin));
   const checkedOnPage = pageKeys.filter((k) => checkedSet.has(k)).length;
   const allChecked = pageKeys.length > 0 && checkedOnPage === pageKeys.length;
   const toggleAll = () => {
@@ -357,9 +370,10 @@ export function DataTable<T>({
 
   // A scroll region needs keyboard access (axe: scrollable-region-focusable). Only a region
   // that actually overflows becomes a tab stop, so a table that fits adds none.
+  const isEmpty = !loading && pagedEntries.length === 0;
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollable, setScrollable] = useState(false);
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     const measure = () =>
@@ -370,9 +384,9 @@ export function DataTable<T>({
     observer.observe(el);
     if (el.firstElementChild) observer.observe(el.firstElementChild);
     return () => observer.disconnect();
-  });
+    // Re-measure when the content that sizes the region changes; the observer covers resizes.
+  }, [pagedEntries, loading, columns, dense, layout, minTableWidth, maxHeight, isEmpty]);
 
-  const isEmpty = !loading && pagedData.length === 0;
   const regionName = typeof caption === 'string' ? caption : 'Tabla de datos';
 
   return (
@@ -479,7 +493,7 @@ export function DataTable<T>({
                 })}
                 {hasActions && (
                   <th scope="col" className="he-table__th he-table__actions-cell">
-                    <span className="he-table__sr">Acciones</span>
+                    <span className="he-table__sr">{actionsLabel}</span>
                   </th>
                 )}
               </tr>
@@ -495,9 +509,9 @@ export function DataTable<T>({
                       ))}
                     </tr>
                   ))
-                : pagedData.map((row, index) => {
+                : pagedEntries.map(({ row, origin }, index) => {
                     const detailOpen = isRowSelected?.(row, index) ?? false;
-                    const key = keyOf(row, index);
+                    const key = keyOf(row, origin);
                     const checked = selectable && checkedSet.has(key);
                     const expandedContent = hasExpander ? renderExpanded!(row, index) : null;
                     const canExpand = expandedContent != null;

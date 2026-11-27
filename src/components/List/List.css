@@ -71,11 +71,11 @@
   background: var(--he-text-tertiary);
 }
 
-/* Borealis is a fill, but at 1.11:1 a bare 6px disc vanishes on --he-surface;
- * the authored line token rings it so it stays visible without becoming text. */
+/* Borealis is a fill, but at 1.11:1 a bare 6px disc vanishes on --he-bg-surface;
+ * the strong border token rings it so it stays visible without becoming text. */
 .he-list__dot--accent {
   background: var(--he-accent-default);
-  box-shadow: 0 0 0 1px var(--he-accent-line);
+  box-shadow: 0 0 0 1px var(--he-border-strong);
 }
 
 /* Interactive rows (button / link) reset native chrome and gain hover + focus. */

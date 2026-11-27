@@ -1,12 +1,19 @@
-/* PageHeader (Figma "Page header"): column, gap 16, padding 24/24/0/24.
- * Title row = Sentient page title + actions on the right; the Tabs row sits under it. */
+/* PageHeader (Figma "Page header"): column, gap 16. Title row = Sentient page title + actions
+ * on the right; the Tabs row sits under it. Flush by default and 32px of air below a page
+ * header, as in 0.4.5: apps pad their own pages. `inset` adds the Figma padding 24/24/0/24
+ * for a header that sits at the top of a shell panel (ListPage sets it). */
 .he-pagehead {
   display: flex;
   flex-direction: column;
   gap: var(--he-spacing-4);
   box-sizing: border-box;
-  padding: var(--he-spacing-6) var(--he-spacing-6) 0;
+  margin-bottom: var(--he-spacing-8);
   color: var(--he-text-primary);
+}
+
+.he-pagehead--inset {
+  margin-bottom: 0;
+  padding: var(--he-spacing-6) var(--he-spacing-6) 0;
 }
 
 .he-pagehead__row {
@@ -71,9 +78,9 @@
   margin-top: var(--he-spacing-1);
 }
 
-/* compact — the page's h1 at record/workspace density, no outer padding. */
+/* compact — the page's h1 at record/workspace density, no outer margin. */
 .he-pagehead--compact {
-  padding: 0;
+  margin-bottom: 0;
   gap: var(--he-spacing-3);
 }
 
@@ -88,9 +95,9 @@
   letter-spacing: var(--he-type-display-page-title-sm-tracking);
 }
 
-/* section — titles a panel, card or chart. Sans heading, no padding. */
+/* section — titles a panel, card or chart. Sans heading, no margin. */
 .he-pagehead--section {
-  padding: 0;
+  margin-bottom: 0;
   gap: var(--he-spacing-2);
 }
 
@@ -116,7 +123,6 @@
 /* hero — the centered greeting. */
 .he-pagehead--hero {
   padding-top: var(--he-spacing-12);
-  padding-bottom: var(--he-spacing-6);
 }
 
 .he-pagehead--hero .he-pagehead__title {
@@ -125,7 +131,7 @@
 
 /* rule under the header (opt in) */
 .he-pagehead--divider {
-  padding-bottom: var(--he-spacing-4);
+  padding-bottom: var(--he-spacing-6);
   border-bottom: var(--he-border-width) solid var(--he-border-default);
 }
 

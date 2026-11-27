@@ -71,6 +71,32 @@ export const Form: Story = {
   ),
 };
 
+/** RadioGroup is named by aria-labelledby; a Checkbox gets one name, not two. */
+export const Composite: Story = {
+  render: () => (
+    <div style={{ display: 'grid', gap: 16 }}>
+      <Field label="Buzón">
+        <RadioGroup name="buzon" defaultValue="shared">
+          <Radio value="shared" label="Buzón compartido de Handle" />
+          <Radio value="own" label="Mi propio correo" />
+        </RadioGroup>
+      </Field>
+      <Field label="Leer códigos automáticamente">
+        <Checkbox />
+      </Field>
+      <Field label="Notificaciones">
+        <Checkbox label="Resumen diario" />
+      </Field>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('radiogroup')).toHaveAccessibleName('Buzón');
+    await expect(canvas.getByRole('checkbox', { name: 'Leer códigos automáticamente' })).toBeInTheDocument();
+    await expect(canvas.getByRole('checkbox', { name: 'Resumen diario' })).toBeInTheDocument();
+  },
+};
+
 export const ErrorLinked: Story = {
   /* Danger text meets AA on a surface, not on the app background. */
   decorators: [

@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 import { Icon } from '../Icon/Icon';
 import { Input } from './Input';
+import { SearchInput } from './SearchInput';
 import { Select } from './Select';
 import { Textarea } from './Textarea';
 
@@ -55,4 +57,21 @@ export const States: Story = {
       <Textarea placeholder="Notas para la renovación…" aria-label="Notas" />
     </div>
   ),
+};
+
+/** SearchInput speaks Spanish by default; the clear button appears once there is text. */
+export const Search: Story = {
+  render: () => (
+    <div style={col}>
+      <SearchInput aria-label="Buscar" />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('searchbox', { name: 'Buscar' });
+    await expect(input).toHaveAttribute('placeholder', 'Buscar…');
+    await userEvent.type(input, 'bupa');
+    await userEvent.click(canvas.getByRole('button', { name: 'Limpiar búsqueda' }));
+    await expect(input).toHaveValue('');
+  },
 };

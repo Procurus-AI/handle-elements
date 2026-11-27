@@ -39,7 +39,7 @@
 }
 
 .he-switch:focus-visible {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
 }
 
@@ -49,7 +49,8 @@
   width: var(--he-switch-thumb);
   height: var(--he-switch-thumb);
   border-radius: var(--he-corner-full);
-  background: var(--he-bg-surface);
+  /* Unchecked: --he-text-secondary reaches 4.5:1 on --he-bg-active (light and dark); 3:1 is the floor. */
+  background: var(--he-text-secondary);
   box-shadow: var(--he-elevation-panel);
   transition: transform var(--he-motion-fast);
 }
@@ -60,6 +61,8 @@
 }
 
 .he-switch--checked .he-switch__thumb {
+  /* 15:1 on the accent track; the old surface thumb was 1.1:1. */
+  background: var(--he-accent-on-accent);
   transform: translateX(calc(var(--he-switch-width) - var(--he-switch-thumb) - 4px));
 }
 

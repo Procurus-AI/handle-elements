@@ -109,6 +109,21 @@ export async function openStorybook(opts = {}) {
     deviceScaleFactor: opts.deviceScaleFactor ?? 1,
     reducedMotion: 'reduce',
   });
+  // Record Storybook's channel events so a story counts as settled only after its play
+  // function finished, and so a failing play function is a render error, not a pass.
+  await context.addInitScript(() => {
+    const state = { done: false, error: null };
+    window.__heStory = state;
+    const attach = () => {
+      const ch = window.__STORYBOOK_ADDONS_CHANNEL__;
+      if (!ch) return setTimeout(attach, 10);
+      ch.on('storyRendered', () => { state.done = true; });
+      for (const ev of ['storyErrored', 'storyThrewException', 'playFunctionThrewException']) {
+        ch.on(ev, (e) => { state.error = `${ev}: ${(e && (e.message || e.title)) || ''}`.slice(0, 300); state.done = true; });
+      }
+    };
+    attach();
+  });
 
   /** Open one story and wait until it is settled; returns the theme on <html>. Throws on render errors or timeout. */
   async function openStory(page, id, theme) {
@@ -121,10 +136,12 @@ export async function openStorybook(opts = {}) {
         const err = document.querySelector('#error-message');
         const shown = document.body.classList.contains('sb-show-errordisplay');
         if (shown && err) throw new Error('story error: ' + err.textContent);
-        return root && root.childElementCount > 0;
+        const st = window.__heStory;
+        if (st && st.error) throw new Error(st.error);
+        return root && root.childElementCount > 0 && (!st || st.done);
       },
       undefined,
-      { timeout: 20000 },
+      { timeout: 30000 },
     );
     // The theme actually on <html>: a story may pin its own `globals.theme`.
     return page.evaluate(async () => {
@@ -155,6 +172,11 @@ export async function openStorybook(opts = {}) {
           const job = jobs[next++];
           try {
             const actual = await openStory(page, job.story.id, job.theme);
+            if (actual !== 'light' && actual !== 'dark') {
+              // A missing or unknown theme means the decorator is broken: never a skip.
+              results.push({ ...job, error: `story rendered without a valid data-theme (got ${actual})` });
+              continue;
+            }
             if (actual !== job.theme) {
               // Story pins another theme; it is covered by that theme's run (or never, if
               // that theme was not requested).

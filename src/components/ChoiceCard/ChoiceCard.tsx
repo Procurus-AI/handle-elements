@@ -1,5 +1,7 @@
 import {
+  Children,
   createContext,
+  isValidElement,
   useContext,
   type HTMLAttributes,
   type KeyboardEvent,
@@ -12,6 +14,12 @@ import { Icon, type IconName } from '../Icon/Icon';
 interface ChoiceGroupContext {
   value: string | undefined;
   select: (value: string) => void;
+  /**
+   * Card that holds the tab stop when the value is missing or names a disabled/unknown card:
+   * the first enabled one. `null` = the selection is usable, `undefined` = the group could not
+   * read its cards (wrapped children), so every card stays reachable while nothing is selected.
+   */
+  fallbackValue: string | null | undefined;
 }
 
 const GroupContext = createContext<ChoiceGroupContext | null>(null);
@@ -26,8 +34,8 @@ export interface ChoiceCardGroupProps extends Omit<HTMLAttributes<HTMLDivElement
 }
 
 /**
- * Radiogroup of ChoiceCards. Arrow keys move and select. With nothing selected every enabled
- * card is a tab stop; once one is selected it is the only one.
+ * Radiogroup of ChoiceCards. Arrow keys move and select. When the value is missing or
+ * names a disabled card, the first enabled card is the tab stop; otherwise the selected card is.
  */
 export function ChoiceCardGroup({ value, onChange, label, className, children, onKeyDown, ...rest }: ChoiceCardGroupProps) {
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -45,8 +53,18 @@ export function ChoiceCardGroup({ value, onChange, label, className, children, o
     next.click();
   };
 
+  const cards = Children.toArray(children).flatMap((child) =>
+    isValidElement<ChoiceCardProps>(child) && child.type === ChoiceCard ? [child.props] : [],
+  );
+  const fallbackValue =
+    cards.length === 0
+      ? undefined
+      : cards.some((card) => !card.disabled && card.value === value)
+        ? null
+        : (cards.find((card) => !card.disabled)?.value ?? null);
+
   return (
-    <GroupContext.Provider value={{ value, select: (v) => onChange?.(v) }}>
+    <GroupContext.Provider value={{ value, select: (v) => onChange?.(v), fallbackValue }}>
       <div
         role="radiogroup"
         aria-label={label}
@@ -90,13 +108,14 @@ export function ChoiceCard({
   if (!group) throw new Error('ChoiceCard must be rendered inside a ChoiceCardGroup');
   const checked = group.value === value;
   const noSelection = group.value === undefined || group.value === '';
+  const tabStop = checked || group.fallbackValue === value || (group.fallbackValue === undefined && noSelection);
   return (
     <button
       type="button"
       role="radio"
       aria-checked={checked}
       disabled={disabled}
-      tabIndex={checked || noSelection ? 0 : -1}
+      tabIndex={tabStop ? 0 : -1}
       className={cx('he-choice-card', checked && 'he-choice-card--checked', className)}
       onClick={(event) => {
         onClick?.(event);

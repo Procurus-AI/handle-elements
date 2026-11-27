@@ -9,8 +9,23 @@ import { cx } from '../../lib/cx';
 import { CalendarDay } from '../CalendarDay/CalendarDay';
 import { Icon } from '../Icon/Icon';
 
-/** Status vocabulary shared by day markers and panel rows (mirrors StatusPill). */
+/**
+ * Status vocabulary shared by day markers and panel rows (mirrors StatusPill).
+ * `accent` is the 0.4.5 value: still accepted, rendered as `neutral` because the
+ * brand colour is never a status.
+ */
 export type CalendarStatus = 'ok' | 'warn' | 'error' | 'neutral' | 'accent';
+
+/** Visible status after the legacy `accent` value is folded into `neutral`. */
+const presentedStatus = (status: CalendarStatus): Exclude<CalendarStatus, 'accent'> =>
+  status === 'accent' ? 'neutral' : status;
+
+/** Accessible names of the header controls. Defaults are Spanish. */
+export interface CalendarLabels {
+  previousMonth?: string;
+  nextMonth?: string;
+  today?: string;
+}
 
 export interface CalendarMarker {
   status: CalendarStatus;
@@ -49,8 +64,10 @@ export interface CalendarProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onS
   renderDay?: (ctx: CalendarDayContext) => ReactNode;
   /** Render leading/trailing days from adjacent months (default false → blanks). */
   showOutsideDays?: boolean;
-  /** Label for the "jump to today" button. Default "Today". */
+  /** Label for the "jump to today" button. Default "Hoy". Wins over `labels.today`. */
   todayLabel?: string;
+  /** Header control labels: `previousMonth` "Mes anterior", `nextMonth` "Mes siguiente", `today` "Hoy". */
+  labels?: CalendarLabels;
   /** Right-aligned header slot (search, filters, export…). */
   actions?: ReactNode;
   /** Hide the header row entirely. */
@@ -77,7 +94,8 @@ export function Calendar({
   markers,
   renderDay,
   showOutsideDays = false,
-  todayLabel = 'Hoy',
+  todayLabel,
+  labels,
   actions,
   hideHeader = false,
   className,
@@ -136,13 +154,13 @@ export function Calendar({
         <div className="he-cal__header">
           <div className="he-cal__nav">
             <button type="button" className="he-cal__today" onClick={() => changeMonth(todayDate)}>
-              {todayLabel}
+              {todayLabel ?? labels?.today ?? 'Hoy'}
             </button>
             <div className="he-cal__arrows">
               <button
                 type="button"
                 className="he-cal__arrow"
-                aria-label="Mes anterior"
+                aria-label={labels?.previousMonth ?? 'Mes anterior'}
                 onClick={() => changeMonth(addMonths(viewMonth, -1))}
               >
                 <Icon name="chevron-left" />
@@ -150,7 +168,7 @@ export function Calendar({
               <button
                 type="button"
                 className="he-cal__arrow"
-                aria-label="Mes siguiente"
+                aria-label={labels?.nextMonth ?? 'Mes siguiente'}
                 onClick={() => changeMonth(addMonths(viewMonth, 1))}
               >
                 <Icon name="chevron-right" />
@@ -193,7 +211,7 @@ export function Calendar({
                     today={isToday}
                     outside={!inMonth}
                     selected={isSelected}
-                    events={markers?.(date)}
+                    events={markers?.(date).map((m) => ({ ...m, status: presentedStatus(m.status) }))}
                     onClick={() => selectDay(date)}
                   >
                     {renderDay ? renderDay({ date, inMonth, isToday, isSelected }) : undefined}
@@ -297,7 +315,7 @@ export function CalendarPanelRow({
         </span>
       )}
       {status != null && (
-        <span className={cx('he-cal-panel__row-dot', `he-cal-panel__row-dot--${status}`)} aria-hidden />
+        <span className={cx('he-cal-panel__row-dot', `he-cal-panel__row-dot--${presentedStatus(status)}`)} aria-hidden />
       )}
       {leading != null && <span className="he-cal-panel__row-leading">{leading}</span>}
       <span className="he-cal-panel__row-main">

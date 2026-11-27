@@ -110,3 +110,25 @@ export const HoverCardStory: Story = {
     await expect(await body.findByRole('dialog')).toBeVisible();
   },
 };
+
+/** A Fragment child cannot take props: the description goes on the anchor span. */
+export const FragmentChild: Story = {
+  name: 'Hijo Fragment',
+  render: () => (
+    <div style={{ padding: 'var(--he-spacing-12) var(--he-spacing-8)' }}>
+      <Tooltip content="Descripción del grupo." delay={0}>
+        <>
+          <Button variant="secondary">Uno</Button>
+          <Button variant="secondary">Dos</Button>
+        </>
+      </Tooltip>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(document.body);
+    await userEvent.tab();
+    const tip = await body.findByRole('tooltip');
+    const anchor = canvasElement.querySelector('.he-tooltip-anchor');
+    await expect(anchor).toHaveAttribute('aria-describedby', tip.id);
+  },
+};

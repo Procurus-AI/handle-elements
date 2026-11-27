@@ -71,6 +71,33 @@ export const States: Story = {
   },
 };
 
+/** The one-button cycle skips disabled options. */
+export const IconOnlyCycle: Story = {
+  render: () => {
+    const [value, setValue] = useState('live');
+    return (
+      <Segmented
+        label="Entorno"
+        iconOnly
+        value={value}
+        onChange={setValue}
+        options={[
+          { value: 'live', label: 'Producción' },
+          { value: 'staging', label: 'Pruebas', disabled: true },
+          { value: 'dev', label: 'Desarrollo' },
+        ]}
+      />
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = canvas.getByRole('button');
+    await expect(toggle).toHaveAccessibleName('Entorno: Producción \u2192 Desarrollo');
+    await userEvent.click(toggle);
+    await expect(toggle).toHaveAccessibleName('Entorno: Desarrollo \u2192 Producción');
+  },
+};
+
 export const WithIcons: Story = {
   render: () => {
     const [value, setValue] = useState('summary');

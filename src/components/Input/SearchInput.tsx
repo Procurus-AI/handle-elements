@@ -12,6 +12,8 @@ export interface SearchInputProps extends Omit<InputProps, 'icon' | 'type' | 'en
   clearable?: boolean;
   /** Debounce for `onValueChange`, in ms (default 0 = immediate). */
   debounceMs?: number;
+  /** Accessible name of the clear button. Default "Limpiar búsqueda". */
+  clearLabel?: string;
   /** Custom leading icon (defaults to a search glyph). */
   icon?: ReactNode;
 }
@@ -24,8 +26,9 @@ export function SearchInput({
   clearable = true,
   debounceMs = 0,
   icon,
+  clearLabel = 'Limpiar búsqueda',
   variant = 'pill',
-  placeholder = 'Search…',
+  placeholder = 'Buscar…',
   className,
   ...rest
 }: SearchInputProps) {
@@ -70,7 +73,7 @@ export function SearchInput({
       icon={icon ?? <Icon name="search" size={16} />}
       end={
         clearable && current ? (
-          <button type="button" className="he-searchinput__clear" onClick={clear} aria-label="Clear search">
+          <button type="button" className="he-searchinput__clear" onClick={clear} aria-label={clearLabel}>
             <Icon name="x" size={14} />
           </button>
         ) : undefined

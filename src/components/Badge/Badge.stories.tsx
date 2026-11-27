@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { Badge } from './Badge';
 
 const meta = {
@@ -65,4 +66,12 @@ export const LegacyTones: Story = {
       <Badge tone="neutral">neutral</Badge>
     </div>
   ),
+  /** Both class generations are emitted, so consumer CSS keyed on 0.4.5 names keeps matching. */
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('ok')).toHaveClass('he-badge--ok', 'he-badge--success');
+    await expect(canvas.getByText('warn')).toHaveClass('he-badge--warn', 'he-badge--warning');
+    await expect(canvas.getByText('error')).toHaveClass('he-badge--error', 'he-badge--danger');
+    await expect(canvas.getByText('neutral')).toHaveClass('he-badge--neutral', 'he-badge--idle');
+  },
 };

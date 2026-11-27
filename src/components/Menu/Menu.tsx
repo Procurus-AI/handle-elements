@@ -565,9 +565,15 @@ export function Popover({
     applyActiveId(null);
     setOpenSubId(null);
     setPosition(null);
-    if (restoreFocus.current) returnFocusRef.current?.focus?.();
+    if (restoreFocus.current) {
+      returnFocusRef.current?.focus?.();
+      // The saved element may be gone or unfocusable (a menu open on mount saves whatever
+      // held focus then); never leave keyboard users on <body>: fall back to the trigger.
+      const landed = document.activeElement;
+      if (!landed || landed === document.body) (delegate ?? triggerRef.current)?.focus?.();
+    }
     restoreFocus.current = false;
-  }, [currentOpen, applyActiveId, setOpenSubId]);
+  }, [currentOpen, applyActiveId, setOpenSubId, delegate]);
 
   useEffect(() => {
     if (!currentOpen || !isBrowser()) return;

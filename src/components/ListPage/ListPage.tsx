@@ -54,7 +54,7 @@ export function ListPage({
 }: ListPageProps) {
   return (
     <AppShell sidebar={sidebar} className={cx('he-list-page', className)} {...rest}>
-      <PageHeader title={title} aside={actions} tabs={tabs} />
+      <PageHeader inset title={title} aside={actions} tabs={tabs} />
       <div className="he-list-page__content">
         {notice}
         {stats}

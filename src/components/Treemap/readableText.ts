@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { useIsomorphicLayoutEffect } from '../../lib/useIsomorphicLayoutEffect';
 
 /** Relative luminance of a computed CSS colour (`rgb()` or `color(srgb …)`), or null. */
 function luminance(css: string): number | null {
@@ -29,7 +30,7 @@ const CANDIDATES = ['var(--he-text-primary)', 'var(--he-text-inverse)'] as const
 export function useReadableText<T extends HTMLElement>(fill: string | undefined) {
   const ref = useRef<T>(null);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
 

@@ -1,5 +1,6 @@
 import {
   cloneElement,
+  Fragment,
   isValidElement,
   useCallback,
   useId,
@@ -182,7 +183,9 @@ export function Tooltip({
 
   // The description belongs on the control that holds focus. A single element child
   // gets it directly; any other child shape falls back to the anchor span.
-  const only = isValidElement<{ 'aria-describedby'?: string }>(children) ? children : null;
+  // A Fragment is an element but takes no props: it falls back to the anchor span.
+  const only =
+    isValidElement<{ 'aria-describedby'?: string }>(children) && children.type !== Fragment ? children : null;
   const describedBy = shown ? tooltipId : undefined;
   const merge = (existing?: string) => [existing, describedBy].filter(Boolean).join(' ') || undefined;
   const anchored = only

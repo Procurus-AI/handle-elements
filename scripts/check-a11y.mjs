@@ -34,8 +34,8 @@ const selfDisabled = [];
 for (const file of walk(path.join(root, 'src'))) {
   const src = readFileSync(file, 'utf8');
   const patterns = [
-    /a11y\s*:\s*\{[^}]*\btest\s*:\s*['"](off|todo)['"]/s,
-    /a11y\s*:\s*\{[^}]*\bdisable\s*:\s*true/s,
+    /a11y\s*:\s*\{[\s\S]{0,600}?\btest\s*:\s*['"](off|todo)['"]/,
+    /a11y\s*:\s*\{[\s\S]{0,600}?\bdisable\s*:\s*true/,
     /a11y\s*:\s*\{[\s\S]*?\benabled\s*:\s*false/,
     /a11y\s*:\s*\{[\s\S]*?\bdisableOtherRules\b/,
   ];
@@ -114,7 +114,11 @@ for (const r of results) {
 }
 rows.sort((a, b) => a.storyId.localeCompare(b.storyId) || a.theme.localeCompare(b.theme) || a.ruleId.localeCompare(b.ruleId));
 
-const storiesChecked = new Set(results.filter((r) => r.result).map((r) => r.story.id)).size;
+const scannedIds = new Set(results.filter((r) => r.result).map((r) => r.story.id));
+const storiesChecked = scannedIds.size;
+// Coverage: every story must be scanned in at least one theme. A skip is only valid when the
+// story pins a theme that this run also scanned.
+const unscanned = [...new Set(results.map((r) => r.story.id))].filter((id) => !scannedIds.has(id));
 const report = {
   generatedAt: new Date().toISOString(),
   tags: TAGS,
@@ -144,11 +148,12 @@ if (rows.length) {
 }
 for (const e of renderErrors) console.error(`render error: ${e.storyId} (${e.theme}): ${e.error}`);
 for (const s of selfDisabled) console.error(`story disables a11y itself: ${s}`);
+for (const id of unscanned) console.error(`story never scanned in any theme: ${id}`);
 
 const nodes = rows.reduce((n, r) => n + r.count, 0);
 console.log(
   `\n[check-a11y] ${storiesChecked} stories x ${THEMES.length} themes: ${rows.length} violation(s) ` +
     `(${nodes} nodes, ${new Set(rows.map((r) => r.storyId)).size} stories), ${waivedRows.length} waived, ` +
-    `${renderErrors.length} render error(s), ${skipped.length} skipped (story pins its theme), ${selfDisabled.length} self-disabled. Report: .results/a11y/report.json`,
+    `${renderErrors.length} render error(s), ${skipped.length} skipped (story pins its theme), ${selfDisabled.length} self-disabled, ${unscanned.length} unscanned. Report: .results/a11y/report.json`,
 );
-process.exit(rows.length || renderErrors.length || selfDisabled.length ? 1 : 0);
+process.exit(rows.length || renderErrors.length || selfDisabled.length || unscanned.length || !storiesChecked ? 1 : 0);

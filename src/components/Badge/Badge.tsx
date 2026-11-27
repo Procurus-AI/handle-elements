@@ -24,11 +24,16 @@ const CANONICAL: Record<BadgeTone, 'success' | 'warning' | 'danger' | 'idle' | '
   accent: 'accent',
 };
 
+/** 0.4.5 class names, still emitted so consumer CSS keyed on them keeps matching. */
+const LEGACY_CLASS = { idle: 'neutral', success: 'ok', warning: 'warn', danger: 'error' } as const;
+
 /** Status pill: tinted fill, text and dot in one hue, no border. For bare numbers use Count. */
 export function Badge({ tone = 'neutral', size = 'md', dot = false, className, children, ...rest }: BadgeProps) {
+  const canonical = CANONICAL[tone];
+  const legacy = canonical === 'accent' ? undefined : LEGACY_CLASS[canonical];
   return (
     <span
-      className={cx('he-badge', `he-badge--${CANONICAL[tone]}`, size === 'sm' && 'he-badge--sm', className)}
+      className={cx('he-badge', `he-badge--${canonical}`, legacy && `he-badge--${legacy}`, size === 'sm' && 'he-badge--sm', className)}
       {...rest}
     >
       {dot && <span className="he-badge__dot" aria-hidden />}

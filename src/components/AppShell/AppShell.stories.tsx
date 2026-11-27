@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect } from 'storybook/test';
 import { Button } from '../Button/Button';
 import { DemoSidebar } from '../ListPage/fixtures';
 import { PageHeader } from '../PageHeader/PageHeader';
@@ -23,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 const content = (
   <>
-    <PageHeader title="Recibos" aside={<Button icon="play">Ejecutar validación</Button>} />
+    <PageHeader inset title="Recibos" aside={<Button icon="play">Ejecutar validación</Button>} />
     <div style={{ padding: '20px var(--he-spacing-6) var(--he-spacing-6)', display: 'grid', gap: 'var(--he-spacing-3)' }}>
       <StatStrip aria-label="Resumen de recibos">
         <StatCell label="Recibos" value="53,938" />
@@ -47,6 +48,13 @@ export const Figma: Story = {
       {content}
     </AppShell>
   ),
+  play: async ({ canvasElement }) => {
+    // Inside the shell a Sidebar placed as-is gets Kevin's flat rail.
+    const rail = getComputedStyle(canvasElement.querySelector('.he-sidebar')!);
+    await expect(rail.paddingLeft).toBe('12px');
+    await expect(rail.borderRightWidth).toBe('0px');
+    await expect(getComputedStyle(canvasElement.querySelector('.he-sidebar__scroll')!).paddingLeft).toBe('0px');
+  },
 };
 
 /**

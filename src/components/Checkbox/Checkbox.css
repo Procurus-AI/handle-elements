@@ -89,7 +89,7 @@
 }
 
 .he-checkbox__input:focus-visible + .he-checkbox__box {
-  outline: 2px solid var(--he-focus);
+  outline: 2px solid var(--he-border-focus);
   outline-offset: 2px;
 }
 

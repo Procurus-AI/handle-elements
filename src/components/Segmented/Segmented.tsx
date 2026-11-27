@@ -95,7 +95,8 @@ export function Segmented<T extends string = string>({
 
   if (iconOnly) {
     const current = options.find((option) => option.value === value) ?? options[0];
-    const next = options[(options.findIndex((o) => o.value === value) + 1) % options.length] ?? current;
+    const currentIndex = options.findIndex((o) => o.value === value);
+    const next = options[step(currentIndex, 1)] ?? current;
     // The glyph reports the CURRENT option; the action lives in the accessible
     // name ("Entorno: Live → Dev"), so a one-button cycle is never a guess.
     const name = `${label}: ${textOf(current?.label)} \u2192 ${textOf(next?.label)}`;
