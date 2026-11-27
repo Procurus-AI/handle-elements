@@ -298,7 +298,13 @@ export function DataTable<T>({
     });
   }, [data, globalFilter, filterKeys, filterFn, columns]);
 
-  const filteredData = useMemo(() => filteredEntries.map((e) => e.row), [filteredEntries]);
+  // With no query the filtered rows ARE `data`: keep its identity so onFilteredChange does not
+  // fire on every render when a caller passes inline columns (0.4.5 behaviour).
+  const hasQuery = (globalFilter ?? '').trim() !== '';
+  const filteredData = useMemo(
+    () => (hasQuery ? filteredEntries.map((e) => e.row) : data),
+    [hasQuery, filteredEntries, data],
+  );
 
   // The callback is held in a ref and kept out of the dep array on purpose: an
   // inline arrow is a new identity every render, so depending on it turns any

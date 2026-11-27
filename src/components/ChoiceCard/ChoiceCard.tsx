@@ -1,6 +1,7 @@
 import {
   Children,
   createContext,
+  Fragment,
   isValidElement,
   useContext,
   type HTMLAttributes,
@@ -53,9 +54,14 @@ export function ChoiceCardGroup({ value, onChange, label, className, children, o
     next.click();
   };
 
-  const cards = Children.toArray(children).flatMap((child) =>
-    isValidElement<ChoiceCardProps>(child) && child.type === ChoiceCard ? [child.props] : [],
-  );
+  // Read cards through Fragments too, so the fallback tab stop works for `<>{cards}</>`.
+  const collect = (nodes: ReactNode): ChoiceCardProps[] =>
+    Children.toArray(nodes).flatMap((child) => {
+      if (!isValidElement(child)) return [];
+      if (child.type === Fragment) return collect((child.props as { children?: ReactNode }).children);
+      return child.type === ChoiceCard ? [child.props as ChoiceCardProps] : [];
+    });
+  const cards = collect(children);
   const fallbackValue =
     cards.length === 0
       ? undefined

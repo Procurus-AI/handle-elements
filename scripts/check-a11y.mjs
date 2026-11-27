@@ -93,6 +93,16 @@ const results = await sb.forEachStory(
 );
 await sb.close();
 
+function pinsTheme(story, theme) {
+  if (!theme || !story.importPath || !story.exportName) return false;
+  const src = readFileSync(path.join(root, story.importPath), 'utf8');
+  const start = src.search(new RegExp(`export const ${story.exportName}\\b`));
+  if (start < 0) return false;
+  const next = src.slice(start + 1).search(/\nexport const /);
+  const block = next < 0 ? src.slice(start) : src.slice(start, start + 1 + next);
+  return new RegExp(`globals\\s*:\\s*\\{[^}]*theme\\s*:\\s*['"]${theme}['"]`).test(block);
+}
+
 // ---- 4. report ------------------------------------------------------------------------
 const rows = [];
 const waivedRows = [];
@@ -104,6 +114,13 @@ for (const r of results) {
     continue;
   }
   if (r.skipped) {
+    // A skip is valid only when the story's own export pins that theme in `globals`;
+    // otherwise the story ignored the requested theme, which is a broken decorator or story.
+    const pinned = (r.skipped.match(/story pins theme (\w+)/) ?? [])[1];
+    if (!pinsTheme(r.story, pinned)) {
+      renderErrors.push({ storyId: r.story.id, theme: r.theme, error: `rendered ${pinned} without pinning it in globals` });
+      continue;
+    }
     skipped.push({ storyId: r.story.id, theme: r.theme, reason: r.skipped });
     continue;
   }
